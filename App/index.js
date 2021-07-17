@@ -1,4 +1,4 @@
 import React from "react";
-import OnBoarding from "./screens/OnBoarding";
+import Navigation from "./config/Navigation";
 
-export default () => <OnBoarding />;
+export default () => <Navigation />;

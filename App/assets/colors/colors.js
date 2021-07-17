@@ -1,6 +1,7 @@
 export default {
     primary: "#07B4DA",
     textDarker: "#595757",
+    iconDark: "#404040",
     textLighter: "#7B7575",
     danger: "#F32121",
     textField: "#E7E7E7",
