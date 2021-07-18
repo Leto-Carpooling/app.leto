@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.textField,
         borderRadius: 4,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
         paddingVertical: 10,
         flexDirection: "row",
         alignItems: "center",
@@ -24,6 +24,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontFamily: "Inter_500Medium",
         fontSize: 17,
-        marginLeft: 8,
+        marginLeft: 10,
     },
 });

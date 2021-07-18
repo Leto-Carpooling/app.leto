@@ -31,16 +31,6 @@ export default ({ navigation }) => {
                     <IconButton
                         icon={
                             <MaterialIcons
-                                name="arrow-back-ios"
-                                size={25}
-                                color={colors.iconDark}
-                            />
-                        }
-                        onPress={() => alert("todo")}
-                    />
-                    <IconButton
-                        icon={
-                            <MaterialIcons
                                 name="menu"
                                 size={30}
                                 color={colors.iconDark}
@@ -98,7 +88,7 @@ const styles = StyleSheet.create({
     },
     topBar: {
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         marginTop: 40,
         marginHorizontal: 30,
         marginBottom: 30,

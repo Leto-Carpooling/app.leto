@@ -24,7 +24,7 @@ export const Button = ({ onPress, text }) => {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: colors.primary,
-        elevation: 7,
+        elevation: 5,
         flexDirection: "row",
         paddingHorizontal: 15,
         paddingVertical: 13,

@@ -1,5 +1,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { MaterialIcons } from "@expo/vector-icons";
 import {
     createDrawerNavigator,
     DrawerContentScrollView,
@@ -19,8 +21,10 @@ import colors from "../assets/colors/colors";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import AppLoading from "expo-app-loading";
+import { color } from "react-native-reanimated";
 
 function CustomDrawerContent(props) {
+    const insets = useSafeAreaInsets();
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
@@ -31,16 +35,37 @@ function CustomDrawerContent(props) {
         return <AppLoading />;
     } else {
         return (
-            <DrawerContentScrollView {...props}>
+            <DrawerContentScrollView
+                contentContainerStyle={{
+                    paddingTop: insets.top,
+                }}
+                {...props}
+            >
                 <View style={styles.header}>
                     <Text style={styles.logoText}>Leto.</Text>
                     <Text style={styles.tagline}>Cheaper greener rides.</Text>
                 </View>
+
+                <View style={styles.center}>
+                    <DrawerItem
+                        label="Sign out"
+                        labelStyle={{
+                            fontFamily: "Inter_500Medium",
+                            fontSize: 17,
+                        }}
+                        icon={() => (
+                            <MaterialIcons
+                                name="logout"
+                                color={colors.iconDark}
+                                size={20}
+                            />
+                        )}
+                        activeBackgroundColor={colors.primary}
+                        inactiveBackgroundColor={colors.white}
+                        onPress={() => alert("todo")}
+                    />
+                </View>
                 <DrawerItemList {...props} />
-                <DrawerItem
-                    label="Help"
-                    onPress={() => alert("Link to help")}
-                />
             </DrawerContentScrollView>
         );
     }
@@ -76,7 +101,7 @@ const styles = StyleSheet.create({
     header: {
         width: "100%",
         backgroundColor: colors.primary,
-        height: "50%",
+        height: 200,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -91,5 +116,9 @@ const styles = StyleSheet.create({
         fontFamily: "Inter_500Medium",
         fontSize: 20,
         color: colors.white,
+    },
+    center: {
+        justifyContent: "center",
+        padding: 5,
     },
 });

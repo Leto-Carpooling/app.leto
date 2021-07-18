@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         paddingHorizontal: 10,
         paddingVertical: 12,
-        elevation: 10,
+        elevation: 5,
         alignItems: "center",
     },
     toastTxt: {

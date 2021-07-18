@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, SafeAreaView, StyleSheet } from "react-native";
+import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,31 +19,34 @@ export default () => {
     } else {
         return (
             <SafeAreaView style={styles.container}>
-                <MaterialIcons
-                    name="arrow-back-ios"
-                    size={25}
-                    color={colors.iconDark}
-                    style={styles.backIcon}
-                />
-                <Text style={styles.logoText}>Leto.</Text>
-                <Text style={styles.tagline}>Cheaper greener rides.</Text>
+                <ScrollView>
+                    <View>
+                        <Text style={styles.logoText}>Leto.</Text>
+                        <Text style={styles.tagline}>
+                            Cheaper greener rides.
+                        </Text>
 
-                <View style={styles.center}>
-                    <MaterialIcons
-                        name="check-circle-outline"
-                        size={150}
-                        color={colors.success}
-                    />
-                </View>
-                <View style={styles.center}>
-                    <Text style={styles.title}>
-                        We signed you up successfully.
-                    </Text>
-                </View>
+                        <View style={styles.center}>
+                            <MaterialIcons
+                                name="check-circle-outline"
+                                size={150}
+                                color={colors.success}
+                            />
+                        </View>
+                        <View style={styles.center}>
+                            <Text style={styles.title}>
+                                We signed you up successfully.
+                            </Text>
+                        </View>
 
-                <View style={styles.btnContainer}>
-                    <Button text="Proceed" onPress={() => alert("todo")} />
-                </View>
+                        <View style={styles.btnContainer}>
+                            <Button
+                                text="Proceed"
+                                onPress={() => alert("todo")}
+                            />
+                        </View>
+                    </View>
+                </ScrollView>
             </SafeAreaView>
         );
     }
@@ -64,6 +67,7 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins_400Regular",
         fontSize: 60,
         marginLeft: 30,
+        marginTop: 70,
     },
     tagline: {
         color: colors.textLighter,
@@ -74,7 +78,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: "Inter_400Regular",
-        fontSize: 22,
+        fontSize: 19,
         color: colors.textLighter,
     },
     label: {

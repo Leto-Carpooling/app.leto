@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     label: {
         color: colors.textLighter,
         fontFamily: "Inter_500Medium",
-        fontSize: 17,
+        fontSize: 15,
         marginBottom: 8,
     },
 });
