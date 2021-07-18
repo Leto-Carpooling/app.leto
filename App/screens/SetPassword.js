@@ -8,6 +8,7 @@ import AppLoading from "expo-app-loading";
 import { Toast } from "../components/Toast";
 import { TextField } from "../components/TextField";
 import { Button } from "../components/Button";
+import { LabelledTextInput } from "../components/LabelledTextInput";
 
 export default () => {
     let [fontsLoaded] = useFonts({
@@ -40,22 +41,34 @@ export default () => {
                 </View>
 
                 <View>
-                    <Text style={styles.label}>Email or phone</Text>
-                    <View style={{ marginHorizontal: 20 }}>
-                        <TextField
-                            icon={
-                                <MaterialIcons
-                                    name="mail"
-                                    size={30}
-                                    color={colors.primary}
-                                />
-                            }
-                            placeholder="Email or phone"
-                            onChangeText={() => console.log("test")}
-                        />
-                    </View>
+                    <LabelledTextInput
+                        label="New password"
+                        icon={
+                            <MaterialIcons
+                                name="lock"
+                                size={30}
+                                color={colors.primary}
+                            />
+                        }
+                        placeholder="Choose a password"
+                    />
+                    <View style={styles.spacer} />
+                    <LabelledTextInput
+                        label="Confirm password"
+                        icon={
+                            <MaterialIcons
+                                name="lock"
+                                size={30}
+                                color={colors.primary}
+                            />
+                        }
+                        placeholder="Repeatpassword"
+                    />
                     <View style={styles.btnContainer}>
-                        <Button text="Next" onPress={() => alert("todo")} />
+                        <Button
+                            text="Create account"
+                            onPress={() => alert("todo")}
+                        />
                     </View>
                 </View>
             </SafeAreaView>
@@ -108,5 +121,8 @@ const styles = StyleSheet.create({
     btnContainer: {
         padding: 20,
         marginTop: 10,
+    },
+    spacer: {
+        marginVertical: 10,
     },
 });

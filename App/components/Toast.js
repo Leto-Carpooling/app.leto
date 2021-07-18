@@ -17,13 +17,35 @@ export const Toast = ({ type, text, hidden }) => {
     if (hidden) {
         hiddenStyle = { display: "none" };
     }
+
+    function setIcon() {
+        switch (type) {
+            case "danger":
+                return (
+                    <MaterialIcons
+                        name="error"
+                        size={30}
+                        color={colors.white}
+                    />
+                );
+        }
+    }
+
+    function setTheme() {
+        switch (type) {
+            case "danger":
+                return {
+                    backgroundColor: colors.danger,
+                };
+        }
+    }
     if (!fontsLoaded) {
         return <AppLoading />;
     } else {
         return (
-            <View style={[styles.container, hiddenStyle]}>
-                <MaterialIcons name="error" size={30} color={colors.white} />
-                <Text style={styles.toastTxt}>Email already taken</Text>
+            <View style={[styles.container, setTheme(), hiddenStyle]}>
+                {setIcon()}
+                <Text style={styles.toastTxt}>{text}</Text>
             </View>
         );
     }
@@ -31,13 +53,11 @@ export const Toast = ({ type, text, hidden }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.danger,
         width: "87%",
-        height: 50,
         borderRadius: 3,
         flexDirection: "row",
         paddingHorizontal: 10,
-        paddingVertical: 5,
+        paddingVertical: 12,
         elevation: 10,
         alignItems: "center",
     },

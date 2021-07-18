@@ -8,6 +8,7 @@ import AppLoading from "expo-app-loading";
 import { Toast } from "../components/Toast";
 import { TextField } from "../components/TextField";
 import { Button } from "../components/Button";
+import { LabelledTextInput } from "../components/LabelledTextInput";
 
 export default () => {
     let [fontsLoaded] = useFonts({
@@ -29,33 +30,45 @@ export default () => {
                 />
                 <Text style={styles.logoText}>Leto.</Text>
                 <Text style={styles.tagline}>Cheaper greener rides.</Text>
-                <Text style={styles.title}>Sign up</Text>
+                <Text style={styles.title}>Login</Text>
 
                 <View style={[styles.center, { marginVertical: 20 }]}>
                     <Toast
                         hidden={false}
                         type="danger"
-                        text="Passwords do not match"
+                        text="Invalid email and password"
                     />
                 </View>
 
                 <View>
-                    <Text style={styles.label}>Email or phone</Text>
-                    <View style={{ marginHorizontal: 20 }}>
-                        <TextField
-                            icon={
-                                <MaterialIcons
-                                    name="mail"
-                                    size={30}
-                                    color={colors.primary}
-                                />
-                            }
-                            placeholder="Email or phone"
-                            onChangeText={() => console.log("test")}
-                        />
-                    </View>
+                    <LabelledTextInput
+                        label="Email or phone"
+                        icon={
+                            <MaterialIcons
+                                name="mail"
+                                size={30}
+                                color={colors.primary}
+                            />
+                        }
+                        placeholder="Email or phone"
+                        contentType="emailAddress"
+                    />
+                    <View style={styles.spacer} />
+                    <LabelledTextInput
+                        label="Password"
+                        icon={
+                            <MaterialIcons
+                                name="lock"
+                                size={30}
+                                color={colors.primary}
+                            />
+                        }
+                        placeholder="Enter your password"
+                        secureTextEntry={true}
+                        contentType="password"
+                    />
                     <View style={styles.btnContainer}>
-                        <Button text="Next" onPress={() => alert("todo")} />
+                        <Button text="Login" onPress={() => alert("todo")} />
                     </View>
                 </View>
             </SafeAreaView>
@@ -108,5 +121,8 @@ const styles = StyleSheet.create({
     btnContainer: {
         padding: 20,
         marginTop: 10,
+    },
+    spacer: {
+        marginVertical: 10,
     },
 });

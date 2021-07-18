@@ -5,8 +5,6 @@ import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
-import { Toast } from "../components/Toast";
-import { TextField } from "../components/TextField";
 import { Button } from "../components/Button";
 
 export default () => {
@@ -29,34 +27,22 @@ export default () => {
                 />
                 <Text style={styles.logoText}>Leto.</Text>
                 <Text style={styles.tagline}>Cheaper greener rides.</Text>
-                <Text style={styles.title}>Sign up</Text>
 
-                <View style={[styles.center, { marginVertical: 20 }]}>
-                    <Toast
-                        hidden={false}
-                        type="danger"
-                        text="Passwords do not match"
+                <View style={styles.center}>
+                    <MaterialIcons
+                        name="check-circle-outline"
+                        size={150}
+                        color={colors.success}
                     />
                 </View>
+                <View style={styles.center}>
+                    <Text style={styles.title}>
+                        We signed you up successfully.
+                    </Text>
+                </View>
 
-                <View>
-                    <Text style={styles.label}>Email or phone</Text>
-                    <View style={{ marginHorizontal: 20 }}>
-                        <TextField
-                            icon={
-                                <MaterialIcons
-                                    name="mail"
-                                    size={30}
-                                    color={colors.primary}
-                                />
-                            }
-                            placeholder="Email or phone"
-                            onChangeText={() => console.log("test")}
-                        />
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Button text="Next" onPress={() => alert("todo")} />
-                    </View>
+                <View style={styles.btnContainer}>
+                    <Button text="Proceed" onPress={() => alert("todo")} />
                 </View>
             </SafeAreaView>
         );
@@ -90,8 +76,6 @@ const styles = StyleSheet.create({
         fontFamily: "Inter_400Regular",
         fontSize: 22,
         color: colors.textLighter,
-        marginLeft: 20,
-        marginTop: 20,
     },
     label: {
         color: colors.textLighter,
