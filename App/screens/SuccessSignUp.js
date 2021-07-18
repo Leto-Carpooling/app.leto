@@ -7,7 +7,7 @@ import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { Button } from "../components/Button";
 
-export default () => {
+export default ({ navigation }) => {
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
@@ -42,7 +42,7 @@ export default () => {
                         <View style={styles.btnContainer}>
                             <Button
                                 text="Proceed"
-                                onPress={() => alert("todo")}
+                                onPress={() => toHome(navigation)}
                             />
                         </View>
                     </View>
@@ -51,6 +51,13 @@ export default () => {
         );
     }
 };
+
+function toHome(navigation) {
+    navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+    });
+}
 
 const styles = StyleSheet.create({
     container: {

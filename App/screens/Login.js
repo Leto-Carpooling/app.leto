@@ -84,7 +84,7 @@ export default ({ navigation }) => {
                             <View style={styles.btnContainer}>
                                 <Button
                                     text="Login"
-                                    onPress={() => alert("todo")}
+                                    onPress={() => toHome(navigation)}
                                 />
                             </View>
                         </View>
@@ -97,6 +97,13 @@ export default ({ navigation }) => {
         );
     }
 };
+
+function toHome(navigation) {
+    navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+    });
+}
 
 const styles = StyleSheet.create({
     container: {

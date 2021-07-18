@@ -12,8 +12,9 @@ import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
 import { LabelledTextInput } from "../components/LabelledTextInput";
 
-export default () => {
+export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
+    const [username, onChangeText] = useState("");
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -65,13 +66,18 @@ export default () => {
                                     />
                                 }
                                 placeholder="Email or phone"
+                                text={username}
+                                onChangeText={onChangeText}
+                                auto={true}
                             />
                             <View style={styles.spacer} />
 
                             <View style={styles.btnContainer}>
                                 <Button
                                     text="Next"
-                                    onPress={() => alert("todo")}
+                                    onPress={() =>
+                                        navigation.navigate("SetPassword")
+                                    }
                                 />
                             </View>
                         </View>
@@ -84,6 +90,8 @@ export default () => {
         );
     }
 };
+
+function checkEmail() {}
 
 const styles = StyleSheet.create({
     container: {

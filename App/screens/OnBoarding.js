@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     View,
     Text,
@@ -13,12 +13,21 @@ import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import AppLoading from "expo-app-loading";
 import { Button } from "../components/Button";
 
-export default () => {
+export default ({ navigation }) => {
+    function isAuthenticated() {
+        if (false) {
+            navigation.navigate("Home");
+        }
+    }
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
         Inter_400Regular,
     });
+
+    useEffect(() => {
+        isAuthenticated();
+    }, []);
 
     if (!fontsLoaded) {
         return <AppLoading />;
@@ -41,13 +50,13 @@ export default () => {
                         </Text>
                         <View style={styles.btn}>
                             <Button
-                                onPress={() => alert("todo")}
+                                onPress={() => navigation.navigate("SignUp")}
                                 text="Sign up"
                             />
                         </View>
                         <View style={styles.btn}>
                             <Button
-                                onPress={() => alert("todo")}
+                                onPress={() => navigation.navigate("Login")}
                                 text="Login"
                             />
                         </View>

@@ -81,7 +81,9 @@ export default ({ navigation }) => {
                             <View style={styles.btnContainer}>
                                 <Button
                                     text="Create account"
-                                    onPress={() => alert("todo")}
+                                    onPress={() =>
+                                        navigation.navigate("SuccessSignUp")
+                                    }
                                 />
                             </View>
                         </View>

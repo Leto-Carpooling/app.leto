@@ -21,7 +21,6 @@ import colors from "../assets/colors/colors";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import AppLoading from "expo-app-loading";
-import { color } from "react-native-reanimated";
 
 function CustomDrawerContent(props) {
     const insets = useSafeAreaInsets();
@@ -51,7 +50,7 @@ function CustomDrawerContent(props) {
                         label="Sign out"
                         labelStyle={{
                             fontFamily: "Inter_500Medium",
-                            fontSize: 17,
+                            fontSize: 16,
                         }}
                         icon={() => (
                             <MaterialIcons
@@ -65,7 +64,6 @@ function CustomDrawerContent(props) {
                         onPress={() => alert("todo")}
                     />
                 </View>
-                <DrawerItemList {...props} />
             </DrawerContentScrollView>
         );
     }
@@ -76,7 +74,7 @@ const Drawer = createDrawerNavigator();
 function MyDrawer() {
     return (
         <Drawer.Navigator
-            initialRouteName="Home"
+            initialRouteName="OnBoarding"
             drawerContent={(props) => <CustomDrawerContent {...props} />}
         >
             <Drawer.Screen name="Home" component={Home} />
