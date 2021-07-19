@@ -6,11 +6,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { Toast } from "../components/Toast";
-import { TextField } from "../components/TextField";
 import { Button } from "../components/Button";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
-import { LabelledTextInput } from "../components/LabelledTextInput";
+import { LabelledAutoTextField } from "../components/LabelledAutoTextField";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
@@ -56,19 +55,11 @@ export default ({ navigation }) => {
                         </View>
 
                         <View>
-                            <LabelledTextInput
+                            <LabelledAutoTextField
                                 label="Email or phone"
-                                icon={
-                                    <MaterialIcons
-                                        name="mail"
-                                        size={30}
-                                        color={colors.primary}
-                                    />
-                                }
                                 placeholder="Email or phone"
-                                text={username}
+                                value={username}
                                 onChangeText={onChangeText}
-                                auto={true}
                             />
                             <View style={styles.spacer} />
 
