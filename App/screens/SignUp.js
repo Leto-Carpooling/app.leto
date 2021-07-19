@@ -10,10 +10,15 @@ import { Button } from "../components/Button";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
 import { LabelledAutoTextField } from "../components/LabelledAutoTextField";
+import { api } from "../config/api";
+import { validate } from "validate.js";
+import { constraintsEmail } from "../util/constraints";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
-    const [username, onChangeText] = useState("");
+    const [toastVisible, setToastVisible] = useState(false);
+    const [toastText, setToastText] = useState("");
+    const [username, onChangeText] = useState("tony@gmail.com");
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -48,9 +53,9 @@ export default ({ navigation }) => {
 
                         <View style={[styles.center, { marginVertical: 20 }]}>
                             <Toast
-                                hidden={false}
+                                hidden={!toastVisible}
                                 type="danger"
-                                text="Passwords do not match"
+                                text={toastText}
                             />
                         </View>
 
@@ -66,9 +71,7 @@ export default ({ navigation }) => {
                             <View style={styles.btnContainer}>
                                 <Button
                                     text="Next"
-                                    onPress={() =>
-                                        navigation.navigate("SetPassword")
-                                    }
+                                    onPress={() => checkEmail()}
                                 />
                             </View>
                         </View>
@@ -80,9 +83,30 @@ export default ({ navigation }) => {
             </SafeAreaView>
         );
     }
-};
 
-function checkEmail() {}
+    function checkEmail() {
+        const validationResult = validate(
+            { emailAddress: username },
+            constraintsEmail
+        );
+
+        if (validationResult) {
+            setToastVisible(true);
+            setToastText(validationResult["emailAddress"]);
+        } else {
+            api.post(`signup.php`, { email: username, action: "e" })
+                .then((resp) => {
+                    console.log(resp.data);
+                    navigation.navigate("SetPassword");
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setToastVisible(true);
+                    setToastText("Something went wrong.");
+                });
+        }
+    }
+};
 
 const styles = StyleSheet.create({
     container: {

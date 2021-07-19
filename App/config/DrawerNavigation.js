@@ -21,6 +21,7 @@ import colors from "../assets/colors/colors";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import AppLoading from "expo-app-loading";
+import VerifyEmail from "../screens/VerifyEmail";
 
 function CustomDrawerContent(props) {
     const insets = useSafeAreaInsets();
@@ -83,6 +84,7 @@ function MyDrawer() {
             <Drawer.Screen name="SignUp" component={SignUp} />
             <Drawer.Screen name="SetPassword" component={SetPassword} />
             <Drawer.Screen name="SuccessSignUp" component={SuccessSignUp} />
+            <Drawer.Screen name="VerifyEmail" component={VerifyEmail} />
         </Drawer.Navigator>
     );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Text,
     View,
@@ -12,10 +12,15 @@ import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
-import { Button } from "../components/Button";
 import { IconButton } from "../components/IconButton";
 
 export default ({ navigation }) => {
+    useEffect(() => {
+        const isVerified = true;
+        if (!isVerified) {
+            navigation.navigate("VerifyEmail");
+        }
+    }, []);
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
