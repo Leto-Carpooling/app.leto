@@ -10,9 +10,13 @@ import { Button } from "../components/Button";
 import { LabelledTextInput } from "../components/LabelledTextInput";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
+import { api } from "../config/api";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
+    const [toastVisible, setToastVisible] = useState(false);
+    const [toastText, setToastText] = useState("");
+    const [password, onChangeText] = useState("");
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -47,7 +51,7 @@ export default ({ navigation }) => {
 
                         <View style={[styles.center, { marginVertical: 20 }]}>
                             <Toast
-                                hidden={false}
+                                hidden={toastVisible}
                                 type="danger"
                                 text="Passwords do not match"
                             />
@@ -63,7 +67,10 @@ export default ({ navigation }) => {
                                         color={colors.primary}
                                     />
                                 }
+                                value={password}
+                                onChangeText={onChangeText}
                                 placeholder="Choose a password"
+                                secureTextEntry={true}
                             />
                             <View style={styles.spacer} />
                             <LabelledTextInput
@@ -76,6 +83,7 @@ export default ({ navigation }) => {
                                     />
                                 }
                                 placeholder="Repeat password"
+                                secureTextEntry={true}
                             />
                             <View style={styles.btnContainer}>
                                 <Button
@@ -94,7 +102,29 @@ export default ({ navigation }) => {
     }
 
     function checkPassword() {
-        navigation.navigate("SuccessSignUp");
+        const params = new URLSearchParams();
+        params.append("password", password);
+        params.append("email", +Math.random(0, 200) + "tony__@gmail.com");
+        const config = {
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded; charset=UTF-8",
+            },
+        };
+        api.post(`signup.php`, params, config)
+            .then((resp) => {
+                console.log(resp.data); //OK
+                //navigation.navigate("SuccessSignUp");
+                if (resp.data.status !== "OK") {
+                    setToastVisible(true);
+                    setToastText(resp.data.message);
+                }
+            })
+            .catch((err) => {
+                console.log("err: " + err);
+                setToastVisible(true);
+                setToastText("Something went wrong.");
+            });
     }
 };
 

@@ -94,13 +94,22 @@ export default ({ navigation }) => {
             setToastVisible(true);
             setToastText(validationResult["emailAddress"]);
         } else {
-            api.post(`signup.php`, { email: username, action: "e" })
+            const params = new URLSearchParams();
+            params.append("email", username);
+            params.append("action", "e");
+            const config = {
+                headers: {
+                    "Content-Type":
+                        "application/x-www-form-urlencoded; charset=UTF-8",
+                },
+            };
+            api.post(`signup.php`, params, config)
                 .then((resp) => {
-                    console.log(resp.data);
+                    console.log(resp.data.status); //OK
                     navigation.navigate("SetPassword");
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.log("err: " + err);
                     setToastVisible(true);
                     setToastText("Something went wrong.");
                 });
