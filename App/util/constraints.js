@@ -10,13 +10,18 @@ export const constraintsEmail = {
 export const constraintsPassword = {
     password: {
         presence: true,
-        format: {
-            pattern: /(?=.*[0-9])/,
-            message: "Include at least one number",
-        },
         length: {
             minimum: 9,
             message: "Password must be at least 9 characters",
+        },
+    },
+};
+
+export const constraintHasNum = {
+    password: {
+        format: {
+            pattern: /\d/,
+            message: "Include at least one number",
         },
     },
 };

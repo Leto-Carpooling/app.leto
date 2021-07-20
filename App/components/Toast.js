@@ -6,7 +6,7 @@ import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import AppLoading from "expo-app-loading";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export const Toast = ({ type, text, hidden }) => {
+export const Toast = ({ type, text, hidden, style }) => {
     let hiddenStyle;
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -43,7 +43,7 @@ export const Toast = ({ type, text, hidden }) => {
         return <AppLoading />;
     } else {
         return (
-            <View style={[styles.container, setTheme(), hiddenStyle]}>
+            <View style={[styles.container, setTheme(), hiddenStyle, style]}>
                 {setIcon()}
                 <Text style={styles.toastTxt}>{text}</Text>
             </View>

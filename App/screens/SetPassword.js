@@ -11,12 +11,14 @@ import { LabelledTextInput } from "../components/LabelledTextInput";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
 import { api } from "../config/api";
+import { validatePassword } from "../util/PasswordValidator";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
-    const [toastVisible, setToastVisible] = useState(false);
-    const [toastText, setToastText] = useState("");
-    const [password, onChangeText] = useState("");
+    const [toastGroup, setToastGroup] = useState([]);
+    const [fieldBorderStyle, setFieldBorderStyle] = useState({});
+    const [password, onChangePassword] = useState("");
+    const [passwordConfir, onChangePasswordConfir] = useState("");
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -50,11 +52,17 @@ export default ({ navigation }) => {
                         <Text style={styles.title}>Sign up</Text>
 
                         <View style={[styles.center, { marginVertical: 20 }]}>
-                            <Toast
-                                hidden={toastVisible}
-                                type="danger"
-                                text="Passwords do not match"
-                            />
+                            {toastGroup.map((toast, index) => {
+                                return (
+                                    <Toast
+                                        key={index}
+                                        hidden={false}
+                                        type="danger"
+                                        text={toast.toastText}
+                                        style={{ marginBottom: 10 }}
+                                    />
+                                );
+                            })}
                         </View>
 
                         <View>
@@ -68,9 +76,10 @@ export default ({ navigation }) => {
                                     />
                                 }
                                 value={password}
-                                onChangeText={onChangeText}
+                                onChangeText={onChangePassword}
                                 placeholder="Choose a password"
                                 secureTextEntry={true}
+                                style={fieldBorderStyle}
                             />
                             <View style={styles.spacer} />
                             <LabelledTextInput
@@ -82,8 +91,15 @@ export default ({ navigation }) => {
                                         color={colors.primary}
                                     />
                                 }
+                                value={passwordConfir}
+                                onChangeText={onChangePasswordConfir}
                                 placeholder="Repeat password"
                                 secureTextEntry={true}
+                                style={fieldBorderStyle}
+                                // style={{
+                                //     borderWidth: 2,
+                                //     borderColor: colors.danger,
+                                // }}
                             />
                             <View style={styles.btnContainer}>
                                 <Button
@@ -102,29 +118,45 @@ export default ({ navigation }) => {
     }
 
     function checkPassword() {
-        const params = new URLSearchParams();
-        params.append("password", password);
-        params.append("email", +Math.random(0, 200) + "tony__@gmail.com");
-        const config = {
-            headers: {
-                "Content-Type":
-                    "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-        };
-        api.post(`signup.php`, params, config)
-            .then((resp) => {
-                console.log(resp.data); //OK
-                //navigation.navigate("SuccessSignUp");
-                if (resp.data.status !== "OK") {
-                    setToastVisible(true);
-                    setToastText(resp.data.message);
-                }
-            })
-            .catch((err) => {
-                console.log("err: " + err);
-                setToastVisible(true);
-                setToastText("Something went wrong.");
+        const errors = validatePassword(password, passwordConfir);
+        console.log(errors);
+        if (errors.length > 0) {
+            const toastErrors = [];
+            errors.forEach((err) => {
+                toastErrors.push({ toastText: err });
             });
+            setToastGroup(toastErrors);
+            setFieldBorderStyle({
+                borderWidth: 2,
+                borderColor: colors.danger,
+            });
+        } else {
+            setFieldBorderStyle({});
+            setToastGroup([]);
+            const params = new URLSearchParams();
+            params.append("password", password);
+            params.append("email", +Math.random(0, 200) + "tony__@gmail.com");
+            const config = {
+                headers: {
+                    "Content-Type":
+                        "application/x-www-form-urlencoded; charset=UTF-8",
+                },
+            };
+            api.post(`signup.php`, params, config)
+                .then((resp) => {
+                    console.log(resp.data); //OK
+                    //navigation.navigate("SuccessSignUp");
+                    if (resp.data.status !== "OK") {
+                        // setToastVisible(true);
+                        // setToastText(resp.data.message);
+                    }
+                })
+                .catch((err) => {
+                    console.log("err: " + err);
+                    // setToastVisible(true);
+                    // setToastText("Something went wrong.");
+                });
+        }
     }
 };
 

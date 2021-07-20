@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextInput, StyleSheet, View } from "react-native";
 import colors from "../assets/colors/colors";
 
-export const TextField = ({ icon, ...props }) => {
+export const TextField = ({ icon, style, ...props }) => {
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, style]}>
             {icon}
             <TextInput {...props} style={styles.textField} />
         </View>
@@ -13,11 +13,11 @@ export const TextField = ({ icon, ...props }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.textField,
         borderRadius: 4,
         paddingHorizontal: 10,
         paddingVertical: 10,
         flexDirection: "row",
+        backgroundColor: colors.textField,
         alignItems: "center",
     },
     textField: {

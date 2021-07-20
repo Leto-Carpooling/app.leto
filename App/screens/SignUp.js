@@ -103,13 +103,14 @@ export default ({ navigation }) => {
                         "application/x-www-form-urlencoded; charset=UTF-8",
                 },
             };
+            navigation.navigate("SetPassword");
             api.post(`signup.php`, params, config)
                 .then((resp) => {
                     console.log(resp.data.status); //OK
                     navigation.navigate("SetPassword");
                 })
                 .catch((err) => {
-                    console.log("err: " + err);
+                    console.log(err);
                     setToastVisible(true);
                     setToastText("Something went wrong.");
                 });
