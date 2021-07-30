@@ -11,10 +11,17 @@ import { LabelledTextInput } from "../components/LabelledTextInput";
 import { IconButton } from "../components/IconButton";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { LabelledAutoTextField } from "../components/LabelledAutoTextField";
+import axios from "axios";
+import { Log } from "../util/Logger";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [username, onChangeText] = useState("");
+    const [password, onChangePassword] = useState("");
+    const [toastVisible, setToastVisible] = useState(false);
+    const [toastText, setToastText] = useState("");
+    const [btnLoading, setBtnLoading] = useState(false);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -49,9 +56,9 @@ export default ({ navigation }) => {
 
                         <View style={[styles.center, { marginVertical: 20 }]}>
                             <Toast
-                                hidden={false}
+                                hidden={!toastVisible}
                                 type="danger"
-                                text="Invalid email and password"
+                                text={toastText}
                             />
                         </View>
 
@@ -66,21 +73,18 @@ export default ({ navigation }) => {
                             <View style={styles.spacer} />
                             <LabelledTextInput
                                 label="Password"
-                                icon={
-                                    <MaterialIcons
-                                        name="lock"
-                                        size={30}
-                                        color={colors.primary}
-                                    />
-                                }
+                                iconName="lock"
                                 placeholder="Enter your password"
                                 secureTextEntry={true}
-                                contentType="password"
+                                theme="neutral"
+                                value={password}
+                                onChangeText={onChangePassword}
                             />
                             <View style={styles.btnContainer}>
                                 <Button
                                     text="Login"
-                                    onPress={() => toHome(navigation)}
+                                    onPress={login}
+                                    loading={btnLoading}
                                 />
                             </View>
                         </View>
@@ -91,6 +95,47 @@ export default ({ navigation }) => {
                 </ScrollView>
             </SafeAreaView>
         );
+    }
+
+    function login() {
+        const config = {
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded; charset=UTF-8",
+            },
+        };
+        const params = new URLSearchParams();
+        params.append("email", username);
+        params.append("password", password);
+        axios
+            .post(`login`, params, config)
+            .then((resp) => {
+                Log("login:113", resp.data);
+                if (resp.data.status !== "OK") {
+                    setToastVisible(true);
+                    setToastText(resp.data.message);
+                    setBtnLoading(false);
+                } else {
+                    storeAuthToken(resp.data.message, navigation);
+                }
+            })
+            .catch((err) => {
+                Log("login:122", err);
+                setBtnLoading(false);
+                setToastVisible(true);
+                setToastText("Something went wrong");
+            });
+    }
+};
+
+//store auth token
+const storeAuthToken = async (token, navigation) => {
+    try {
+        await AsyncStorage.setItem("@token", token);
+        setBtnLoading(false);
+        toHome(navigation);
+    } catch (e) {
+        console.log(e);
     }
 };
 

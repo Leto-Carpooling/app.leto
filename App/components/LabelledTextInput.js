@@ -3,20 +3,13 @@ import { View, Text, StyleSheet } from "react-native";
 import { TextField } from "./TextField";
 import colors from "../assets/colors/colors";
 
-export const LabelledTextInput = ({
-    label,
-    placeholder,
-    icon,
-    contentType,
-    ...props
-}) => {
+export const LabelledTextInput = ({ label, placeholder, icon, ...props }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.label}>{label}</Text>
             <TextField
                 icon={icon}
                 placeholder={placeholder}
-                textContentType={contentType}
                 onChangeText={() => console.log("test")}
                 {...props}
             />

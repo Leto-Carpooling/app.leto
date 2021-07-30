@@ -19,6 +19,7 @@ export default ({ navigation }) => {
     const [toastVisible, setToastVisible] = useState(false);
     const [toastText, setToastText] = useState("");
     const [username, onChangeText] = useState("tony@gmail.com");
+    const [btnLoading, setBtnLoading] = useState(false);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -72,6 +73,7 @@ export default ({ navigation }) => {
                                 <Button
                                     text="Next"
                                     onPress={() => checkEmail()}
+                                    loading={btnLoading}
                                 />
                             </View>
                         </View>
@@ -94,6 +96,7 @@ export default ({ navigation }) => {
             setToastVisible(true);
             setToastText(validationResult["emailAddress"]);
         } else {
+            setBtnLoading(true);
             const params = new URLSearchParams();
             params.append("email", username);
             params.append("action", "e");
@@ -103,14 +106,21 @@ export default ({ navigation }) => {
                         "application/x-www-form-urlencoded; charset=UTF-8",
                 },
             };
-            navigation.navigate("SetPassword");
             api.post(`signup.php`, params, config)
                 .then((resp) => {
-                    console.log(resp.data.status); //OK
+                    console.log(resp.data); //OK
+                    if (resp.data.status !== "OK") {
+                        setToastVisible(true);
+                        setToastText(resp.data.message);
+                        setBtnLoading(false);
+                    } else {
+                        setBtnLoading(false);
+                    }
                     navigation.navigate("SetPassword");
                 })
                 .catch((err) => {
                     console.log(err);
+                    setBtnLoading(false);
                     setToastVisible(true);
                     setToastText("Something went wrong.");
                 });

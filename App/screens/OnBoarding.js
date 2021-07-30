@@ -12,13 +12,10 @@ import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import AppLoading from "expo-app-loading";
 import { Button } from "../components/Button";
+import { Log } from "../util/Logger";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ navigation }) => {
-    function isAuthenticated() {
-        if (false) {
-            navigation.navigate("Home");
-        }
-    }
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
@@ -26,7 +23,7 @@ export default ({ navigation }) => {
     });
 
     useEffect(() => {
-        isAuthenticated();
+        isAuthenticated(navigation);
     }, []);
 
     if (!fontsLoaded) {
@@ -70,6 +67,23 @@ export default ({ navigation }) => {
     }
 };
 
+const isAuthenticated = async (navigation) => {
+    try {
+        const token = await AsyncStorage.getItem("@token");
+        if (token !== null) {
+            toHome(navigation);
+        }
+    } catch (e) {
+        Log("isAuthenticated:82", e);
+    }
+};
+
+function toHome(navigation) {
+    navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+    });
+}
 const styles = StyleSheet.create({
     container: {
         width: "100%",

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TextInput, Text } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
 
 export const AutoTextField = ({ value, ...props }) => {

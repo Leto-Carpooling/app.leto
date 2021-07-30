@@ -12,13 +12,17 @@ import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
 import { api } from "../config/api";
 import { validatePassword } from "../util/PasswordValidator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Log } from "../util/Logger";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastGroup, setToastGroup] = useState([]);
-    const [fieldBorderStyle, setFieldBorderStyle] = useState({});
-    const [password, onChangePassword] = useState("");
-    const [passwordConfir, onChangePasswordConfir] = useState("");
+    const [textFieldTheme, settextFieldTheme] = useState("neutral");
+    const [password, onChangePassword] = useState("mogoaOmbaso2001");
+    const [passwordConfir, onChangePasswordConfir] =
+        useState("mogoaOmbaso2001");
+    const [btnLoading, setBtnLoading] = useState(false);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -68,43 +72,28 @@ export default ({ navigation }) => {
                         <View>
                             <LabelledTextInput
                                 label="New password"
-                                icon={
-                                    <MaterialIcons
-                                        name="lock"
-                                        size={30}
-                                        color={colors.primary}
-                                    />
-                                }
+                                iconName="lock"
                                 value={password}
                                 onChangeText={onChangePassword}
                                 placeholder="Choose a password"
                                 secureTextEntry={true}
-                                style={fieldBorderStyle}
+                                theme={textFieldTheme}
                             />
                             <View style={styles.spacer} />
                             <LabelledTextInput
                                 label="Confirm password"
-                                icon={
-                                    <MaterialIcons
-                                        name="lock"
-                                        size={30}
-                                        color={colors.primary}
-                                    />
-                                }
+                                iconName="lock"
                                 value={passwordConfir}
                                 onChangeText={onChangePasswordConfir}
                                 placeholder="Repeat password"
                                 secureTextEntry={true}
-                                style={fieldBorderStyle}
-                                // style={{
-                                //     borderWidth: 2,
-                                //     borderColor: colors.danger,
-                                // }}
+                                theme={textFieldTheme}
                             />
                             <View style={styles.btnContainer}>
                                 <Button
                                     text="Create account"
                                     onPress={checkPassword}
+                                    loading={btnLoading}
                                 />
                             </View>
                         </View>
@@ -126,12 +115,10 @@ export default ({ navigation }) => {
                 toastErrors.push({ toastText: err });
             });
             setToastGroup(toastErrors);
-            setFieldBorderStyle({
-                borderWidth: 2,
-                borderColor: colors.danger,
-            });
+            settextFieldTheme("danger");
         } else {
-            setFieldBorderStyle({});
+            setBtnLoading(true);
+            settextFieldTheme("success");
             setToastGroup([]);
             const params = new URLSearchParams();
             params.append("password", password);
@@ -144,21 +131,40 @@ export default ({ navigation }) => {
             };
             api.post(`signup.php`, params, config)
                 .then((resp) => {
-                    console.log(resp.data); //OK
-                    //navigation.navigate("SuccessSignUp");
+                    Log("checkPassword:134", resp.data);
                     if (resp.data.status !== "OK") {
-                        // setToastVisible(true);
-                        // setToastText(resp.data.message);
+                        setToastGroup([{ toastText: resp.data.message }]);
+                        setBtnLoading(false);
+                    } else {
+                        storeAuthToken(resp.data.message, navigation);
                     }
                 })
                 .catch((err) => {
-                    console.log("err: " + err);
-                    // setToastVisible(true);
-                    // setToastText("Something went wrong.");
+                    Log("checkPassword:144", err);
+                    setToastGroup([{ toastText: "Something went wrong." }]);
+                    setBtnLoading(false);
                 });
         }
     }
 };
+
+//store auth token
+const storeAuthToken = async (token, navigation) => {
+    try {
+        await AsyncStorage.setItem("@token", token);
+        setBtnLoading(false);
+        toSuccessSignUp(navigation);
+    } catch (e) {
+        // saving error
+    }
+};
+
+function toSuccessSignUp(navigation) {
+    navigation.reset({
+        index: 0,
+        routes: [{ name: "SuccessSignUp" }],
+    });
+}
 
 const styles = StyleSheet.create({
     container: {

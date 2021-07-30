@@ -8,4 +8,9 @@ export default {
     success: "#12BD57",
     hover: "#C4EDF5",
     white: "#FFFFFF",
+    placeholderColor: "#9b9b9b",
+    faintWhite: "#EFEFEF",
+    disbaled: "#D2D2D2",
+    divider: "#DCD7D7",
+    midGray: "#C4C4C4",
 };
