@@ -114,7 +114,7 @@ const Drawer = createDrawerNavigator();
 function MyDrawer() {
     return (
         <Drawer.Navigator
-            initialRouteName="UpgradeStatus"
+            initialRouteName="OnBoarding"
             drawerContent={(props) => <CustomDrawerContent {...props} />}
         >
             <Drawer.Screen name="Home" component={Home} />

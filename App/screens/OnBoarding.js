@@ -23,8 +23,10 @@ export default ({ navigation }) => {
     });
 
     useEffect(() => {
-        isAuthenticated(navigation);
-    }, []);
+        if (fontsLoaded) {
+            isAuthenticated(navigation);
+        }
+    }, [fontsLoaded]);
 
     if (!fontsLoaded) {
         return <AppLoading />;
@@ -70,6 +72,7 @@ export default ({ navigation }) => {
 const isAuthenticated = async (navigation) => {
     try {
         const token = await AsyncStorage.getItem("@token");
+        Log("isAuthenthicated:73", token);
         if (token !== null) {
             toHome(navigation);
         }

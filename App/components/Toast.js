@@ -65,6 +65,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: "Inter_500Medium",
         color: colors.white,
+        flex: 1,
+        flexWrap: "wrap",
         marginLeft: 10,
     },
 });

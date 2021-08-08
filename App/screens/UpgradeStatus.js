@@ -79,7 +79,7 @@ export default ({ navigation }) => {
                             <MaterialIcons
                                 name="error" //or error/pending
                                 color={colors.danger} //or danger/primary
-                                size={300}
+                                size={200}
                             />
                             <Text style={styles.title2}>
                                 Your submission was declined.

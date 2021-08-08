@@ -11,14 +11,14 @@ import { LabelledTextInput } from "../components/LabelledTextInput";
 import { IconButton } from "../components/IconButton";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { LabelledAutoTextField } from "../components/LabelledAutoTextField";
-import axios from "axios";
 import { Log } from "../util/Logger";
+import { api } from "../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
-    const [username, onChangeText] = useState("");
-    const [password, onChangePassword] = useState("");
+    const [username, onChangeText] = useState("tony@gmail.com");
+    const [password, onChangePassword] = useState("mogoaOmbaso2001");
     const [toastVisible, setToastVisible] = useState(false);
     const [toastText, setToastText] = useState("");
     const [btnLoading, setBtnLoading] = useState(false);
@@ -107,8 +107,10 @@ export default ({ navigation }) => {
         const params = new URLSearchParams();
         params.append("email", username);
         params.append("password", password);
-        axios
-            .post(`login`, params, config)
+
+        setBtnLoading(true);
+
+        api.post(`login.php`, params, config)
             .then((resp) => {
                 Log("login:113", resp.data);
                 if (resp.data.status !== "OK") {
@@ -116,7 +118,11 @@ export default ({ navigation }) => {
                     setToastText(resp.data.message);
                     setBtnLoading(false);
                 } else {
-                    storeAuthToken(resp.data.message, navigation);
+                    storeAuthToken(
+                        resp.data.message,
+                        navigation,
+                        setBtnLoading
+                    );
                 }
             })
             .catch((err) => {
@@ -129,7 +135,7 @@ export default ({ navigation }) => {
 };
 
 //store auth token
-const storeAuthToken = async (token, navigation) => {
+const storeAuthToken = async (token, navigation, setBtnLoading) => {
     try {
         await AsyncStorage.setItem("@token", token);
         setBtnLoading(false);

@@ -115,11 +115,11 @@ export default ({ navigation }) => {
                         setBtnLoading(false);
                     } else {
                         setBtnLoading(false);
+                        navigation.navigate("SetPassword", { email: username });
                     }
-                    navigation.navigate("SetPassword");
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.log(err.response);
                     setBtnLoading(false);
                     setToastVisible(true);
                     setToastText("Something went wrong.");

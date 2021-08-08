@@ -15,7 +15,7 @@ import { validatePassword } from "../util/PasswordValidator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Log } from "../util/Logger";
 
-export default ({ navigation }) => {
+export default ({ route, navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastGroup, setToastGroup] = useState([]);
     const [textFieldTheme, settextFieldTheme] = useState("neutral");
@@ -23,6 +23,8 @@ export default ({ navigation }) => {
     const [passwordConfir, onChangePasswordConfir] =
         useState("mogoaOmbaso2001");
     const [btnLoading, setBtnLoading] = useState(false);
+
+    const { email } = route.params;
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -122,7 +124,7 @@ export default ({ navigation }) => {
             setToastGroup([]);
             const params = new URLSearchParams();
             params.append("password", password);
-            params.append("email", +Math.random(0, 200) + "tony__@gmail.com");
+            params.append("email", email);
             const config = {
                 headers: {
                     "Content-Type":
@@ -136,7 +138,11 @@ export default ({ navigation }) => {
                         setToastGroup([{ toastText: resp.data.message }]);
                         setBtnLoading(false);
                     } else {
-                        storeAuthToken(resp.data.message, navigation);
+                        storeAuthToken(
+                            resp.data.message,
+                            navigation,
+                            setBtnLoading
+                        );
                     }
                 })
                 .catch((err) => {
@@ -149,13 +155,14 @@ export default ({ navigation }) => {
 };
 
 //store auth token
-const storeAuthToken = async (token, navigation) => {
+const storeAuthToken = async (token, navigation, setBtnLoading) => {
     try {
         await AsyncStorage.setItem("@token", token);
         setBtnLoading(false);
         toSuccessSignUp(navigation);
     } catch (e) {
         // saving error
+        Log("161", e);
     }
 };
 
