@@ -1,25 +1,35 @@
-import React, { useState } from "react";
-import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+    Text,
+    View,
+    SafeAreaView,
+    StyleSheet,
+    TouchableHighlight,
+    TouchableOpacity,
+    ScrollView,
+} from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
+import fonts from "../assets/fonts/fonts";
 import AppLoading from "expo-app-loading";
 import { IconButton } from "../components/IconButton";
 import { LabelledTextInput } from "../components/LabelledTextInput";
+import Spacer from "../components/Spacer";
 import { Button } from "../components/Button";
-import { api } from "../config/api";
+import { validate } from "validate.js";
+import { constraintsEmail } from "../util/constraints";
 import { Toast } from "../components/Toast";
+import { api } from "../config/api";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 
-export default ({ route, navigation }) => {
-    const [code, onChangeCode] = useState("");
-    const [scrollEnabled, setScrollEnabled] = useState(false);
+export default ({ navigation }) => {
+    const [email, onChangeEmail] = useState("");
     const [toastVisible, setToastVisible] = useState(false);
     const [toastText, setToastText] = useState("");
     const [btnLoading, setBtnLoading] = useState(false);
-
-    const { token } = route.params;
+    const [scrollEnabled, setScrollEnabled] = useState(false);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -46,31 +56,30 @@ export default ({ route, navigation }) => {
                                 onPress={() => navigation.goBack()}
                             />
                         </View>
-                        <Text style={styles.logoText}>Leto.</Text>
-                        <Text style={styles.tagline}>
-                            Cheaper greener rides.
-                        </Text>
+                        <Text style={styles.title}>Forgot Password</Text>
+                        <Spacer height={10} />
 
-                        <Text style={styles.title}>Sign up</Text>
-                        <View style={[styles.center, { marginVertical: 20 }]}>
+                        <View style={styles.center}>
                             <Toast
                                 hidden={!toastVisible}
                                 type="danger"
                                 text={toastText}
                             />
                         </View>
-                        <View style={styles.spacer} />
-                        <LabelledTextInput
-                            label="Enter the 6-digit verification code sent to your email"
-                            placeholder="6-digit code"
-                            iconName="vpn-key"
-                            value={code}
-                            onChangeText={onChangeCode}
-                        />
+                        <Spacer height={10} />
+                        <View>
+                            <LabelledTextInput
+                                label="Enter your email"
+                                placeholder="Email address"
+                                iconName="email"
+                                value={email}
+                                onChangeText={onChangeEmail}
+                            />
+                        </View>
                         <View style={styles.btnContainer}>
                             <Button
-                                text="Submit"
-                                onPress={() => submit()}
+                                onPress={sendResetReq}
+                                text="Request password reset"
                                 loading={btnLoading}
                             />
                         </View>
@@ -82,44 +91,52 @@ export default ({ route, navigation }) => {
             </SafeAreaView>
         );
     }
-
-    function submit() {
+    function sendResetReq() {
         setBtnLoading(true);
-        const params = new FormData();
-        params.append("code", code);
+        const validationResult = validate(
+            { emailAddress: email },
+            constraintsEmail
+        );
+
+        if (validationResult) {
+            setToastVisible(true);
+            setToastText(validationResult["emailAddress"]);
+        }
 
         const config = {
             headers: {
-                auth: token,
+                "Content-Type":
+                    "application/x-www-form-urlencoded; charset=UTF-8",
             },
         };
+        const params = new URLSearchParams();
+        params.append("email", email);
+        params.append("action", "sc");
 
-        api.post(`confirmEmail.php`, params, config)
+        setBtnLoading(true);
+
+        api.post(`forgotPassword.php`, params, config)
             .then((resp) => {
-                console.log(resp.data); //OK
                 if (resp.data.status !== "OK") {
                     setToastVisible(true);
                     setToastText(resp.data.message);
                     setBtnLoading(false);
+                    console.log(resp.data);
                 } else {
-                    setBtnLoading(false);
-                    toSuccessSignUp(navigation);
+                    console.log(resp.data);
+                    navigation.navigate("ResetPassword", {
+                        msg: resp.data.message,
+                    });
                 }
             })
             .catch((err) => {
-                console.log(err);
+                Log("login:124", err);
                 setBtnLoading(false);
                 setToastVisible(true);
-                setToastText("Something went wrong.");
+                setToastText("Something went wrong");
             });
     }
 };
-function toSuccessSignUp(navigation) {
-    navigation.reset({
-        index: 0,
-        routes: [{ name: "SuccessSignUp" }],
-    });
-}
 
 const styles = StyleSheet.create({
     container: {
@@ -141,11 +158,11 @@ const styles = StyleSheet.create({
         marginLeft: 40,
     },
     title: {
-        fontFamily: "Inter_400Regular",
-        fontSize: 22,
+        fontFamily: fonts.poppinsRegular,
+        fontSize: 40,
         color: colors.textLighter,
-        marginLeft: 20,
-        marginTop: 20,
+        paddingHorizontal: 20,
+        marginTop: 10,
     },
     label: {
         color: colors.textLighter,
@@ -163,6 +180,7 @@ const styles = StyleSheet.create({
         padding: 20,
         marginTop: 10,
     },
+
     topBar: {
         alignItems: "center",
         justifyContent: "flex-start",
@@ -170,8 +188,5 @@ const styles = StyleSheet.create({
         marginHorizontal: 30,
         marginBottom: 30,
         flexDirection: "row",
-    },
-    spacer: {
-        marginVertical: 10,
     },
 });

@@ -18,7 +18,7 @@ export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastVisible, setToastVisible] = useState(false);
     const [toastText, setToastText] = useState("");
-    const [username, onChangeText] = useState("tony@gmail.com");
+    const [username, onChangeText] = useState("tony.mogoa@strathmore.edu");
     const [btnLoading, setBtnLoading] = useState(false);
 
     let [fontsLoaded] = useFonts({

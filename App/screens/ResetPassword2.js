@@ -12,19 +12,21 @@ import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
 import { api } from "../config/api";
 import { validatePassword } from "../util/PasswordValidator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Log } from "../util/Logger";
+import fonts from "../assets/fonts/fonts";
+import Spacer from "../components/Spacer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ route, navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastGroup, setToastGroup] = useState([]);
     const [textFieldTheme, settextFieldTheme] = useState("neutral");
-    const [password, onChangePassword] = useState("mogoaOmbaso2001");
+    const [password, onChangePassword] = useState("mogoaOmbaso2021");
+    const [oldPassword, onChangeOldPassword] = useState("mogoaOmbaso2001");
+    const [code, onChangeCode] = useState("");
     const [passwordConfir, onChangePasswordConfir] =
-        useState("mogoaOmbaso2001");
+        useState("mogoaOmbaso2021");
     const [btnLoading, setBtnLoading] = useState(false);
-
-    const { email } = route.params;
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -51,11 +53,9 @@ export default ({ route, navigation }) => {
                                 onPress={() => navigation.goBack()}
                             />
                         </View>
-                        <Text style={styles.logoText}>Leto.</Text>
-                        <Text style={styles.tagline}>
-                            Cheaper greener rides.
-                        </Text>
-                        <Text style={styles.title}>Sign up</Text>
+                        <Text style={styles.title}>Reset Password</Text>
+
+                        <Spacer height={10} />
 
                         <View style={[styles.center, { marginVertical: 20 }]}>
                             {toastGroup.map((toast, index) => {
@@ -72,6 +72,15 @@ export default ({ route, navigation }) => {
                         </View>
 
                         <View>
+                            <LabelledTextInput
+                                label="Old password"
+                                iconName="lock"
+                                value={oldPassword}
+                                onChangeText={onChangeOldPassword}
+                                placeholder="Enter old password"
+                                secureTextEntry={true}
+                            />
+                            <View style={styles.spacer} />
                             <LabelledTextInput
                                 label="New password"
                                 iconName="lock"
@@ -93,8 +102,8 @@ export default ({ route, navigation }) => {
                             />
                             <View style={styles.btnContainer}>
                                 <Button
-                                    text="Create account"
-                                    onPress={checkPassword}
+                                    text="Reset Password"
+                                    onPress={resetPassword}
                                     loading={btnLoading}
                                 />
                             </View>
@@ -108,7 +117,7 @@ export default ({ route, navigation }) => {
         );
     }
 
-    function checkPassword() {
+    async function resetPassword() {
         const errors = validatePassword(password, passwordConfir);
         console.log(errors);
         if (errors.length > 0) {
@@ -123,53 +132,50 @@ export default ({ route, navigation }) => {
             settextFieldTheme("success");
             setToastGroup([]);
             const params = new URLSearchParams();
-            params.append("password", password);
-            params.append("email", email);
-            const config = {
-                headers: {
-                    "Content-Type":
-                        "application/x-www-form-urlencoded; charset=UTF-8",
-                },
-            };
-            api.post(`signup.php`, params, config)
-                .then((resp) => {
-                    Log("checkPassword:134", resp.data);
-                    if (resp.data.status !== "OK") {
-                        setToastGroup([{ toastText: resp.data.message }]);
-                        setBtnLoading(false);
-                    } else {
-                        storeAuthToken(
-                            resp.data.message,
-                            navigation,
-                            setBtnLoading
-                        );
-                    }
-                })
-                .catch((err) => {
-                    Log("checkPassword:144", err);
-                    setToastGroup([{ toastText: "Something went wrong." }]);
-                    setBtnLoading(false);
-                });
+            params.append("old-password", oldPassword);
+            params.append("new-password", password);
+
+            try {
+                const token = await AsyncStorage.getItem("@token");
+                if (token !== null) {
+                    const config = {
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded; charset=UTF-8",
+                            auth: token,
+                        },
+                    };
+                    api.post(`resetPassword.php`, params, config)
+                        .then((resp) => {
+                            Log("checkPassword:147", resp.data);
+                            if (resp.data.status !== "OK") {
+                                setToastGroup([
+                                    { toastText: resp.data.message },
+                                ]);
+                                setBtnLoading(false);
+                            } else {
+                                toSuccessResetPassword2(navigation);
+                            }
+                        })
+                        .catch((err) => {
+                            Log("checkPassword:160", err);
+                            setToastGroup([
+                                { toastText: "Something went wrong." },
+                            ]);
+                            setBtnLoading(false);
+                        });
+                }
+            } catch (e) {
+                Log("isAuthenticated:82", e);
+            }
         }
     }
 };
 
-//store auth token
-const storeAuthToken = async (token, navigation, setBtnLoading) => {
-    try {
-        await AsyncStorage.setItem("@token", token);
-        setBtnLoading(false);
-        toSetName(navigation);
-    } catch (e) {
-        // saving error
-        Log("161", e);
-    }
-};
-
-function toSetName(navigation) {
+function toSuccessResetPassword2(navigation) {
     navigation.reset({
         index: 0,
-        routes: [{ name: "SetName" }],
+        routes: [{ name: "SuccessResetPassword2" }],
     });
 }
 
@@ -197,11 +203,11 @@ const styles = StyleSheet.create({
         marginLeft: 40,
     },
     title: {
-        fontFamily: "Inter_400Regular",
-        fontSize: 22,
+        fontFamily: fonts.poppinsRegular,
+        fontSize: 40,
         color: colors.textLighter,
-        marginLeft: 20,
-        marginTop: 20,
+        paddingHorizontal: 20,
+        marginTop: 10,
     },
     label: {
         color: colors.textLighter,
@@ -221,5 +227,16 @@ const styles = StyleSheet.create({
     },
     spacer: {
         marginVertical: 10,
+    },
+    subtitle: {
+        fontFamily: fonts.interRegular,
+        fontSize: 16,
+        color: colors.textLighter,
+        flex: 1,
+        flexWrap: "wrap",
+    },
+    subtitleContainer: {
+        paddingHorizontal: 15,
+        marginBottom: 10,
     },
 });

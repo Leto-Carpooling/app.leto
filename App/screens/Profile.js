@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Text,
     View,
@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TouchableHighlight,
     TouchableOpacity,
+    ScrollView,
 } from "react-native";
 import {
     useFonts,
@@ -24,8 +25,13 @@ import { Button } from "../components/Button";
 import FlexButton from "../components/FlexButton";
 import { LabelledTextInput } from "../components/LabelledTextInput";
 import Divider from "../components/Divider";
+import * as DocumentPicker from "expo-document-picker";
+import { KeyboardSpacer } from "../components/KeyboardSpacer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api } from "../config/api";
 
 export default ({ navigation }) => {
+    const [scrollEnabled, setScrollEnabled] = useState(false);
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Poppins_500Medium,
@@ -38,73 +44,138 @@ export default ({ navigation }) => {
     } else {
         return (
             <SafeAreaView style={styles.container}>
-                <View style={styles.topBar}>
-                    <IconButton
-                        icon={
-                            <MaterialIcons
-                                name="arrow-back-ios"
-                                size={25}
-                                color={colors.iconDark}
+                <ScrollView>
+                    <View>
+                        <View style={styles.topBar}>
+                            <IconButton
+                                icon={
+                                    <MaterialIcons
+                                        name="arrow-back-ios"
+                                        size={25}
+                                        color={colors.iconDark}
+                                    />
+                                }
+                                onPress={() => navigation.goBack()}
                             />
-                        }
-                        onPress={() => navigation.goBack()}
-                    />
-                    <IconButton
-                        icon={
-                            <MaterialIcons
-                                name="menu"
-                                size={30}
-                                color={colors.iconDark}
+                            <IconButton
+                                icon={
+                                    <MaterialIcons
+                                        name="menu"
+                                        size={30}
+                                        color={colors.iconDark}
+                                    />
+                                }
+                                onPress={() => navigation.toggleDrawer()}
                             />
-                        }
-                        onPress={() => navigation.toggleDrawer()}
-                    />
-                </View>
-                <Text style={styles.title}>Profile</Text>
-                <Spacer height={5} />
+                        </View>
+                        <Text style={styles.title}>Profile</Text>
+                        <TouchableOpacity
+                            style={styles.avatarContainer}
+                            onPress={uploadImage}
+                        >
+                            <Avatar size={100} />
+                            <Text style={styles.avatarText}>
+                                Tap to change profile picture
+                            </Text>
+                        </TouchableOpacity>
 
-                <View style={styles.avatarContainer}>
-                    <Avatar size={100} />
-                    <Text style={styles.avatarText}>
-                        Tap to change profile picture
-                    </Text>
-                </View>
+                        <Spacer height={10} />
+                        <View>
+                            <LabelledTextInput
+                                label="Firstname"
+                                placeholder="Firstname"
+                                iconName="person"
+                            />
+                        </View>
+                        <Spacer height={10} />
+                        <View>
+                            <LabelledTextInput
+                                label="Lastname"
+                                placeholder="Lastname"
+                                iconName="person"
+                            />
+                        </View>
 
-                <Spacer height={10} />
-                <View>
-                    <LabelledTextInput
-                        label="Firstname"
-                        placeholder="Firstname"
-                        iconName="person"
-                    />
-                </View>
-                <Spacer height={10} />
-                <View>
-                    <LabelledTextInput
-                        label="Lastname"
-                        placeholder="Lastname"
-                        iconName="person"
-                    />
-                </View>
+                        <View style={styles.btnContainer}>
+                            <Button
+                                onPress={() => alert("todo")}
+                                text="Save"
+                                disabled={false}
+                            />
+                        </View>
 
-                <View style={styles.btnContainer}>
-                    <Button
-                        onPress={() => alert("todo")}
-                        text="Save"
-                        disabled={true}
-                    />
-                </View>
+                        <Divider />
 
-                <Divider />
-
-                <View style={styles.btnContainer}>
-                    <Button
-                        onPress={() => alert("todo")}
-                        text="Reset Password"
-                    />
-                </View>
+                        <View style={styles.btnContainer}>
+                            <Button
+                                onPress={() =>
+                                    navigation.navigate("ResetPassword2")
+                                }
+                                text="Reset Password"
+                            />
+                        </View>
+                        <KeyboardSpacer
+                            onToggle={(visible) => setScrollEnabled(visible)}
+                        />
+                    </View>
+                </ScrollView>
             </SafeAreaView>
         );
+    }
+
+    async function uploadImage() {
+        const result = await DocumentPicker.getDocumentAsync({
+            type: "image/*",
+            copyToCacheDirectory: false,
+            multiple: false,
+        });
+        if (result.type == "success") {
+            let { name, size, uri } = result;
+            let nameParts = name.split(".");
+            let fileType = nameParts[nameParts.length - 1];
+            var fileToUpload = {
+                name: name,
+                size: size,
+                uri: uri,
+                type: "image/" + fileType,
+            };
+
+            const params = new FormData();
+            params.append("first-name", "");
+            params.append("last-name", "");
+            params.append("email", "");
+            params.append("phone", "");
+            params.append("profile-image", fileToUpload);
+            try {
+                const token = await AsyncStorage.getItem("@token");
+                const config = {
+                    headers: {
+                        auth: token,
+                        "Content-Type": "multipart/form-data; ",
+                    },
+                };
+                api.post(`editProfile.php`, params, config)
+                    .then((resp) => {
+                        console.log(resp.data); //OK
+                        if (resp.data.status !== "OK") {
+                            // setToastVisible(true);
+                            // setToastText(resp.data.message);
+                            // setBtnLoading(false);
+                        } else {
+                            //setBtnLoading(false);
+                            //navigation.navigate("VerifyEmail");
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        // setBtnLoading(false);
+                        // setToastVisible(true);
+                        // setToastText("Something went wrong.");
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 };
 
@@ -124,7 +195,8 @@ const styles = StyleSheet.create({
         fontFamily: fonts.poppinsRegular,
         fontSize: 40,
         color: colors.textLighter,
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
     },
     label: {
         color: colors.textLighter,
@@ -151,10 +223,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     avatarText: {
-        fontFamily: fonts.interMedium,
-        fontSize: 18,
+        fontFamily: fonts.interRegular,
+        fontSize: 16,
         flex: 1,
         flexWrap: "wrap",
+        marginLeft: 10,
         color: colors.textLighter,
     },
 });

@@ -32,6 +32,12 @@ import UpgradeTwo from "../screens/UpgradeTwo";
 import UpgradeThree from "../screens/UpgradeThree";
 import UpgradeSubmitted from "../screens/UpgradeSubmitted";
 import UpgradeStatus from "../screens/UpgradeStatus";
+import ForgotPassword from "../screens/ForgotPassword";
+import ResetPassword from "../screens/ResetPassword";
+import ResetPassword2 from "../screens/ResetPassword2";
+import SuccessResetPassword from "../screens/SuccessResetPassword";
+import SuccessResetPassword2 from "../screens/SuccessResetPassword2";
+import SetName from "../screens/SetName";
 
 function CustomDrawerContent({ navigation, ...props }) {
     const insets = useSafeAreaInsets();
@@ -59,6 +65,7 @@ function CustomDrawerContent({ navigation, ...props }) {
                 <View style={styles.center}>
                     <ProfileBox
                         toProfile={() => navigation.navigate("Profile")}
+                        signout={() => logout(navigation)}
                     />
                     <Spacer height={10} />
                     <DrawerItem
@@ -76,7 +83,7 @@ function CustomDrawerContent({ navigation, ...props }) {
                         )}
                         activeBackgroundColor={colors.primary}
                         inactiveBackgroundColor={colors.white}
-                        onPress={() => logout()}
+                        onPress={() => navigation.navigate("UpgradeOne")}
                     />
                     <DrawerItem
                         label="Check approval"
@@ -93,7 +100,7 @@ function CustomDrawerContent({ navigation, ...props }) {
                         )}
                         activeBackgroundColor={colors.primary}
                         inactiveBackgroundColor={colors.white}
-                        onPress={() => logout()}
+                        onPress={() => navigation.navigate("UpgradeStatus")}
                     />
                 </View>
             </DrawerContentScrollView>
@@ -101,9 +108,10 @@ function CustomDrawerContent({ navigation, ...props }) {
     }
 }
 
-const logout = async () => {
+const logout = async (navigation) => {
     try {
         await AsyncStorage.removeItem("@token");
+        navigation.navigate("OnBoarding");
     } catch (e) {
         console.log(e);
     }
@@ -128,6 +136,18 @@ function MyDrawer() {
             <Drawer.Screen name="UpgradeOne" component={UpgradeOne} />
             <Drawer.Screen name="UpgradeTwo" component={UpgradeTwo} />
             <Drawer.Screen name="UpgradeThree" component={UpgradeThree} />
+            <Drawer.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Drawer.Screen name="ResetPassword" component={ResetPassword} />
+            <Drawer.Screen name="ResetPassword2" component={ResetPassword2} />
+            <Drawer.Screen name="SetName" component={SetName} />
+            <Drawer.Screen
+                name="SuccessResetPassword"
+                component={SuccessResetPassword}
+            />
+            <Drawer.Screen
+                name="SuccessResetPassword2"
+                component={SuccessResetPassword2}
+            />
             <Drawer.Screen
                 name="UpgradeSubmitted"
                 component={UpgradeSubmitted}

@@ -12,19 +12,20 @@ import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
 import { api } from "../config/api";
 import { validatePassword } from "../util/PasswordValidator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Log } from "../util/Logger";
+import fonts from "../assets/fonts/fonts";
 
 export default ({ route, navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastGroup, setToastGroup] = useState([]);
     const [textFieldTheme, settextFieldTheme] = useState("neutral");
     const [password, onChangePassword] = useState("mogoaOmbaso2001");
+    const [code, onChangeCode] = useState("");
     const [passwordConfir, onChangePasswordConfir] =
         useState("mogoaOmbaso2001");
     const [btnLoading, setBtnLoading] = useState(false);
 
-    const { email } = route.params;
+    const { msg } = route.params;
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -51,11 +52,10 @@ export default ({ route, navigation }) => {
                                 onPress={() => navigation.goBack()}
                             />
                         </View>
-                        <Text style={styles.logoText}>Leto.</Text>
-                        <Text style={styles.tagline}>
-                            Cheaper greener rides.
-                        </Text>
-                        <Text style={styles.title}>Sign up</Text>
+                        <Text style={styles.title}>Reset Password</Text>
+                        <View style={styles.subtitleContainer}>
+                            <Text style={styles.subtitle}>{msg}</Text>
+                        </View>
 
                         <View style={[styles.center, { marginVertical: 20 }]}>
                             {toastGroup.map((toast, index) => {
@@ -72,6 +72,14 @@ export default ({ route, navigation }) => {
                         </View>
 
                         <View>
+                            <LabelledTextInput
+                                label="Enter the code"
+                                placeholder="Enter the code"
+                                iconName="vpn-key"
+                                value={code}
+                                onChangeText={onChangeCode}
+                            />
+                            <View style={styles.spacer} />
                             <LabelledTextInput
                                 label="New password"
                                 iconName="lock"
@@ -93,7 +101,7 @@ export default ({ route, navigation }) => {
                             />
                             <View style={styles.btnContainer}>
                                 <Button
-                                    text="Create account"
+                                    text="Reset Password"
                                     onPress={checkPassword}
                                     loading={btnLoading}
                                 />
@@ -123,30 +131,27 @@ export default ({ route, navigation }) => {
             settextFieldTheme("success");
             setToastGroup([]);
             const params = new URLSearchParams();
-            params.append("password", password);
-            params.append("email", email);
+            params.append("action", "cp");
+            params.append("code", code);
+            params.append("new-password", password);
             const config = {
                 headers: {
                     "Content-Type":
                         "application/x-www-form-urlencoded; charset=UTF-8",
                 },
             };
-            api.post(`signup.php`, params, config)
+            api.post(`forgotPassword.php`, params, config)
                 .then((resp) => {
-                    Log("checkPassword:134", resp.data);
+                    Log("checkPassword:147", resp.data);
                     if (resp.data.status !== "OK") {
                         setToastGroup([{ toastText: resp.data.message }]);
                         setBtnLoading(false);
                     } else {
-                        storeAuthToken(
-                            resp.data.message,
-                            navigation,
-                            setBtnLoading
-                        );
+                        navigation.navigate("SuccessResetPassword");
                     }
                 })
                 .catch((err) => {
-                    Log("checkPassword:144", err);
+                    Log("checkPassword:160", err);
                     setToastGroup([{ toastText: "Something went wrong." }]);
                     setBtnLoading(false);
                 });
@@ -154,22 +159,10 @@ export default ({ route, navigation }) => {
     }
 };
 
-//store auth token
-const storeAuthToken = async (token, navigation, setBtnLoading) => {
-    try {
-        await AsyncStorage.setItem("@token", token);
-        setBtnLoading(false);
-        toSetName(navigation);
-    } catch (e) {
-        // saving error
-        Log("161", e);
-    }
-};
-
-function toSetName(navigation) {
+function toSuccessSignUp(navigation) {
     navigation.reset({
         index: 0,
-        routes: [{ name: "SetName" }],
+        routes: [{ name: "SuccessSignUp" }],
     });
 }
 
@@ -197,11 +190,11 @@ const styles = StyleSheet.create({
         marginLeft: 40,
     },
     title: {
-        fontFamily: "Inter_400Regular",
-        fontSize: 22,
+        fontFamily: fonts.poppinsRegular,
+        fontSize: 40,
         color: colors.textLighter,
-        marginLeft: 20,
-        marginTop: 20,
+        paddingHorizontal: 20,
+        marginTop: 10,
     },
     label: {
         color: colors.textLighter,
@@ -221,5 +214,16 @@ const styles = StyleSheet.create({
     },
     spacer: {
         marginVertical: 10,
+    },
+    subtitle: {
+        fontFamily: fonts.interRegular,
+        fontSize: 16,
+        color: colors.textLighter,
+        flex: 1,
+        flexWrap: "wrap",
+    },
+    subtitleContainer: {
+        paddingHorizontal: 15,
+        marginBottom: 10,
     },
 });

@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-    Text,
-    View,
-    SafeAreaView,
-    StyleSheet,
-    ScrollView,
-    TouchableOpacity,
-} from "react-native";
+import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,22 +7,19 @@ import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { Toast } from "../components/Toast";
 import { Button } from "../components/Button";
-import { LabelledTextInput } from "../components/LabelledTextInput";
-import { IconButton } from "../components/IconButton";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
-import { LabelledAutoTextField } from "../components/LabelledAutoTextField";
-import { Log } from "../util/Logger";
+import { IconButton } from "../components/IconButton";
+import { LabelledTextInput } from "../components/LabelledTextInput";
 import { api } from "../config/api";
-import Spacer from "../components/Spacer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import fonts from "../assets/fonts/fonts";
+import Spacer from "../components/Spacer";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
-    const [username, onChangeText] = useState("tony.mogoa@strathmore.edu");
-    const [password, onChangePassword] = useState("mogoaOmbaso2001");
     const [toastVisible, setToastVisible] = useState(false);
     const [toastText, setToastText] = useState("");
+    const [firstName, onChangeFirstName] = useState("Tony");
+    const [lastName, onChangeLastName] = useState("Mogoa");
     const [btnLoading, setBtnLoading] = useState(false);
 
     let [fontsLoaded] = useFonts({
@@ -61,7 +51,7 @@ export default ({ navigation }) => {
                         <Text style={styles.tagline}>
                             Cheaper greener rides.
                         </Text>
-                        <Text style={styles.title}>Login</Text>
+                        <Text style={styles.title}>Sign up</Text>
 
                         <View style={[styles.center, { marginVertical: 20 }]}>
                             <Toast
@@ -72,42 +62,30 @@ export default ({ navigation }) => {
                         </View>
 
                         <View>
-                            <LabelledAutoTextField
-                                label="Email or phone"
-                                placeholder="Email or phone"
-                                contentType="emailAddress"
-                                value={username}
-                                onChangeText={onChangeText}
+                            <LabelledTextInput
+                                label="Firstname"
+                                iconName="person"
+                                value={firstName}
+                                onChangeText={onChangeFirstName}
+                                placeholder="Firstname"
+                            />
+                            <Spacer height={10} />
+                            <LabelledTextInput
+                                label="Lastname"
+                                iconName="person"
+                                value={lastName}
+                                onChangeText={onChangeLastName}
+                                placeholder="Lastname"
                             />
                             <View style={styles.spacer} />
-                            <LabelledTextInput
-                                label="Password"
-                                iconName="lock"
-                                placeholder="Enter your password"
-                                secureTextEntry={true}
-                                theme="neutral"
-                                value={password}
-                                onChangeText={onChangePassword}
-                            />
+
                             <View style={styles.btnContainer}>
                                 <Button
-                                    text="Login"
-                                    onPress={login}
+                                    text="Next"
+                                    onPress={() => checkName()}
                                     loading={btnLoading}
                                 />
                             </View>
-                            <Spacer height={20} />
-                            <TouchableOpacity
-                                style={styles.forgotTextContainer}
-                                onPress={() =>
-                                    navigation.navigate("ForgotPassword")
-                                }
-                            >
-                                <Text style={styles.forgotText}>
-                                    Forgot password?
-                                </Text>
-                            </TouchableOpacity>
-                            <Spacer height={10} />
                         </View>
                         <KeyboardSpacer
                             onToggle={(visible) => setScrollEnabled(visible)}
@@ -118,60 +96,52 @@ export default ({ navigation }) => {
         );
     }
 
-    function login() {
-        const config = {
-            headers: {
-                "Content-Type":
-                    "application/x-www-form-urlencoded; charset=UTF-8",
-            },
-        };
-        const params = new URLSearchParams();
-        params.append("email", username);
-        params.append("password", password);
-
-        setBtnLoading(true);
-
-        api.post(`login.php`, params, config)
-            .then((resp) => {
-                Log("login:113", resp.data);
-                if (resp.data.status !== "OK") {
-                    setToastVisible(true);
-                    setToastText(resp.data.message);
-                    setBtnLoading(false);
-                } else {
-                    storeAuthToken(
-                        resp.data.message,
-                        navigation,
-                        setBtnLoading
-                    );
-                }
-            })
-            .catch((err) => {
-                Log("login:122", err);
-                setBtnLoading(false);
-                setToastVisible(true);
-                setToastText("Something went wrong");
-            });
+    async function checkName() {
+        if (firstName === "" || lastName === "") {
+            setToastVisible(true);
+            setToastText("Fields cannot be empty");
+        } else {
+            setBtnLoading(true);
+            const params = new FormData();
+            params.append("first-name", firstName);
+            params.append("last-name", lastName);
+            params.append("email", "");
+            params.append("phone", "");
+            params.append("profile-image", "");
+            try {
+                const token = await AsyncStorage.getItem("@token");
+                const config = {
+                    headers: {
+                        auth: token,
+                    },
+                };
+                api.post(`editProfile.php`, params, config)
+                    .then((resp) => {
+                        console.log(resp.data); //OK
+                        if (resp.data.status !== "OK") {
+                            setToastVisible(true);
+                            setToastText(resp.data.message);
+                            setBtnLoading(false);
+                            navigation.navigate("VerifyEmail", {
+                                token: token,
+                            });
+                        } else {
+                            setBtnLoading(false);
+                            navigation.navigate("VerifyEmail");
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        setBtnLoading(false);
+                        setToastVisible(true);
+                        setToastText("Something went wrong.");
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 };
-
-//store auth token
-const storeAuthToken = async (token, navigation, setBtnLoading) => {
-    try {
-        await AsyncStorage.setItem("@token", token);
-        setBtnLoading(false);
-        toHome(navigation);
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-function toHome(navigation) {
-    navigation.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-    });
-}
 
 const styles = StyleSheet.create({
     container: {
@@ -218,18 +188,5 @@ const styles = StyleSheet.create({
     btnContainer: {
         padding: 20,
         marginTop: 10,
-    },
-    spacer: {
-        marginVertical: 10,
-    },
-    forgotText: {
-        color: colors.primary,
-        fontFamily: fonts.interRegular,
-        fontSize: 16,
-        textDecorationLine: "underline",
-    },
-    forgotTextContainer: {
-        justifyContent: "center",
-        alignItems: "center",
     },
 });
