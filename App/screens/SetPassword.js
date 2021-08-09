@@ -157,19 +157,19 @@ export default ({ route, navigation }) => {
 //store auth token
 const storeAuthToken = async (token, navigation, setBtnLoading) => {
     try {
-        await AsyncStorage.setItem("@token", token);
+        //await AsyncStorage.setItem("@token", token);
         setBtnLoading(false);
-        toSetName(navigation);
+        toSetName(navigation, token);
     } catch (e) {
         // saving error
         Log("161", e);
     }
 };
 
-function toSetName(navigation) {
+function toSetName(navigation, token) {
     navigation.reset({
         index: 0,
-        routes: [{ name: "SetName" }],
+        routes: [{ name: "SetName", params: { token } }],
     });
 }
 

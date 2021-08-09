@@ -103,6 +103,7 @@ export default ({ route, navigation }) => {
                     setBtnLoading(false);
                 } else {
                     setBtnLoading(false);
+
                     toSuccessSignUp(navigation);
                 }
             })
@@ -114,7 +115,8 @@ export default ({ route, navigation }) => {
             });
     }
 };
-function toSuccessSignUp(navigation) {
+async function toSuccessSignUp(navigation) {
+    await AsyncStorage.setItem("@token", token);
     navigation.reset({
         index: 0,
         routes: [{ name: "SuccessSignUp" }],

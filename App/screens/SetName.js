@@ -14,13 +14,15 @@ import { api } from "../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spacer from "../components/Spacer";
 
-export default ({ navigation }) => {
+export default ({ route, navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastVisible, setToastVisible] = useState(false);
     const [toastText, setToastText] = useState("");
     const [firstName, onChangeFirstName] = useState("Tony");
     const [lastName, onChangeLastName] = useState("Mogoa");
     const [btnLoading, setBtnLoading] = useState(false);
+
+    const { token } = route.params;
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -82,7 +84,7 @@ export default ({ navigation }) => {
                             <View style={styles.btnContainer}>
                                 <Button
                                     text="Next"
-                                    onPress={() => checkName()}
+                                    onPress={() => checkName(token)}
                                     loading={btnLoading}
                                 />
                             </View>
@@ -96,7 +98,7 @@ export default ({ navigation }) => {
         );
     }
 
-    async function checkName() {
+    async function checkName(token) {
         if (firstName === "" || lastName === "") {
             setToastVisible(true);
             setToastText("Fields cannot be empty");
@@ -109,7 +111,7 @@ export default ({ navigation }) => {
             params.append("phone", "");
             params.append("profile-image", "");
             try {
-                const token = await AsyncStorage.getItem("@token");
+                //const token = await AsyncStorage.getItem("@token");
                 const config = {
                     headers: {
                         auth: token,
@@ -122,12 +124,11 @@ export default ({ navigation }) => {
                             setToastVisible(true);
                             setToastText(resp.data.message);
                             setBtnLoading(false);
+                        } else {
+                            setBtnLoading(false);
                             navigation.navigate("VerifyEmail", {
                                 token: token,
                             });
-                        } else {
-                            setBtnLoading(false);
-                            navigation.navigate("VerifyEmail");
                         }
                     })
                     .catch((err) => {

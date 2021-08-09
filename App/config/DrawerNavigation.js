@@ -39,6 +39,8 @@ import SuccessResetPassword from "../screens/SuccessResetPassword";
 import SuccessResetPassword2 from "../screens/SuccessResetPassword2";
 import SetName from "../screens/SetName";
 
+import { api } from "./api";
+
 function CustomDrawerContent({ navigation, ...props }) {
     const insets = useSafeAreaInsets();
     let [fontsLoaded] = useFonts({
@@ -110,10 +112,47 @@ function CustomDrawerContent({ navigation, ...props }) {
 
 const logout = async (navigation) => {
     try {
+        await invalidateToken();
         await AsyncStorage.removeItem("@token");
-        navigation.navigate("OnBoarding");
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "OnBoarding" }],
+        });
     } catch (e) {
         console.log(e);
+    }
+};
+
+const invalidateToken = async () => {
+    try {
+        const token = await AsyncStorage.getItem("@token");
+        const config = {
+            headers: {
+                auth: token,
+            },
+        };
+        api.post(`logout.php`, {}, config)
+            .then((resp) => {
+                console.log(resp.data); //OK
+                if (resp.data.status !== "OK") {
+                    //setToastVisible(true);
+                    //setToastText(resp.data.message);
+                    //setBtnLoading(false);
+                    // navigation.navigate("VerifyEmail", {
+                    //     token: token,
+                    // });
+                } else {
+                    //setBtnLoading(false);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                //setBtnLoading(false);
+                //setToastVisible(true);
+                //setToastText("Something went wrong.");
+            });
+    } catch (error) {
+        console.log(error);
     }
 };
 
