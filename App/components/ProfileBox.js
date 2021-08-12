@@ -4,18 +4,29 @@ import { Button } from "./Button";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
 import { Avatar } from "./Avatar";
+import { Log } from "../util/Logger";
 
-export const ProfileBox = ({ toProfile, signout }) => {
+export const ProfileBox = ({ toProfile, signout, user }) => {
+    //Log("ProfileBox:10", user);
+    const fullName = `${user.firstname} ${user.lastname}`;
+    const maxlimit = 14;
     return (
         <View style={styles.container}>
             <TouchableOpacity
                 style={styles.avatarContainer}
                 onPress={toProfile}
             >
-                <Avatar size={50} />
+                <Avatar size={50} src={user.profileImage} />
                 <View style={styles.avatarTxtContainer}>
-                    <Text style={styles.nameStyle}>John Doe</Text>
-                    <Text style={styles.emailStyle}>john.doe@gmail.com</Text>
+                    <Text style={styles.nameStyle} numberOfLines={1}>
+                        {/* {fullName.length > maxlimit
+                            ? fullName.substring(0, maxlimit - 3) + "..."
+                            : fullName} */}
+                        {fullName}
+                    </Text>
+                    <Text style={styles.emailStyle} numberOfLines={1}>
+                        {user.email}
+                    </Text>
                 </View>
             </TouchableOpacity>
 
@@ -76,10 +87,14 @@ const styles = StyleSheet.create({
     nameStyle: {
         fontFamily: "Inter_400Regular",
         fontSize: 20,
+        flex: 1,
+        marginRight: 50,
         color: colors.textDarker,
     },
     emailStyle: {
         fontFamily: "Inter_500Medium",
+        flex: 1,
+        marginRight: 50,
         color: colors.textLighter,
     },
     avatarTxtContainer: {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -11,6 +11,8 @@ import { Button } from "../components/Button";
 import { api } from "../config/api";
 import { Toast } from "../components/Toast";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppContext } from "../util/AppContext";
 
 export default ({ route, navigation }) => {
     const [code, onChangeCode] = useState("");
@@ -19,7 +21,8 @@ export default ({ route, navigation }) => {
     const [toastText, setToastText] = useState("");
     const [btnLoading, setBtnLoading] = useState(false);
 
-    const { token } = route.params;
+    const { token, firstName, lastName, email } = route.params;
+    const { setUser } = useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -70,7 +73,7 @@ export default ({ route, navigation }) => {
                         <View style={styles.btnContainer}>
                             <Button
                                 text="Submit"
-                                onPress={() => submit()}
+                                onPress={() => submit(token)}
                                 loading={btnLoading}
                             />
                         </View>
@@ -83,7 +86,7 @@ export default ({ route, navigation }) => {
         );
     }
 
-    function submit() {
+    function submit(token) {
         setBtnLoading(true);
         const params = new FormData();
         params.append("code", code);
@@ -103,8 +106,15 @@ export default ({ route, navigation }) => {
                     setBtnLoading(false);
                 } else {
                     setBtnLoading(false);
-
-                    toSuccessSignUp(navigation);
+                    const user = {
+                        token: token,
+                        firstname: firstName,
+                        lastname: lastName,
+                        profileImage: "./../assets/img/profile.svg",
+                        email: email,
+                    };
+                    setUser(user);
+                    toSuccessSignUp(navigation, user);
                 }
             })
             .catch((err) => {
@@ -115,8 +125,8 @@ export default ({ route, navigation }) => {
             });
     }
 };
-async function toSuccessSignUp(navigation) {
-    await AsyncStorage.setItem("@token", token);
+async function toSuccessSignUp(navigation, user) {
+    await AsyncStorage.setItem("@user", JSON.stringify(user));
     navigation.reset({
         index: 0,
         routes: [{ name: "SuccessSignUp" }],

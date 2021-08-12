@@ -138,11 +138,11 @@ export default ({ route, navigation }) => {
                         setToastGroup([{ toastText: resp.data.message }]);
                         setBtnLoading(false);
                     } else {
-                        storeAuthToken(
-                            resp.data.message,
-                            navigation,
-                            setBtnLoading
-                        );
+                        const user = JSON.parse(resp.data.message);
+                        Log("checkPassword:142", user);
+                        setBtnLoading(false);
+                        toSetName(navigation, user);
+                        //storeAuthToken(user, navigation, setBtnLoading);
                     }
                 })
                 .catch((err) => {
@@ -155,9 +155,9 @@ export default ({ route, navigation }) => {
 };
 
 //store auth token
-const storeAuthToken = async (token, navigation, setBtnLoading) => {
+const storeAuthToken = async (user, navigation, setBtnLoading) => {
     try {
-        //await AsyncStorage.setItem("@token", token);
+        await AsyncStorage.setItem("@user", JSON.stringify(user));
         setBtnLoading(false);
         toSetName(navigation, token);
     } catch (e) {
@@ -166,10 +166,10 @@ const storeAuthToken = async (token, navigation, setBtnLoading) => {
     }
 };
 
-function toSetName(navigation, token) {
+function toSetName(navigation, user) {
     navigation.reset({
         index: 0,
-        routes: [{ name: "SetName", params: { token } }],
+        routes: [{ name: "SetName", params: user }],
     });
 }
 

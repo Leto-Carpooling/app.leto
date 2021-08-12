@@ -71,9 +71,9 @@ export default ({ navigation }) => {
 
 const isAuthenticated = async (navigation) => {
     try {
-        const token = await AsyncStorage.getItem("@token");
-        Log("isAuthenthicated:73", token);
-        if (token !== null) {
+        const userd = await AsyncStorage.getItem("@user");
+        //Log("isAuthenthicated:73", userd);
+        if (userd !== null) {
             toHome(navigation);
         }
     } catch (e) {

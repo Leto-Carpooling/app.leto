@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
     Text,
     View,
@@ -23,6 +23,7 @@ import { api } from "../config/api";
 import Spacer from "../components/Spacer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import fonts from "../assets/fonts/fonts";
+import { AppContext } from "../util/AppContext";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
@@ -31,6 +32,8 @@ export default ({ navigation }) => {
     const [toastVisible, setToastVisible] = useState(false);
     const [toastText, setToastText] = useState("");
     const [btnLoading, setBtnLoading] = useState(false);
+
+    const { setUser } = useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -139,11 +142,8 @@ export default ({ navigation }) => {
                     setToastText(resp.data.message);
                     setBtnLoading(false);
                 } else {
-                    storeAuthToken(
-                        resp.data.message,
-                        navigation,
-                        setBtnLoading
-                    );
+                    const user = JSON.parse(resp.data.message);
+                    storeAuth(user, navigation, setBtnLoading, setUser);
                 }
             })
             .catch((err) => {
@@ -156,9 +156,10 @@ export default ({ navigation }) => {
 };
 
 //store auth token
-const storeAuthToken = async (token, navigation, setBtnLoading) => {
+const storeAuth = async (user, navigation, setBtnLoading, setUser) => {
     try {
-        await AsyncStorage.setItem("@token", token);
+        await AsyncStorage.setItem("@user", JSON.stringify(user));
+        setUser(user);
         setBtnLoading(false);
         toHome(navigation);
     } catch (e) {

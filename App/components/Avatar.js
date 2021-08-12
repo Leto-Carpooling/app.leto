@@ -1,7 +1,11 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, ActivityIndicator } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import colors from "../assets/colors/colors";
+import { Log } from "../util/Logger";
+import constants from "../util/constants";
 
-export const Avatar = ({ size }) => {
+export const Avatar = ({ size, src, loading }) => {
     const styles = StyleSheet.create({
         image: {
             resizeMode: "cover",
@@ -11,10 +15,22 @@ export const Avatar = ({ size }) => {
         },
     });
 
-    return (
-        <Image
-            style={styles.image}
-            source={{ uri: "https://picsum.photos/200/300" }}
-        />
-    );
+    if (loading) {
+        return <ActivityIndicator size="large" color={colors.primary} />;
+    } else {
+        return src === "./../assets/img/profile.svg" ? (
+            <MaterialIcons
+                name="sentiment-satisfied"
+                color={colors.primary}
+                size={size}
+            />
+        ) : (
+            <Image
+                style={styles.image}
+                source={{
+                    uri: `${constants.serverUrl}storage/${src}`,
+                }}
+            />
+        );
+    }
 };

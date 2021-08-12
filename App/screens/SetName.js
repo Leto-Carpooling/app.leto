@@ -11,7 +11,6 @@ import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import { IconButton } from "../components/IconButton";
 import { LabelledTextInput } from "../components/LabelledTextInput";
 import { api } from "../config/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Spacer from "../components/Spacer";
 
 export default ({ route, navigation }) => {
@@ -22,7 +21,7 @@ export default ({ route, navigation }) => {
     const [lastName, onChangeLastName] = useState("Mogoa");
     const [btnLoading, setBtnLoading] = useState(false);
 
-    const { token } = route.params;
+    const { token, email } = route.params;
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -128,6 +127,9 @@ export default ({ route, navigation }) => {
                             setBtnLoading(false);
                             navigation.navigate("VerifyEmail", {
                                 token: token,
+                                firstName: firstName,
+                                lastName: lastName,
+                                email: email,
                             });
                         }
                     })

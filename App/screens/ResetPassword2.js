@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -15,7 +15,8 @@ import { validatePassword } from "../util/PasswordValidator";
 import { Log } from "../util/Logger";
 import fonts from "../assets/fonts/fonts";
 import Spacer from "../components/Spacer";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppContext } from "../util/AppContext";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ route, navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
@@ -27,6 +28,7 @@ export default ({ route, navigation }) => {
     const [passwordConfir, onChangePasswordConfir] =
         useState("mogoaOmbaso2021");
     const [btnLoading, setBtnLoading] = useState(false);
+    const { user } = useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -117,7 +119,7 @@ export default ({ route, navigation }) => {
         );
     }
 
-    async function resetPassword() {
+    function resetPassword() {
         const errors = validatePassword(password, passwordConfir);
         console.log(errors);
         if (errors.length > 0) {
@@ -136,35 +138,28 @@ export default ({ route, navigation }) => {
             params.append("new-password", password);
 
             try {
-                const token = await AsyncStorage.getItem("@token");
-                if (token !== null) {
-                    const config = {
-                        headers: {
-                            "Content-Type":
-                                "application/x-www-form-urlencoded; charset=UTF-8",
-                            auth: token,
-                        },
-                    };
-                    api.post(`resetPassword.php`, params, config)
-                        .then((resp) => {
-                            Log("checkPassword:147", resp.data);
-                            if (resp.data.status !== "OK") {
-                                setToastGroup([
-                                    { toastText: resp.data.message },
-                                ]);
-                                setBtnLoading(false);
-                            } else {
-                                toSuccessResetPassword2(navigation);
-                            }
-                        })
-                        .catch((err) => {
-                            Log("checkPassword:160", err);
-                            setToastGroup([
-                                { toastText: "Something went wrong." },
-                            ]);
+                const config = {
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded; charset=UTF-8",
+                        auth: user.token,
+                    },
+                };
+                api.post(`resetPassword.php`, params, config)
+                    .then((resp) => {
+                        Log("checkPassword:147", resp.data);
+                        if (resp.data.status !== "OK") {
+                            setToastGroup([{ toastText: resp.data.message }]);
                             setBtnLoading(false);
-                        });
-                }
+                        } else {
+                            toSuccessResetPassword2(navigation);
+                        }
+                    })
+                    .catch((err) => {
+                        Log("checkPassword:160", err);
+                        setToastGroup([{ toastText: "Something went wrong." }]);
+                        setBtnLoading(false);
+                    });
             } catch (e) {
                 Log("isAuthenticated:82", e);
             }

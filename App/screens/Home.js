@@ -15,12 +15,6 @@ import AppLoading from "expo-app-loading";
 import { IconButton } from "../components/IconButton";
 
 export default ({ navigation }) => {
-    useEffect(() => {
-        const isVerified = true;
-        if (!isVerified) {
-            navigation.navigate("VerifyEmail");
-        }
-    }, []);
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,

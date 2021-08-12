@@ -61,6 +61,17 @@ export default ({ navigation }) => {
 
                         <Spacer height={20} />
 
+                        {/* {user.profileImage === "./../assets/img/profile.svg" ? (
+                            <TouchableOpacity
+                                style={styles.avatarContainer}
+                                onPress={uploadImage}
+                            >
+                                <Avatar size={100} src={user.profileImage} />
+                                <Text style={styles.avatarText}>
+                                    Tap to change profile picture
+                                </Text>
+                            </TouchableOpacity>
+                        ) : null} */}
                         <View style={styles.avatarContainer}>
                             <Avatar size={100} />
                             <Text style={styles.avatarText}>

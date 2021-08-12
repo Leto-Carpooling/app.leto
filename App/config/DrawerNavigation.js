@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,6 +17,8 @@ import Login from "../screens/Login";
 import Home from "../screens/Home";
 import { Text, View, StyleSheet } from "react-native";
 import colors from "../assets/colors/colors";
+
+import { AppContext } from "../util/AppContext";
 
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -40,8 +42,26 @@ import SuccessResetPassword2 from "../screens/SuccessResetPassword2";
 import SetName from "../screens/SetName";
 
 import { api } from "./api";
+import { Log } from "../util/Logger";
 
 function CustomDrawerContent({ navigation, ...props }) {
+    //const [user, setUser] = useState({});
+    const [profileBox, setProfileBox] = useState(null);
+    // //console.log(user);
+    const { user } = useContext(AppContext);
+    //console.log(user);
+    useEffect(() => {
+        setProfileBox(
+            user && (
+                <ProfileBox
+                    toProfile={() => navigation.navigate("Profile")}
+                    signout={() => logout(navigation)}
+                    user={user}
+                />
+            )
+        );
+    }, [user]);
+
     const insets = useSafeAreaInsets();
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -65,10 +85,8 @@ function CustomDrawerContent({ navigation, ...props }) {
                 </View>
 
                 <View style={styles.center}>
-                    <ProfileBox
-                        toProfile={() => navigation.navigate("Profile")}
-                        signout={() => logout(navigation)}
-                    />
+                    {profileBox}
+
                     <Spacer height={10} />
                     <DrawerItem
                         label="Sign up to drive"
@@ -113,7 +131,7 @@ function CustomDrawerContent({ navigation, ...props }) {
 const logout = async (navigation) => {
     try {
         await invalidateToken();
-        await AsyncStorage.removeItem("@token");
+        await AsyncStorage.removeItem("@user");
         navigation.reset({
             index: 0,
             routes: [{ name: "OnBoarding" }],
@@ -123,12 +141,30 @@ const logout = async (navigation) => {
     }
 };
 
+async function getUser(setUser) {
+    const user = await AsyncStorage.getItem("@user");
+    Log("getUser", user);
+    setUser(JSON.parse(user));
+}
+
+function renderProfileBox() {
+    return (
+        user && (
+            <ProfileBox
+                toProfile={() => navigation.navigate("Profile")}
+                signout={() => logout(navigation)}
+                user={user}
+            />
+        )
+    );
+}
+
 const invalidateToken = async () => {
     try {
-        const token = await AsyncStorage.getItem("@token");
+        const user = JSON.parse(await AsyncStorage.getItem("@user"));
         const config = {
             headers: {
-                auth: token,
+                auth: user.token,
             },
         };
         api.post(`logout.php`, {}, config)
@@ -167,7 +203,11 @@ function MyDrawer() {
             <Drawer.Screen name="Home" component={Home} />
             <Drawer.Screen name="Profile" component={Profile} />
             <Drawer.Screen name="Login" component={Login} />
-            <Drawer.Screen name="OnBoarding" component={OnBoarding} />
+            <Drawer.Screen
+                name="OnBoarding"
+                component={OnBoarding}
+                options={{ swipeEnabled: false }}
+            />
             <Drawer.Screen name="SignUp" component={SignUp} />
             <Drawer.Screen name="SetPassword" component={SetPassword} />
             <Drawer.Screen name="SuccessSignUp" component={SuccessSignUp} />

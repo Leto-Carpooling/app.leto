@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
     Text,
     View,
@@ -29,9 +29,17 @@ import * as DocumentPicker from "expo-document-picker";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../config/api";
+import { AppContext } from "../util/AppContext";
+import { Log } from "../util/Logger";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
+    const { user } = useContext(AppContext);
+    const [firstName, onChangeFirstName] = useState(user.firstname);
+    const [lastName, onChangeLastName] = useState(user.lastname);
+    const [avatarLoading, setAvatarLoading] = useState(false);
+    const [avatarImg, setAvatarImg] = useState(user.profileImage);
+
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Poppins_500Medium,
@@ -69,11 +77,16 @@ export default ({ navigation }) => {
                             />
                         </View>
                         <Text style={styles.title}>Profile</Text>
+
                         <TouchableOpacity
                             style={styles.avatarContainer}
                             onPress={uploadImage}
                         >
-                            <Avatar size={100} />
+                            <Avatar
+                                size={100}
+                                src={avatarImg}
+                                loading={avatarLoading}
+                            />
                             <Text style={styles.avatarText}>
                                 Tap to change profile picture
                             </Text>
@@ -85,6 +98,8 @@ export default ({ navigation }) => {
                                 label="Firstname"
                                 placeholder="Firstname"
                                 iconName="person"
+                                value={firstName}
+                                onChangeText={onChangeFirstName}
                             />
                         </View>
                         <Spacer height={10} />
@@ -93,6 +108,8 @@ export default ({ navigation }) => {
                                 label="Lastname"
                                 placeholder="Lastname"
                                 iconName="person"
+                                value={lastName}
+                                onChangeText={onChangeLastName}
                             />
                         </View>
 
@@ -130,6 +147,7 @@ export default ({ navigation }) => {
             multiple: false,
         });
         if (result.type == "success") {
+            setAvatarLoading(true);
             let { name, size, uri } = result;
             let nameParts = name.split(".");
             let fileType = nameParts[nameParts.length - 1];
@@ -147,33 +165,38 @@ export default ({ navigation }) => {
             params.append("phone", "");
             params.append("profile-image", fileToUpload);
             try {
-                const token = await AsyncStorage.getItem("@token");
                 const config = {
                     headers: {
-                        auth: token,
+                        auth: user.token,
                         "Content-Type": "multipart/form-data; ",
                     },
                 };
                 api.post(`editProfile.php`, params, config)
                     .then((resp) => {
-                        console.log(resp.data); //OK
+                        Log("uploadImage", resp.data);
                         if (resp.data.status !== "OK") {
                             // setToastVisible(true);
                             // setToastText(resp.data.message);
                             // setBtnLoading(false);
+                            setAvatarLoading(false);
                         } else {
                             //setBtnLoading(false);
                             //navigation.navigate("VerifyEmail");
+                            setAvatarLoading(false);
+                            const user = JSON.parse(resp.data.message);
+                            setAvatarImg(user.profileImage);
                         }
                     })
                     .catch((err) => {
                         console.log(err);
+                        setAvatarLoading(false);
                         // setBtnLoading(false);
                         // setToastVisible(true);
                         // setToastText("Something went wrong.");
                     });
             } catch (error) {
                 console.log(error);
+                setAvatarLoading(false);
             }
         }
     }
