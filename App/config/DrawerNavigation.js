@@ -40,6 +40,7 @@ import ResetPassword2 from "../screens/ResetPassword2";
 import SuccessResetPassword from "../screens/SuccessResetPassword";
 import SuccessResetPassword2 from "../screens/SuccessResetPassword2";
 import SetName from "../screens/SetName";
+import VerifyPhone from "../screens/VerifyPhone";
 
 import { api } from "./api";
 import { Log } from "../util/Logger";
@@ -47,8 +48,9 @@ import { Log } from "../util/Logger";
 function CustomDrawerContent({ navigation, ...props }) {
     //const [user, setUser] = useState({});
     const [profileBox, setProfileBox] = useState(null);
+    // const [loading, setLoading] = useState(true);
     // //console.log(user);
-    const { user } = useContext(AppContext);
+    const { user, upgradeSubmitted } = useContext(AppContext);
     //console.log(user);
     useEffect(() => {
         setProfileBox(
@@ -88,43 +90,54 @@ function CustomDrawerContent({ navigation, ...props }) {
                     {profileBox}
 
                     <Spacer height={10} />
-                    <DrawerItem
-                        label="Sign up to drive"
-                        labelStyle={{
-                            fontFamily: "Inter_500Medium",
-                            fontSize: 16,
-                        }}
-                        icon={() => (
-                            <MaterialIcons
-                                name="time-to-leave"
-                                color={colors.iconDark}
-                                size={20}
-                            />
-                        )}
-                        activeBackgroundColor={colors.primary}
-                        inactiveBackgroundColor={colors.white}
-                        onPress={() => navigation.navigate("UpgradeOne")}
-                    />
-                    <DrawerItem
-                        label="Check approval"
-                        labelStyle={{
-                            fontFamily: "Inter_500Medium",
-                            fontSize: 16,
-                        }}
-                        icon={() => (
-                            <MaterialIcons
-                                name="time-to-leave"
-                                color={colors.iconDark}
-                                size={20}
-                            />
-                        )}
-                        activeBackgroundColor={colors.primary}
-                        inactiveBackgroundColor={colors.white}
-                        onPress={() => navigation.navigate("UpgradeStatus")}
-                    />
+                    {renderUpgradeDrawerItems()}
                 </View>
             </DrawerContentScrollView>
         );
+    }
+
+    function renderUpgradeDrawerItems() {
+        if (upgradeSubmitted) {
+            return (
+                <DrawerItem
+                    label="Check approval"
+                    labelStyle={{
+                        fontFamily: "Inter_500Medium",
+                        fontSize: 16,
+                    }}
+                    icon={() => (
+                        <MaterialIcons
+                            name="time-to-leave"
+                            color={colors.iconDark}
+                            size={20}
+                        />
+                    )}
+                    activeBackgroundColor={colors.primary}
+                    inactiveBackgroundColor={colors.white}
+                    onPress={() => navigation.navigate("UpgradeStatus")}
+                />
+            );
+        } else {
+            return (
+                <DrawerItem
+                    label="Sign up to drive"
+                    labelStyle={{
+                        fontFamily: "Inter_500Medium",
+                        fontSize: 16,
+                    }}
+                    icon={() => (
+                        <MaterialIcons
+                            name="time-to-leave"
+                            color={colors.iconDark}
+                            size={20}
+                        />
+                    )}
+                    activeBackgroundColor={colors.primary}
+                    inactiveBackgroundColor={colors.white}
+                    onPress={() => navigation.navigate("UpgradeOne")}
+                />
+            );
+        }
     }
 }
 
@@ -208,17 +221,38 @@ function MyDrawer() {
                 component={OnBoarding}
                 options={{ swipeEnabled: false }}
             />
-            <Drawer.Screen name="SignUp" component={SignUp} />
-            <Drawer.Screen name="SetPassword" component={SetPassword} />
-            <Drawer.Screen name="SuccessSignUp" component={SuccessSignUp} />
-            <Drawer.Screen name="VerifyEmail" component={VerifyEmail} />
+            <Drawer.Screen
+                name="SignUp"
+                component={SignUp}
+                options={{ swipeEnabled: false }}
+            />
+            <Drawer.Screen
+                name="SetPassword"
+                component={SetPassword}
+                options={{ swipeEnabled: false }}
+            />
+            <Drawer.Screen
+                name="SuccessSignUp"
+                component={SuccessSignUp}
+                options={{ swipeEnabled: false }}
+            />
+            <Drawer.Screen
+                name="VerifyEmail"
+                component={VerifyEmail}
+                options={{ swipeEnabled: false }}
+            />
             <Drawer.Screen name="UpgradeOne" component={UpgradeOne} />
             <Drawer.Screen name="UpgradeTwo" component={UpgradeTwo} />
             <Drawer.Screen name="UpgradeThree" component={UpgradeThree} />
-            <Drawer.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Drawer.Screen
+                name="ForgotPassword"
+                component={ForgotPassword}
+                options={{ swipeEnabled: false }}
+            />
             <Drawer.Screen name="ResetPassword" component={ResetPassword} />
             <Drawer.Screen name="ResetPassword2" component={ResetPassword2} />
             <Drawer.Screen name="SetName" component={SetName} />
+            <Drawer.Screen name="VerifyPhone" component={VerifyPhone} />
             <Drawer.Screen
                 name="SuccessResetPassword"
                 component={SuccessResetPassword}

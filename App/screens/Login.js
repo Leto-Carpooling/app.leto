@@ -143,6 +143,7 @@ export default ({ navigation }) => {
                     setBtnLoading(false);
                 } else {
                     const user = JSON.parse(resp.data.message);
+                    console.log(user);
                     storeAuth(user, navigation, setBtnLoading, setUser);
                 }
             })

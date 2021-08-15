@@ -7,6 +7,7 @@ import {
     TouchableHighlight,
     TouchableOpacity,
     ScrollView,
+    Alert,
 } from "react-native";
 import {
     useFonts,
@@ -34,11 +35,14 @@ import { Log } from "../util/Logger";
 
 export default ({ navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
-    const { user } = useContext(AppContext);
+    const { user, setUser } = useContext(AppContext);
     const [firstName, onChangeFirstName] = useState(user.firstname);
     const [lastName, onChangeLastName] = useState(user.lastname);
     const [avatarLoading, setAvatarLoading] = useState(false);
     const [avatarImg, setAvatarImg] = useState(user.profileImage);
+    const [phone, onChangePhone] = useState("+254708502805"); //user.phone
+    const [btnLoading, setBtnLoading] = useState(false);
+    const [phoneBtnLoading, setPhoneBtnLoading] = useState(false);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -102,7 +106,9 @@ export default ({ navigation }) => {
                                 onChangeText={onChangeFirstName}
                             />
                         </View>
-                        <Spacer height={10} />
+
+                        <Spacer height={20} />
+
                         <View>
                             <LabelledTextInput
                                 label="Lastname"
@@ -115,11 +121,35 @@ export default ({ navigation }) => {
 
                         <View style={styles.btnContainer}>
                             <Button
-                                onPress={() => alert("todo")}
+                                onPress={saveTextData}
                                 text="Save"
-                                disabled={false}
+                                loading={btnLoading}
                             />
                         </View>
+
+                        <Divider />
+
+                        <Spacer height={20} />
+
+                        <View>
+                            <LabelledTextInput
+                                label="Edit phone"
+                                placeholder="+254700000000"
+                                iconName="phone"
+                                value={phone}
+                                onChangeText={onChangePhone}
+                            />
+                        </View>
+
+                        <View style={styles.btnContainer}>
+                            <Button
+                                onPress={toVerifyPhone}
+                                text="Verify"
+                                loading={phoneBtnLoading}
+                            />
+                        </View>
+
+                        <Spacer height={20} />
 
                         <Divider />
 
@@ -138,6 +168,91 @@ export default ({ navigation }) => {
                 </ScrollView>
             </SafeAreaView>
         );
+    }
+
+    // function onChangePhone(event) {
+    //     console.log(event.text);
+    //     setPhone(text);
+    // }
+
+    function toVerifyPhone() {
+        setPhoneBtnLoading(true);
+
+        const params = new FormData();
+        params.append("first-name", "");
+        params.append("last-name", "");
+        params.append("email", "");
+        params.append("phone", phone);
+
+        const config = {
+            headers: {
+                auth: user.token,
+            },
+        };
+
+        api.post(`editProfile.php`, params, config)
+            .then((resp) => {
+                Log("toVerifyPhone", resp.data);
+                setPhoneBtnLoading(false);
+                if (resp.data.status === "OK") {
+                    navigation.navigate("VerifyPhone");
+                } else {
+                    Alert.alert(
+                        "Error",
+                        "Something went wrong try again later."
+                    );
+                }
+                //navigation.navigate("VerifyPhone");
+            })
+            .catch((err) => {
+                Log("toVerifyPhone", err);
+                setPhoneBtnLoading(false);
+            });
+    }
+
+    function saveTextData() {
+        setBtnLoading(true);
+        const params = new FormData();
+        params.append("first-name", firstName);
+        params.append("last-name", lastName);
+        params.append("email", "");
+        params.append("phone", "");
+
+        try {
+            const config = {
+                headers: {
+                    auth: user.token,
+                },
+            };
+            api.post(`editProfile.php`, params, config)
+                .then((resp) => {
+                    Log("uploadImage", resp.data);
+                    setBtnLoading(false);
+                    if (resp.data.status !== "OK") {
+                        // setToastVisible(true);
+                        // setToastText(resp.data.message);
+                        // setBtnLoading(false);
+                    } else {
+                        //setBtnLoading(false);
+                        //navigation.navigate("VerifyEmail");
+
+                        const newUser = JSON.parse(resp.data.message);
+                        updateContext(newUser);
+                        Alert.alert(
+                            "Success",
+                            "We updated your name successfully."
+                        );
+                    }
+                })
+                .catch((err) => {
+                    Log("saveTextData", err);
+                    setBtnLoading(false);
+                    // setToastVisible(true);
+                    // setToastText("Something went wrong.");
+                });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async function uploadImage() {
@@ -173,7 +288,7 @@ export default ({ navigation }) => {
                 };
                 api.post(`editProfile.php`, params, config)
                     .then((resp) => {
-                        Log("uploadImage", resp.data);
+                        //Log("uploadImage", resp.data);
                         if (resp.data.status !== "OK") {
                             // setToastVisible(true);
                             // setToastText(resp.data.message);
@@ -183,8 +298,10 @@ export default ({ navigation }) => {
                             //setBtnLoading(false);
                             //navigation.navigate("VerifyEmail");
                             setAvatarLoading(false);
-                            const user = JSON.parse(resp.data.message);
-                            setAvatarImg(user.profileImage);
+                            const newUser = JSON.parse(resp.data.message);
+                            //Log("uploadImage", newUser);
+                            setAvatarImg(newUser.profileImage);
+                            updateContext(newUser);
                         }
                     })
                     .catch((err) => {
@@ -199,6 +316,11 @@ export default ({ navigation }) => {
                 setAvatarLoading(false);
             }
         }
+    }
+
+    async function updateContext(updatedUser) {
+        setUser(updatedUser);
+        await AsyncStorage.setItem("@user", JSON.stringify(updatedUser));
     }
 };
 

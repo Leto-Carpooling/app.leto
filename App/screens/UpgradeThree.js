@@ -1,5 +1,12 @@
-import React, { useEffect } from "react";
-import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    Text,
+    View,
+    SafeAreaView,
+    StyleSheet,
+    ScrollView,
+    Alert,
+} from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -13,14 +20,51 @@ import Spacer from "../components/Spacer";
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
 import { FileChooser } from "../components/FileChooser";
+import { AppContext } from "../util/AppContext";
+import { api } from "../config/api";
+import { Log } from "../util/Logger";
 
 export default ({ navigation }) => {
-    useEffect(() => {
-        const isVerified = true;
-        if (!isVerified) {
-            navigation.navigate("VerifyEmail");
-        }
-    }, []);
+    const [choosers, setChoosers] = useState([
+        {
+            id: "nid-image",
+            label: "National ID",
+            endPoint: "driverUploads.php",
+        },
+        ,
+        {
+            id: "reg-li-image",
+            label: "Driver's License",
+            endPoint: "driverUploads.php",
+        },
+        ,
+        {
+            id: "psv-li-image",
+            label: "PSV License",
+            endPoint: "driverUploads.php",
+        },
+        ,
+        {
+            id: "good-conduct-image",
+            label: "Good Conduct Certificate",
+            endPoint: "driverUploads.php",
+        },
+        {
+            id: "v-ins-image",
+            label: "Vehicle Insurance",
+            endPoint: "vehicleUploads.php",
+        },
+        { id: "v-reg-image", label: "Logbook", endPoint: "vehicleUploads.php" },
+        {
+            id: "v-ir-image",
+            label: "NTSA Inspection Report",
+            endPoint: "vehicleUploads.php",
+        },
+    ]);
+
+    const [docCount, setDocCount] = useState(0);
+    const [btnLoading, setBtnLoading] = useState(false);
+
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
@@ -62,19 +106,46 @@ export default ({ navigation }) => {
 
                         <Spacer height={20} />
 
-                        <FileChooser label="National ID" />
-                        <Spacer height={10} />
-                        <FileChooser label="National ID" />
-                        <Spacer height={10} />
-                        <FileChooser label="National ID" />
+                        {choosers.map((chooser, index) => (
+                            <View key={index}>
+                                <FileChooser
+                                    label={chooser.label}
+                                    id={chooser.id}
+                                    endPoint={chooser.endPoint}
+                                    setDocCount={setDocCount}
+                                    docCount={docCount}
+                                />
+
+                                <Spacer height={10} />
+                            </View>
+                        ))}
 
                         <View style={styles.btnContainer}>
-                            <Button onPress={() => alert("todo")} text="Next" />
+                            <Button
+                                onPress={toUpgradeSubmitted}
+                                text="Next"
+                                btnLoading={btnLoading}
+                            />
                         </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
         );
+    }
+
+    function toUpgradeSubmitted() {
+        Log("toUpgradeSubmitted", docCount);
+        if (docCount === 7) {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "UpgradeSubmitted" }],
+            });
+        } else {
+            Alert.alert(
+                "Required",
+                "Please attach all documents before proceeding."
+            );
+        }
     }
 };
 

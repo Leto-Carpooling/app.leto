@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -12,8 +12,11 @@ import { LabelledTextInput } from "../components/LabelledTextInput";
 import Spacer from "../components/Spacer";
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppContext } from "../util/AppContext";
 
 export default ({ navigation }) => {
+    const { setUpgradeSubmitted } = useContext(AppContext);
     useEffect(() => {
         const isVerified = true;
         if (!isVerified) {
@@ -37,16 +40,6 @@ export default ({ navigation }) => {
                             <IconButton
                                 icon={
                                     <MaterialIcons
-                                        name="arrow-back-ios"
-                                        size={25}
-                                        color={colors.iconDark}
-                                    />
-                                }
-                                onPress={() => navigation.goBack()}
-                            />
-                            <IconButton
-                                icon={
-                                    <MaterialIcons
                                         name="menu"
                                         size={30}
                                         color={colors.iconDark}
@@ -57,13 +50,11 @@ export default ({ navigation }) => {
                         </View>
                         <Text style={styles.title}>Upgrade to driver</Text>
 
-                        <Spacer height={10} />
-
                         <View style={styles.iconContainer}>
                             <MaterialIcons
                                 name="playlist-add-check"
                                 color={colors.primary}
-                                size={300}
+                                size={200}
                             />
                         </View>
 
@@ -73,12 +64,21 @@ export default ({ navigation }) => {
                         </Text>
 
                         <View style={styles.btnContainer}>
-                            <Button onPress={() => alert("todo")} text="OK" />
+                            <Button onPress={toHome} text="OK" />
                         </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
         );
+    }
+
+    async function toHome() {
+        await AsyncStorage.setItem("@upgradeSubmitted", "submitted");
+        setUpgradeSubmitted(true);
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+        });
     }
 };
 
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     },
     topBar: {
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         marginTop: 40,
         marginHorizontal: 30,
         marginBottom: 30,

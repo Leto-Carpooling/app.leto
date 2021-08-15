@@ -1,5 +1,12 @@
-import React, { useEffect } from "react";
-import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useContext, useState } from "react";
+import {
+    Text,
+    View,
+    SafeAreaView,
+    StyleSheet,
+    ScrollView,
+    Alert,
+} from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -12,13 +19,19 @@ import { LabelledTextInput } from "../components/LabelledTextInput";
 import Spacer from "../components/Spacer";
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
+import { AppContext } from "../util/AppContext";
+import { api } from "../config/api";
+import { Log } from "../util/Logger";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ navigation }) => {
+    const { user } = useContext(AppContext);
+    const [natID, onChangeNatID] = useState("23535446");
+    const [dlNum, onChangeDlNum] = useState("AS3535446");
+    const [btnLoading, setBtnLoading] = useState(false);
+
     useEffect(() => {
-        const isVerified = true;
-        if (!isVerified) {
-            navigation.navigate("VerifyEmail");
-        }
+        getUpgradeStage();
     }, []);
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -61,23 +74,7 @@ export default ({ navigation }) => {
 
                         <Spacer height={20} />
 
-                        {/* {user.profileImage === "./../assets/img/profile.svg" ? (
-                            <TouchableOpacity
-                                style={styles.avatarContainer}
-                                onPress={uploadImage}
-                            >
-                                <Avatar size={100} src={user.profileImage} />
-                                <Text style={styles.avatarText}>
-                                    Tap to change profile picture
-                                </Text>
-                            </TouchableOpacity>
-                        ) : null} */}
-                        <View style={styles.avatarContainer}>
-                            <Avatar size={100} />
-                            <Text style={styles.avatarText}>
-                                Tap to add profile picture
-                            </Text>
-                        </View>
+                        {renderProfileBox(checkHasAvatar())}
 
                         <Spacer height={10} />
 
@@ -87,6 +84,8 @@ export default ({ navigation }) => {
                                 placeholder="23535446"
                                 iconName="person"
                                 keyboardType="number-pad"
+                                value={natID}
+                                onChangeText={onChangeNatID}
                             />
                         </View>
 
@@ -98,15 +97,87 @@ export default ({ navigation }) => {
                                 placeholder="AS3535446"
                                 iconName="person"
                                 keyboardType="numeric"
+                                value={dlNum}
+                                onChangeText={onChangeDlNum}
                             />
                         </View>
 
                         <View style={styles.btnContainer}>
-                            <Button onPress={() => alert("todo")} text="Next" />
+                            <Button
+                                onPress={sendDetails}
+                                text="Next"
+                                loading={btnLoading}
+                            />
                         </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
+        );
+    }
+
+    async function getUpgradeStage() {
+        const stage = await AsyncStorage.getItem("@upgrade");
+        if (stage != null) {
+            Log("getUpgradeStage", stage);
+            navigation.navigate(`${stage}`);
+        }
+    }
+
+    async function setUpgradeStage() {
+        await AsyncStorage.setItem("@upgrade", "UpgradeTwo", () => {
+            navigation.navigate("UpgradeTwo");
+        });
+    }
+
+    async function sendDetails() {
+        //navigation.navigate("UpgradeTwo");
+        setBtnLoading(true);
+
+        const params = new FormData();
+        params.append("action", "personal");
+        params.append("national-id", natID);
+        params.append("regular-license", dlNum);
+
+        const config = {
+            headers: {
+                auth: user.token,
+            },
+        };
+
+        api.post(`updateDriver.php`, params, config)
+            .then((resp) => {
+                setBtnLoading(false);
+                Log("sendDetailsOne", resp.data);
+                if (resp.data.status === "OK") {
+                    setUpgradeStage();
+                } else {
+                    Alert.alert("Error", resp.data.message);
+                }
+            })
+            .catch((err) => {
+                setBtnLoading(false);
+                Log("sendDetailsOne", err);
+            });
+    }
+
+    function renderProfileBox(hasAvatar) {
+        if (!hasAvatar) {
+            return (
+                <View style={styles.avatarContainer}>
+                    <Avatar size={100} src={user.profileImage} />
+                    <Text style={styles.avatarText}>
+                        Tap to add profile picture
+                    </Text>
+                </View>
+            );
+        }
+    }
+
+    function checkHasAvatar() {
+        return !(
+            user.profileImage ===
+                "profile_images/./../assets/img/profile.svg" ||
+            user.profileImage === "./../assets/img/profile.svg"
         );
     }
 };

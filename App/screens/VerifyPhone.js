@@ -1,5 +1,12 @@
 import React, { useState, useContext } from "react";
-import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
+import {
+    Text,
+    View,
+    SafeAreaView,
+    StyleSheet,
+    ScrollView,
+    Alert,
+} from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -21,8 +28,7 @@ export default ({ route, navigation }) => {
     const [toastText, setToastText] = useState("");
     const [btnLoading, setBtnLoading] = useState(false);
 
-    const { token, firstName, lastName, email } = route.params;
-    const { setUser } = useContext(AppContext);
+    const { user, setUser } = useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -49,22 +55,14 @@ export default ({ route, navigation }) => {
                                 onPress={() => navigation.goBack()}
                             />
                         </View>
-                        <Text style={styles.logoText}>Leto.</Text>
-                        <Text style={styles.tagline}>
-                            Cheaper greener rides.
+                        <Text style={styles.title}>Profile</Text>
+                        <Text style={styles.subtitle}>
+                            Verify your phone number.
                         </Text>
 
-                        <Text style={styles.title}>Sign up</Text>
-                        <View style={[styles.center, { marginVertical: 10 }]}>
-                            <Toast
-                                hidden={!toastVisible}
-                                type="danger"
-                                text={toastText}
-                            />
-                        </View>
                         <View style={styles.spacer} />
                         <LabelledTextInput
-                            label="Enter the 6-digit verification code sent to your email"
+                            label="Enter the 6-digit verification code sent to your phone via SMS"
                             placeholder="6-digit code"
                             iconName="vpn-key"
                             value={code}
@@ -73,7 +71,7 @@ export default ({ route, navigation }) => {
                         <View style={styles.btnContainer}>
                             <Button
                                 text="Submit"
-                                onPress={() => submit(token)}
+                                onPress={submit}
                                 loading={btnLoading}
                             />
                         </View>
@@ -86,35 +84,38 @@ export default ({ route, navigation }) => {
         );
     }
 
-    function submit(token) {
+    function submit() {
         setBtnLoading(true);
         const params = new FormData();
         params.append("code", code);
 
         const config = {
             headers: {
-                auth: token,
+                auth: user.token,
             },
         };
 
-        api.post(`confirmEmail.php`, params, config)
+        api.post(`confirmPhone.php`, params, config)
             .then((resp) => {
+                setBtnLoading(false);
+
                 console.log(resp.data); //OK
                 if (resp.data.status !== "OK") {
-                    setToastVisible(true);
-                    setToastText(resp.data.message);
-                    setBtnLoading(false);
+                    Alert.alert("Error", resp.data.message);
                 } else {
-                    setBtnLoading(false);
-                    const user = {
-                        token: token,
-                        firstname: firstName,
-                        lastname: lastName,
-                        profileImage: "./../assets/img/profile.svg",
-                        email: email,
+                    const newUser = {
+                        token: user.token,
+                        firstname: user.firstname,
+                        lastname: user.lastname,
+                        profileImage: user.profileImage,
+                        email: user.email,
                     };
-                    setUser(user);
-                    toSuccessSignUp(navigation, user);
+                    setUser(newUser);
+                    Alert.alert(
+                        "Success",
+                        "We updated your phone number successfully"
+                    );
+                    navigation.goBack();
                 }
             })
             .catch((err) => {
@@ -153,18 +154,17 @@ const styles = StyleSheet.create({
         marginLeft: 40,
     },
     title: {
-        fontFamily: "Inter_400Regular",
-        fontSize: 22,
+        fontFamily: fonts.poppinsRegular,
+        fontSize: 40,
         color: colors.textLighter,
-        marginLeft: 20,
-        marginTop: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
     },
-    label: {
-        color: colors.textLighter,
-        fontFamily: "Inter_500Medium",
+    subtitle: {
+        fontFamily: fonts.interMedium,
+        paddingHorizontal: 20,
         fontSize: 17,
-        marginBottom: 8,
-        marginLeft: 20,
+        color: colors.textLighter,
     },
     center: {
         justifyContent: "center",

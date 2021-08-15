@@ -18,19 +18,26 @@ export const Avatar = ({ size, src, loading }) => {
     if (loading) {
         return <ActivityIndicator size="large" color={colors.primary} />;
     } else {
-        return src === "./../assets/img/profile.svg" ? (
-            <MaterialIcons
-                name="sentiment-satisfied"
-                color={colors.primary}
-                size={size}
-            />
-        ) : (
-            <Image
-                style={styles.image}
-                source={{
-                    uri: `${constants.serverUrl}storage/${src}`,
-                }}
-            />
-        );
+        if (
+            src === "profile_images/./../assets/img/profile.svg" ||
+            src === "./../assets/img/profile.svg"
+        ) {
+            return (
+                <MaterialIcons
+                    name="sentiment-satisfied"
+                    color={colors.primary}
+                    size={size}
+                />
+            );
+        } else {
+            return (
+                <Image
+                    style={styles.image}
+                    source={{
+                        uri: `${constants.serverUrl}storage/${src}`,
+                    }}
+                />
+            );
+        }
     }
 };
