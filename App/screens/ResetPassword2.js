@@ -145,7 +145,7 @@ export default ({ route, navigation }) => {
                         auth: user.token,
                     },
                 };
-                api.post(`resetPassword.php`, params, config)
+                api.post(`user/resetPassword.php`, params, config)
                     .then((resp) => {
                         Log("checkPassword:147", resp.data);
                         if (resp.data.status !== "OK") {

@@ -20,6 +20,7 @@ import { Toast } from "../components/Toast";
 import { KeyboardSpacer } from "../components/KeyboardSpacer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppContext } from "../util/AppContext";
+import fonts from "../assets/fonts/fonts";
 
 export default ({ route, navigation }) => {
     const [code, onChangeCode] = useState("");
@@ -95,7 +96,7 @@ export default ({ route, navigation }) => {
             },
         };
 
-        api.post(`confirmPhone.php`, params, config)
+        api.post(`user/confirmPhone.php`, params, config)
             .then((resp) => {
                 setBtnLoading(false);
 

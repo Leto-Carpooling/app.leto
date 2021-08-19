@@ -134,7 +134,7 @@ export default ({ navigation }) => {
 
         setBtnLoading(true);
 
-        api.post(`login.php`, params, config)
+        api.post(`user/login.php`, params, config)
             .then((resp) => {
                 Log("login:113", resp.data);
                 if (resp.data.status !== "OK") {

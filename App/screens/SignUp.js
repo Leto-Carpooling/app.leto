@@ -106,7 +106,7 @@ export default ({ navigation }) => {
                         "application/x-www-form-urlencoded; charset=UTF-8",
                 },
             };
-            api.post(`signup.php`, params, config)
+            api.post(`user/signup.php`, params, config)
                 .then((resp) => {
                     console.log(resp.data); //OK
                     if (resp.data.status !== "OK") {

@@ -189,7 +189,7 @@ export default ({ navigation }) => {
             },
         };
 
-        api.post(`updateDriver.php`, params, config)
+        api.post(`driver/updateDriver.php`, params, config)
             .then((resp) => {
                 Log("sendDetails2", resp.data);
                 setBtnLoading(false);

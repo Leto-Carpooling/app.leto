@@ -19,6 +19,7 @@ import { LabelledTextInput } from "../components/LabelledTextInput";
 import Spacer from "../components/Spacer";
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ navigation }) => {
     useEffect(() => {
@@ -90,12 +91,68 @@ export default ({ navigation }) => {
                         </View>
 
                         <View style={styles.btnContainer}>
-                            <Button onPress={() => alert("todo")} text="Next" />
+                            <Button onPress={reset} text="Retry" />
                         </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
         );
+    }
+
+    async function reset() {
+        const choosers = [
+            {
+                id: "nid-image",
+                label: "National ID",
+                endPoint: "driverUploads.php",
+            },
+            ,
+            {
+                id: "reg-li-image",
+                label: "Driver's License",
+                endPoint: "driverUploads.php",
+            },
+            ,
+            {
+                id: "psv-li-image",
+                label: "PSV License",
+                endPoint: "driverUploads.php",
+            },
+            ,
+            {
+                id: "good-conduct-image",
+                label: "Good Conduct Certificate",
+                endPoint: "driverUploads.php",
+            },
+            {
+                id: "v-ins-image",
+                label: "Vehicle Insurance",
+                endPoint: "vehicleUploads.php",
+            },
+            {
+                id: "v-reg-image",
+                label: "Logbook",
+                endPoint: "vehicleUploads.php",
+            },
+            {
+                id: "v-ir-image",
+                label: "NTSA Inspection Report",
+                endPoint: "vehicleUploads.php",
+            },
+        ];
+        choosers.map((chooser) => {
+            rmChooserId(chooser.id)
+        });
+        await AsyncStorage.removeItem("@upgrade", () => {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "UpgradeOne" }],
+            });
+        });
+    }
+
+    async function rmChooserId(id){
+        await AsyncStorage.removeItem(`@${id}`);
     }
 };
 

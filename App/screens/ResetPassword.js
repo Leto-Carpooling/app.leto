@@ -140,7 +140,7 @@ export default ({ route, navigation }) => {
                         "application/x-www-form-urlencoded; charset=UTF-8",
                 },
             };
-            api.post(`forgotPassword.php`, params, config)
+            api.post(`user/forgotPassword.php`, params, config)
                 .then((resp) => {
                     Log("checkPassword:147", resp.data);
                     if (resp.data.status !== "OK") {

@@ -115,7 +115,7 @@ export default ({ navigation }) => {
 
         setBtnLoading(true);
 
-        api.post(`forgotPassword.php`, params, config)
+        api.post(`user/forgotPassword.php`, params, config)
             .then((resp) => {
                 if (resp.data.status !== "OK") {
                     setToastVisible(true);

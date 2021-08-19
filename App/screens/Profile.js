@@ -190,17 +190,14 @@ export default ({ navigation }) => {
             },
         };
 
-        api.post(`editProfile.php`, params, config)
+        api.post(`user/editProfile.php`, params, config)
             .then((resp) => {
                 Log("toVerifyPhone", resp.data);
                 setPhoneBtnLoading(false);
                 if (resp.data.status === "OK") {
                     navigation.navigate("VerifyPhone");
                 } else {
-                    Alert.alert(
-                        "Error",
-                        "Something went wrong try again later."
-                    );
+                    Alert.alert("Error", resp.data.message);
                 }
                 //navigation.navigate("VerifyPhone");
             })
