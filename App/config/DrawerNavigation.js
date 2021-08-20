@@ -180,7 +180,7 @@ const invalidateToken = async () => {
                 auth: user.token,
             },
         };
-        api.post(`logout.php`, {}, config)
+        api.post(`user/logout.php`, {}, config)
             .then((resp) => {
                 console.log(resp.data); //OK
                 if (resp.data.status !== "OK") {
