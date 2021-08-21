@@ -6,6 +6,8 @@ export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [origin, setOrigin] = useState(null);
+    const [dest, setDest] = useState(null);
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
     useEffect(() => {
         getUser(setUser);
@@ -17,6 +19,10 @@ export const AppContextProvider = ({ children }) => {
         setUser,
         upgradeSubmitted,
         setUpgradeSubmitted,
+        origin,
+        setOrigin,
+        dest,
+        setDest,
     };
     return (
         <AppContext.Provider value={context}>{children}</AppContext.Provider>
