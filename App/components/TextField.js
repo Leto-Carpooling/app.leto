@@ -49,7 +49,7 @@ const stylesNuetral = StyleSheet.create({
     textField: {
         flex: 1,
         fontFamily: "Inter_500Medium",
-        fontSize: 17,
+        fontSize: 16,
         marginLeft: 10,
     },
 });

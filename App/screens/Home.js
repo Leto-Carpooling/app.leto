@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
     Text,
     View,
@@ -21,11 +21,14 @@ import { IconButton } from "../components/IconButton";
 import MapView from "react-native-maps";
 import tw from "tailwind-react-native-classnames";
 import Animated from "react-native-reanimated";
-import AppBottomSheet from "./subscreens/BottomSheet";
+import BottomSheetRider from "./subscreens/BottomSheetRider";
 import { Button } from "../components/Button";
 import { Dimensions } from "react-native";
+import { AppContext } from "../util/AppContext";
+import BottomSheetDriver from "./subscreens/BottomSheetDriver";
 
 export default ({ navigation }) => {
+    const { isDriver } = useContext(AppContext);
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
@@ -70,7 +73,11 @@ export default ({ navigation }) => {
                         </SafeAreaView>
                     </View>
                     <View style={styles.height_90}>
-                        <AppBottomSheet />
+                        {isDriver ? (
+                            <BottomSheetDriver />
+                        ) : (
+                            <BottomSheetRider />
+                        )}
                     </View>
                 </View>
             </ScrollView>

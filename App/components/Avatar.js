@@ -5,7 +5,7 @@ import colors from "../assets/colors/colors";
 import { Log } from "../util/Logger";
 import constants from "../util/constants";
 
-export const Avatar = ({ size, src, loading }) => {
+export const Avatar = ({ size, src, loading, test }) => {
     const styles = StyleSheet.create({
         image: {
             resizeMode: "cover",
@@ -27,6 +27,15 @@ export const Avatar = ({ size, src, loading }) => {
                     name="sentiment-satisfied"
                     color={colors.primary}
                     size={size}
+                />
+            );
+        } else if (test) {
+            return (
+                <Image
+                    style={styles.image}
+                    source={{
+                        uri: src,
+                    }}
                 />
             );
         } else {

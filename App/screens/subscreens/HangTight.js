@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import colors from "../../assets/colors/colors";
@@ -7,16 +7,30 @@ import Spacer from "../../components/Spacer";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AppContext } from "../../util/AppContext";
 import { TextField } from "../../components/TextField";
+import DriverItem from "../../components/DriverItem";
+import { useNavigation } from "@react-navigation/core";
+import PriceLabel from "../../components/PriceLabel";
+import { Button } from "../../components/Button";
 
 const HangTight = () => {
+    const navigation = useNavigation();
     const [status, setstatus] = useState(2);
     const { origin, dest } = useContext(AppContext);
+
+    useEffect(() => {
+        if (status === 2) {
+            navigation.navigate("Pickup");
+        }
+    }, [status]);
     return (
         <View style={tw`flex-1 p-2 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-2`, styles.fp]}>
                 Hang tight
             </Text>
-            <View style={tw`p-2`}>{renderStatus()}</View>
+            <View style={tw`p-2 flex-row justify-between items-center`}>
+                <View>{renderStatus()}</View>
+                {renderPrice()}
+            </View>
             <View style={tw`p-2`}>
                 <TextField
                     iconName="place"
@@ -31,9 +45,30 @@ const HangTight = () => {
                     value={dest.name}
                     editable={false}
                 />
+                <Spacer height={4} />
+                {renderDriverItem()}
+                <Spacer height={5} />
+
+                <View>
+                    <Button
+                        text="Cancel ride"
+                        iconName="close"
+                        onPress={() => {
+                            navigation.navigate("RideTypeChooser");
+                        }}
+                    />
+                </View>
             </View>
         </View>
     );
+
+    function renderDriverItem() {
+        return status === 2 && <DriverItem />;
+    }
+
+    function renderPrice() {
+        return status >= 1 && <PriceLabel price={130} header="KES" />;
+    }
 
     function renderStatus() {
         switch (status) {

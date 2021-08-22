@@ -7,29 +7,29 @@ import RideTypeChooser from "./RideTypeChooser";
 import WhereTo from "./WhereTo";
 import { createStackNavigator } from "@react-navigation/stack";
 import HangTight from "./HangTight";
+import Pickup from "./Pickup";
+import InTransit from "./InTransit";
+import Arrived from "./Arrived";
+import DriverStatus from "./driver/DriverStatus";
+import RideStatus from "./driver/RideStatus";
 
 const Stack = createStackNavigator();
-const AppBottomSheet = () => {
+const BottomSheetDriver = () => {
     return (
         <View
             style={[tw`bg-white rounded-tl-lg rounded-tr-lg shadow-lg flex-1`]}
         >
             {renderHeader()}
 
-            <Stack.Navigator initialRouteName="RideTypeChooser">
+            <Stack.Navigator initialRouteName="RideStatus">
                 <Stack.Screen
-                    name="RideTypeChooser"
-                    component={RideTypeChooser}
+                    name="DriverStatus"
+                    component={DriverStatus}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                    name="WhereTo"
-                    component={WhereTo}
-                    options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                    name="HangTight"
-                    component={HangTight}
+                    name="RideStatus"
+                    component={RideStatus}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
@@ -37,37 +37,13 @@ const AppBottomSheet = () => {
     );
 };
 
-export default AppBottomSheet;
+export default BottomSheetDriver;
 
 const styles = StyleSheet.create({
     height_90: {
         height: Dimensions.get("window").height * 0.9,
     },
 });
-
-const renderContent = () => (
-    <View
-        style={[
-            tw`bg-white rounded-tl-lg rounded-tr-lg shadow-lg`,
-            styles.height_90,
-        ]}
-    >
-        {renderHeader()}
-
-        <Stack.Navigator initialRouteName="WhereTo">
-            <Stack.Screen
-                name="RideTypeChooser"
-                component={RideTypeChooser}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
-                name="WhereTo"
-                component={WhereTo}
-                options={{ headerShown: false }}
-            />
-        </Stack.Navigator>
-    </View>
-);
 
 const renderHeader = () => (
     <View style={tw`flex justify-center items-center`}>
