@@ -3,23 +3,31 @@ import { View, Text } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import MapView, { Marker } from "react-native-maps";
 import { AppContext } from "../../util/AppContext";
+import MapViewDirections from "react-native-maps-directions";
+import { GOOGLE_MAPS_API_KEY } from "@env";
 
 const Map = () => {
-    const { origin } = useContext(AppContext);
+    const { origin, dest } = useContext(AppContext);
     const mapRef = React.useRef(null);
-    {
-        useEffect(() => {
-            console.log(origin);
-            if (origin) {
-                mapRef.current.animateToRegion({
-                    latitude: origin.lat,
-                    longitude: origin.lng,
-                    latitudeDelta: 0.005,
-                    longitudeDelta: 0.005,
-                });
-            }
-        }, [origin]);
-    }
+
+    useEffect(() => {
+        if (origin) {
+            mapRef.current.animateToRegion({
+                latitude: origin.lat,
+                longitude: origin.lng,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+            });
+        }
+    }, [origin]);
+
+    useEffect(() => {
+        if (!origin || !dest) return;
+
+        mapRef.current.fitToSuppliedMarkers(["origin", "destination"]);
+        console.log("was called");
+    }, [origin, dest]);
+
     return (
         <MapView
             style={tw`flex-1`}
@@ -32,20 +40,51 @@ const Map = () => {
                 longitudeDelta: 0.005,
             }}
         >
+            {origin && dest && (
+                <MapViewDirections
+                    origin={{
+                        latitude: origin.lat,
+                        longitude: origin.lng,
+                    }}
+                    destination={{
+                        latitude: dest.lat,
+                        longitude: dest.lng,
+                    }}
+                    lineDashPattern={[1]}
+                    apikey={GOOGLE_MAPS_API_KEY}
+                    strokeWidth={5}
+                    strokeColor="black"
+                />
+            )}
             {origin && (
                 <Marker
                     coordinate={{
-                        latitude: origin.lat + 0.9,
+                        latitude: origin.lat,
                         longitude: origin.lng,
                     }}
                     title="You"
                     description={"Current location"}
+                    identifier="origin"
+                />
+            )}
+            {dest && (
+                <Marker
+                    coordinate={{
+                        latitude: dest.lat,
+                        longitude: dest.lng,
+                    }}
+                    title="You"
+                    description={"Destination"}
+                    identifier="destination"
                 />
             )}
 
             {origin && (
                 <Marker
-                    coordinate={{ latitude: origin.lat, longitude: origin.lng }}
+                    coordinate={{
+                        latitude: origin.lat + 0.00095,
+                        longitude: origin.lng,
+                    }}
                     image={require("../../assets/img/car_top_view.png")}
                 />
             )}
