@@ -25,7 +25,6 @@ const Map = () => {
         if (!origin || !dest) return;
 
         mapRef.current.fitToSuppliedMarkers(["origin", "destination"]);
-        console.log("was called");
     }, [origin, dest]);
 
     return (
@@ -54,6 +53,10 @@ const Map = () => {
                     apikey={GOOGLE_MAPS_API_KEY}
                     strokeWidth={5}
                     strokeColor="black"
+                    onReady={(result) => {
+                        console.log(`Distance: ${result.distance} km`);
+                        console.log(`Duration: ${result.duration} min.`);
+                    }}
                 />
             )}
             {origin && (
