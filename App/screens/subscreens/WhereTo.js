@@ -19,6 +19,8 @@ const WhereTo = () => {
     const navigation = useNavigation();
     const [whereTo, onChangeWhereTo] = useState("");
     const [whereFrom, onChangeWhereFrom] = useState("Current location");
+    const [toLoading, setToLoading] = useState(false);
+    const [fromLoading, setFromLoading] = useState(false);
     const [timeoutId, setTimeoutId] = useState(null);
     // const [origin, setOrigin] = useState(null);
     // const [dest, setDest] = useState(null);
@@ -26,6 +28,9 @@ const WhereTo = () => {
     const [places, setPlaces] = useState([]);
     const [isTo, setIsTo] = useState(false);
 
+    useEffect(() => {
+        setPlaces([]);
+    }, [whereTo, whereFrom]);
     useEffect(() => {
         if (dest != null && origin != null) {
             navigation.navigate("HangTight");
@@ -37,12 +42,20 @@ const WhereTo = () => {
             clearTimeout(timeoutId);
         }
 
-        const newTimeoutId = setTimeout(() => {
-            if (whereTo != "") {
-                setIsTo(true);
-                getPlaces(whereTo, setPlaces);
-            }
-        }, 400);
+        let newTimeoutId;
+        if (whereTo != "") {
+            setToLoading(true);
+            setIsTo(true);
+            newTimeoutId = setTimeout(() => {
+                getPlaces(
+                    whereTo,
+                    setPlaces,
+                    isTo,
+                    setToLoading,
+                    setFromLoading
+                );
+            }, 400);
+        }
         setTimeoutId(newTimeoutId);
     }, [whereTo]);
 
@@ -51,12 +64,21 @@ const WhereTo = () => {
             clearTimeout(timeoutId);
         }
 
-        const newTimeoutId = setTimeout(() => {
-            if (whereFrom != "" && whereFrom != "Current location") {
-                setIsTo(false);
-                getPlaces(whereFrom, setPlaces);
-            }
-        }, 400);
+        let newTimeoutId;
+        if (whereFrom != "" && whereFrom != "Current location") {
+            setFromLoading(true);
+
+            setIsTo(false);
+            newTimeoutId = setTimeout(() => {
+                getPlaces(
+                    whereFrom,
+                    setPlaces,
+                    isTo,
+                    setToLoading,
+                    setFromLoading
+                );
+            }, 400);
+        }
         setTimeoutId(newTimeoutId);
     }, [whereFrom]);
     return (
@@ -75,6 +97,7 @@ const WhereTo = () => {
                     placeholder="Where from?"
                     value={whereFrom}
                     onChangeText={onChangeWhereFrom}
+                    loading={fromLoading}
                 />
                 <Spacer height={1} />
                 <TextField
@@ -82,6 +105,7 @@ const WhereTo = () => {
                     placeholder="Where to?"
                     value={whereTo}
                     onChangeText={onChangeWhereTo}
+                    loading={toLoading}
                 />
             </View>
             <View style={tw`p-2`}>
@@ -116,7 +140,7 @@ const WhereTo = () => {
     }
 };
 
-function getPlaces(whereTo, setPlaces) {
+function getPlaces(whereTo, setPlaces, isTo, setToLoading, setFromLoading) {
     var config = {
         method: "get",
         url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${whereTo}&inputtype=textquery&language=en&fields=formatted_address,name,geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -134,6 +158,7 @@ function getPlaces(whereTo, setPlaces) {
                     loc: cand.geometry.location,
                 });
             });
+            isTo ? setToLoading(false) : setFromLoading(false);
             //console.log(results);
             setPlaces(results);
         })

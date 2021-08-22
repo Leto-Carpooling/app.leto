@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { TextInput, StyleSheet, View } from "react-native";
+import { TextInput, StyleSheet, View, ActivityIndicator } from "react-native";
 import colors from "../assets/colors/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export const TextField = ({ iconName, theme, ...props }) => {
+export const TextField = ({ iconName, theme, loading, ...props }) => {
     let container, textField, iconColor, placeHolderTextColor;
     switch (theme) {
         case "danger":
@@ -27,7 +27,11 @@ export const TextField = ({ iconName, theme, ...props }) => {
     }
     return (
         <View style={container}>
-            <MaterialIcons name={iconName} size={30} color={iconColor} />
+            {loading ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+                <MaterialIcons name={iconName} size={30} color={iconColor} />
+            )}
             <TextInput
                 style={textField}
                 {...props}
