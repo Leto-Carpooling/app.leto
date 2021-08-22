@@ -6,13 +6,13 @@ import { Avatar } from "../Avatar";
 import FontStyles from "../FontStyles";
 import PriceLabel from "../PriceLabel";
 import Spacer from "../Spacer";
-
+import { MaterialIcons } from "@expo/vector-icons";
 const RideComponent = ({ actionText, onPress }) => {
     const [riders, setRiders] = useState([
         { name: "John" },
-        { name: "John" },
-        { name: "John" },
-        { name: "John" },
+        { name: "Kevin" },
+        { name: "Alvin" },
+        { name: "Mike" },
     ]);
     return (
         <View style={[tw`rounded-md shadow bg-gray-50 flex-row`]}>
@@ -50,9 +50,12 @@ const RiderAvatar = ({ url, name }) => {
     return (
         <View style={tw`m-1 flex-col items-center`}>
             <Avatar size={40} src="https://picsum.photos/200/300" test />
-            <Text style={[tw`text-xs text-gray-500 mt-1`, FontStyles.fi]}>
-                {name}
-            </Text>
+            <View style={[tw`flex-row items-center`]}>
+                <MaterialIcons name="check" color={colors.success} size={13} />
+                <Text style={[tw`text-xs text-gray-500 mt-1`, FontStyles.fi]}>
+                    {name}
+                </Text>
+            </View>
         </View>
     );
 };

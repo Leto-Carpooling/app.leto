@@ -9,10 +9,12 @@ import Spacer from "../../components/Spacer";
 import { Button } from "../../components/Button";
 import colors from "../../assets/colors/colors";
 import LogoTagline from "../../components/text/LogoTagline";
+import { useNavigation } from "@react-navigation/core";
 
 const Arrived = () => {
     const [starCount, setStarCount] = useState(0);
     const [comment, onChangeComment] = useState("");
+    const navigation = useNavigation();
 
     return (
         <View style={tw`flex-1 bg-white`}>
@@ -45,12 +47,19 @@ const Arrived = () => {
                     onChangeText={onChangeComment}
                 />
                 <Spacer height={15} />
-                <Button text="Send" iconName="send" />
+                <Button text="Send" iconName="send" onPress={sendRating} />
                 <Spacer height={20} />
                 <LogoTagline />
             </View>
         </View>
     );
+
+    function sendRating() {
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "RideTypeChooser" }],
+        });
+    }
 };
 
 export default Arrived;
