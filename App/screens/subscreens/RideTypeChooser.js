@@ -6,14 +6,14 @@ import LogoTagline from "../../components/text/LogoTagline";
 import fonts from "../../assets/fonts/fonts";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../../assets/colors/colors";
-
+import Spacer from "../../components/Spacer";
 import CardButton from "../../components/btn/CardButton";
 
 const RideTypeChooser = () => {
     const navigation = useNavigation();
     return (
         <View style={tw`flex-1 bg-white p-4`}>
-            <Text style={[tw`text-2xl text-gray-500 mb-2`, styles.fontPoppins]}>
+            <Text style={[tw`text-2xl text-gray-500 mb-3`, styles.fontPoppins]}>
                 Select ride type
             </Text>
 
@@ -42,6 +42,8 @@ const RideTypeChooser = () => {
                     }
                 />
             </View>
+            <Spacer height={20} />
+            <LogoTagline />
         </View>
     );
 };
