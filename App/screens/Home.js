@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
     Text,
     View,
@@ -18,7 +18,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { IconButton } from "../components/IconButton";
-import MapView from "react-native-maps";
 import tw from "tailwind-react-native-classnames";
 import Animated from "react-native-reanimated";
 import BottomSheetRider from "./subscreens/BottomSheetRider";
@@ -26,15 +25,37 @@ import { Button } from "../components/Button";
 import { Dimensions } from "react-native";
 import { AppContext } from "../util/AppContext";
 import BottomSheetDriver from "./subscreens/BottomSheetDriver";
+import Map from "../components/map/Map";
+import * as Location from "expo-location";
 
 export default ({ navigation }) => {
-    const { isDriver } = useContext(AppContext);
+    const { isDriver, origin, setOrigin, setDest, dest } =
+        useContext(AppContext);
+
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Inter_500Medium,
         Inter_400Regular,
         Poppins_500Medium,
     });
+
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                //setErrorMsg("Permission to access location was denied");
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            console.log(location);
+            setOrigin({
+                lat: location.coords.latitude,
+                lng: location.coords.longitude,
+                name: "Current Location",
+            });
+        })();
+    }, []);
 
     if (!fontsLoaded) {
         return <AppLoading />;
@@ -44,19 +65,10 @@ export default ({ navigation }) => {
                 <View>
                     <View
                         style={{
-                            height: Dimensions.get("window").height * 0.5,
+                            height: Dimensions.get("window").height * 0.7,
                         }}
                     >
-                        <MapView
-                            style={tw`flex-1`}
-                            mapType="mutedStandard"
-                            initialRegion={{
-                                latitude: 37.78825,
-                                longitude: -122.4324,
-                                latitudeDelta: 0.0922,
-                                longitudeDelta: 0.0421,
-                            }}
-                        />
+                        <Map />
                         <SafeAreaView style={tw`absolute top-5 right-5`}>
                             <View style={tw`rounded-full p-2 bg-white`}>
                                 <IconButton

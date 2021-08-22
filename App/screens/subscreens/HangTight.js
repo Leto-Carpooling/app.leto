@@ -132,7 +132,7 @@ const HangTight = () => {
                             />
 
                             <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Calculating pickup point
+                                Finding optimal pickup point
                             </Text>
                         </View>
                     </>
