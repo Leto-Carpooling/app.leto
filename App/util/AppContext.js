@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Log } from "./Logger";
+import firebase from "firebase/app";
 
 export const AppContext = createContext();
 

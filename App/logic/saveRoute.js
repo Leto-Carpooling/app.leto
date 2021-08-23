@@ -1,4 +1,5 @@
 import { api } from "../config/api";
+
 const { user } = useContext(AppContext);
 
 /**
@@ -7,9 +8,11 @@ const { user } = useContext(AppContext);
  * and completed routes will remain
  * 
  * @param {MapAPIRoute} route 
+ * @param {Function} callback - the callback function to handle the response.
+ * 
  */
 
-export default function saveRoute(route){
+export default function saveRoute(route, callback){
     const config = {
         headers: {
             "Content-Type":
@@ -49,8 +52,12 @@ export default function saveRoute(route){
  * @param {JSON} response - response from the OT server
  */
 function saveToFirebase(route, response){
-    let routeId = response.routeId;
     
+    let routeId = response.data.message.routeId;
+    let userId = response.data.message.userId;
+
+    let 
+
 }
 
 /**
