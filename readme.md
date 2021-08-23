@@ -20,7 +20,7 @@ This is where the context information and metadata is stored
 
 #### Step 3: Initialize context and extract context data
 
-Now inside your functional componet add this line which will extract the db object via object destructuring from the context data.
+Now inside your functional component add this line which will extract the db object via object destructuring from the context data.
 
 `const {db} = useContext(AppContext)`
 
@@ -28,4 +28,8 @@ Now inside your functional componet add this line which will extract the db obje
 
 You can then use the data as you wish
 
-``db.....`
+```
+db.ref().on()...
+...
+
+```
