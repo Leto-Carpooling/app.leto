@@ -1,7 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Log } from "./Logger";
-
+import { database } from "./firebase";
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
@@ -10,6 +9,7 @@ export const AppContextProvider = ({ children }) => {
     const [origin, setOrigin] = useState(null);
     const [dest, setDest] = useState(null);
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
+    const [db] = useState(database);
     useEffect(() => {
         getUser(setUser);
         getUpgradeSubmitted(setUpgradeSubmitted);
@@ -26,6 +26,7 @@ export const AppContextProvider = ({ children }) => {
         setDest,
         isDriver,
         setIsDriver,
+        db,
     };
     return (
         <AppContext.Provider value={context}>{children}</AppContext.Provider>
