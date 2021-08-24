@@ -74,6 +74,7 @@ export const FileChooser = ({ label, endPoint, id, setDocCount, docCount }) => {
         const check = await AsyncStorage.getItem(`@${id}`);
         if (check) {
             setStatus(2);
+            setDocCount((docCount) => docCount + 1);
         }
     }
 
