@@ -17,7 +17,7 @@ const InTransit = () => {
                 {renderStatusText()}
             </Text>
 
-            <View style={tw`flex-row justify-start px-4 mb-1`}>
+            <View style={tw`flex-row justify-start px-4 m-2`}>
                 <ActivityIndicator size="small" color={colors.primary} />
             </View>
 
