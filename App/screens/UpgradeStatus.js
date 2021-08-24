@@ -78,7 +78,10 @@ export default ({ navigation }) => {
                                 />
                             </View>
                         ) : (
-                            <ApprovalStatus status={status} />
+                            <ApprovalStatus
+                                status={status}
+                                refresh={getUpgradeStatus}
+                            />
                         )}
 
                         {status === 1 && (
@@ -93,15 +96,27 @@ export default ({ navigation }) => {
     }
 
     function getUpgradeStatus() {
+        setLoading(true);
         const config = {
             headers: {
                 auth: user.token,
             },
         };
 
-        api.post(`upgradeStatus.php`, {}, config)
+        api.post(`driver/checkApproval.php`, {}, config)
             .then((resp) => {
                 Log("getUpgradeStatus", resp.data);
+                setLoading(false);
+                if (resp.data.status === "OK") {
+                    switch (resp.data.message) {
+                        case "pending":
+                            setStatus(0);
+                            break;
+                        case "declined":
+                            setStatus(1);
+                            break;
+                    }
+                }
             })
             .catch((err) => {
                 Log("getUpgradeStatus", err);

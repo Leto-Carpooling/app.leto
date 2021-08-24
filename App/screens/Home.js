@@ -19,10 +19,12 @@ import Map from "../components/map/Map";
 import * as Location from "expo-location";
 import { api } from "../config/api";
 import { Log } from "../util/Logger";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ({ navigation }) => {
     const {
         isDriver,
+        setIsDriver,
         origin,
         setOrigin,
         setDest,
@@ -39,7 +41,7 @@ export default ({ navigation }) => {
     });
 
     useEffect(() => {
-        checkUpgradeApproval();
+        if (!isDriver) checkUpgradeApproval();
     }, []);
 
     useEffect(() => {
@@ -107,15 +109,27 @@ export default ({ navigation }) => {
                 },
             };
 
-            api.post(`upgradeStatus.php`, {}, config)
+            api.post(`driver/checkApproval.php`, {}, config)
                 .then((resp) => {
                     Log("getUpgradeStatus", resp.data);
                     // set isDriver true
+                    if (
+                        resp.data.status === "OK" &&
+                        resp.data.message === "approved"
+                    ) {
+                        setIsDriver(true);
+                        navigation.navigate("SuccessApproved");
+                        setUserIsDriver();
+                    }
                 })
                 .catch((err) => {
                     Log("getUpgradeStatus", err);
                 });
         }
+    }
+
+    async function setUserIsDriver() {
+        await AsyncStorage.setItem("@is_driver", "is_driver");
     }
 };
 
