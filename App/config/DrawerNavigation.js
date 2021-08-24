@@ -44,6 +44,7 @@ import VerifyPhone from "../screens/VerifyPhone";
 
 import { api } from "./api";
 import { Log } from "../util/Logger";
+import SuccessApproved from "../screens/SuccessApproved";
 
 function CustomDrawerContent({ navigation, ...props }) {
     //const [user, setUser] = useState({});
@@ -253,6 +254,7 @@ function MyDrawer() {
             <Drawer.Screen name="ResetPassword2" component={ResetPassword2} />
             <Drawer.Screen name="SetName" component={SetName} />
             <Drawer.Screen name="VerifyPhone" component={VerifyPhone} />
+            <Drawer.Screen name="SuccessApproved" component={SuccessApproved} />
             <Drawer.Screen
                 name="SuccessResetPassword"
                 component={SuccessResetPassword}
