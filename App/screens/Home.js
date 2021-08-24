@@ -1,13 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import {
-    Text,
-    View,
-    SafeAreaView,
-    StyleSheet,
-    TouchableHighlight,
-    TouchableOpacity,
-    ScrollView,
-} from "react-native";
+import React, { useContext, useEffect } from "react";
+import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import {
     useFonts,
     Poppins_400Regular,
@@ -19,18 +11,25 @@ import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { IconButton } from "../components/IconButton";
 import tw from "tailwind-react-native-classnames";
-import Animated from "react-native-reanimated";
 import BottomSheetRider from "./subscreens/BottomSheetRider";
-import { Button } from "../components/Button";
 import { Dimensions } from "react-native";
 import { AppContext } from "../util/AppContext";
 import BottomSheetDriver from "./subscreens/BottomSheetDriver";
 import Map from "../components/map/Map";
 import * as Location from "expo-location";
+import { api } from "../config/api";
+import { Log } from "../util/Logger";
 
 export default ({ navigation }) => {
-    const { isDriver, origin, setOrigin, setDest, dest } =
-        useContext(AppContext);
+    const {
+        isDriver,
+        origin,
+        setOrigin,
+        setDest,
+        dest,
+        upgradeSubmitted,
+        user,
+    } = useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -38,6 +37,10 @@ export default ({ navigation }) => {
         Inter_400Regular,
         Poppins_500Medium,
     });
+
+    useEffect(() => {
+        checkUpgradeApproval();
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -94,6 +97,25 @@ export default ({ navigation }) => {
                 </View>
             </ScrollView>
         );
+    }
+
+    function checkUpgradeApproval() {
+        if (upgradeSubmitted) {
+            const config = {
+                headers: {
+                    auth: user.token,
+                },
+            };
+
+            api.post(`upgradeStatus.php`, {}, config)
+                .then((resp) => {
+                    Log("getUpgradeStatus", resp.data);
+                    // set isDriver true
+                })
+                .catch((err) => {
+                    Log("getUpgradeStatus", err);
+                });
+        }
     }
 };
 

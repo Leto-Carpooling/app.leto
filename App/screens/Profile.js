@@ -221,7 +221,7 @@ export default ({ navigation }) => {
                     auth: user.token,
                 },
             };
-            api.post(`editProfile.php`, params, config)
+            api.post(`user/editProfile.php`, params, config)
                 .then((resp) => {
                     Log("uploadImage", resp.data);
                     setBtnLoading(false);
@@ -283,7 +283,7 @@ export default ({ navigation }) => {
                         "Content-Type": "multipart/form-data; ",
                     },
                 };
-                api.post(`editProfile.php`, params, config)
+                api.post(`user/editProfile.php`, params, config)
                     .then((resp) => {
                         //Log("uploadImage", resp.data);
                         if (resp.data.status !== "OK") {

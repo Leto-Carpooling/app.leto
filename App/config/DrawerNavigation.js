@@ -50,7 +50,7 @@ function CustomDrawerContent({ navigation, ...props }) {
     const [profileBox, setProfileBox] = useState(null);
     // const [loading, setLoading] = useState(true);
     // //console.log(user);
-    const { user, upgradeSubmitted } = useContext(AppContext);
+    const { user, upgradeSubmitted, isDriver } = useContext(AppContext);
     //console.log(user);
     useEffect(() => {
         setProfileBox(
@@ -90,7 +90,7 @@ function CustomDrawerContent({ navigation, ...props }) {
                     {profileBox}
 
                     <Spacer height={10} />
-                    {renderUpgradeDrawerItems()}
+                    {!isDriver && renderUpgradeDrawerItems()}
                 </View>
             </DrawerContentScrollView>
         );
@@ -282,20 +282,20 @@ const styles = StyleSheet.create({
     header: {
         width: "100%",
         backgroundColor: colors.primary,
-        height: 200,
+        height: 160,
         justifyContent: "center",
         alignItems: "center",
     },
     logoText: {
         color: colors.textDarker,
         fontFamily: "Poppins_400Regular",
-        fontSize: 60,
+        fontSize: 40,
         color: colors.white,
     },
     tagline: {
         color: colors.textLighter,
         fontFamily: "Inter_500Medium",
-        fontSize: 20,
+        fontSize: 14,
         color: colors.white,
     },
     center: {
