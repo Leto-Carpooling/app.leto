@@ -5,7 +5,7 @@ export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [isDriver, setIsDriver] = useState(true);
+    const [isDriver, setIsDriver] = useState(false);
     const [origin, setOrigin] = useState(null);
     const [dest, setDest] = useState(null);
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
@@ -15,6 +15,7 @@ export const AppContextProvider = ({ children }) => {
     
     useEffect(() => {
         getUser(setUser);
+        getIsDriver(setIsDriver);
         getUpgradeSubmitted(setUpgradeSubmitted);
     }, []);
 
@@ -40,6 +41,12 @@ async function getUser(setUser) {
     const user = await AsyncStorage.getItem("@user");
     //Log("getUser", user);
     setUser(JSON.parse(user));
+}
+
+async function getIsDriver(setIsDriver) {
+    const is_driver = await AsyncStorage.getItem("@is_driver");
+    //Log("getUser", user);
+    setIsDriver(is_driver ? true : false);
 }
 
 async function getUpgradeSubmitted(setUpgradeSubmitted) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import {
     Text,
     View,
@@ -13,20 +13,22 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { IconButton } from "../components/IconButton";
-import UpgradeProgressIndicator from "../components/UpgradeProgressIndicator";
+import { AppContext } from "../util/AppContext";
 import fonts from "../assets/fonts/fonts";
-import { LabelledTextInput } from "../components/LabelledTextInput";
-import Spacer from "../components/Spacer";
 import { Button } from "../components/Button";
-import { Avatar } from "../components/Avatar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import tw from "tailwind-react-native-classnames";
+import FontStyles from "../components/FontStyles";
+import ApprovalStatus from "../components/info/ApprovalStatus";
+import { api } from "../config/api";
+import { Log } from "../util/Logger";
 
 export default ({ navigation }) => {
+    const { setUpgradeSubmitted, user } = useContext(AppContext);
+    const [loading, setLoading] = useState(true);
+    const [status, setStatus] = useState(0);
     useEffect(() => {
-        const isVerified = true;
-        if (!isVerified) {
-            navigation.navigate("VerifyEmail");
-        }
+        getUpgradeStatus();
     }, []);
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -64,39 +66,61 @@ export default ({ navigation }) => {
                             />
                         </View>
 
-                        <Text style={styles.title}>Upgrade to driver</Text>
-
-                        <View style={styles.loader}>
-                            <Text style={styles.loaderText}>
-                                Checking status...
-                            </Text>
-                            <ActivityIndicator
-                                size="small"
-                                color={colors.primary}
+                        <Text style={styles.title}>Check approval</Text>
+                        {loading ? (
+                            <View style={styles.loader}>
+                                <Text style={styles.loaderText}>
+                                    Checking status...
+                                </Text>
+                                <ActivityIndicator
+                                    size="small"
+                                    color={colors.primary}
+                                />
+                            </View>
+                        ) : (
+                            <ApprovalStatus
+                                status={status}
+                                refresh={getUpgradeStatus}
                             />
-                        </View>
+                        )}
 
-                        <View style={styles.status}>
-                            <MaterialIcons
-                                name="error" //or error/pending
-                                color={colors.danger} //or danger/primary
-                                size={200}
-                            />
-                            <Text style={styles.title2}>
-                                Your submission was declined.
-                            </Text>
-                            <Text style={styles.subtitle2}>
-                                You can try again.
-                            </Text>
-                        </View>
-
-                        <View style={styles.btnContainer}>
-                            <Button onPress={reset} text="Retry" />
-                        </View>
+                        {status === 1 && (
+                            <View style={styles.btnContainer}>
+                                <Button onPress={reset} text="Retry" />
+                            </View>
+                        )}
                     </View>
                 </ScrollView>
             </SafeAreaView>
         );
+    }
+
+    function getUpgradeStatus() {
+        setLoading(true);
+        const config = {
+            headers: {
+                auth: user.token,
+            },
+        };
+
+        api.post(`driver/checkApproval.php`, {}, config)
+            .then((resp) => {
+                Log("getUpgradeStatus", resp.data);
+                setLoading(false);
+                if (resp.data.status === "OK") {
+                    switch (resp.data.message) {
+                        case "pending":
+                            setStatus(0);
+                            break;
+                        case "declined":
+                            setStatus(1);
+                            break;
+                    }
+                }
+            })
+            .catch((err) => {
+                Log("getUpgradeStatus", err);
+            });
     }
 
     async function reset() {
@@ -141,17 +165,20 @@ export default ({ navigation }) => {
             },
         ];
         choosers.map((chooser) => {
-            rmChooserId(chooser.id)
+            rmChooserId(chooser.id);
         });
-        await AsyncStorage.removeItem("@upgrade", () => {
-            navigation.reset({
-                index: 0,
-                routes: [{ name: "UpgradeOne" }],
+        await AsyncStorage.removeItem("@upgrade", async () => {
+            await AsyncStorage.removeItem("@upgradeSubmitted", () => {
+                setUpgradeSubmitted(false);
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Home" }],
+                });
             });
         });
     }
 
-    async function rmChooserId(id){
+    async function rmChooserId(id) {
         await AsyncStorage.removeItem(`@${id}`);
     }
 };
@@ -204,13 +231,13 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     loaderText: {
-        fontFamily: fonts.interMedium,
+        fontFamily: fonts.interRegular,
         fontSize: 16,
         color: colors.textLighter,
         marginRight: 10,
     },
     status: {
-        flexDirection: "column",
+        flexDirection: "row",
         alignItems: "center",
     },
     title2: {

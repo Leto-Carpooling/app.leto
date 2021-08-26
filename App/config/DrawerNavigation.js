@@ -44,13 +44,14 @@ import VerifyPhone from "../screens/VerifyPhone";
 
 import { api } from "./api";
 import { Log } from "../util/Logger";
+import SuccessApproved from "../screens/SuccessApproved";
 
 function CustomDrawerContent({ navigation, ...props }) {
     //const [user, setUser] = useState({});
     const [profileBox, setProfileBox] = useState(null);
     // const [loading, setLoading] = useState(true);
     // //console.log(user);
-    const { user, upgradeSubmitted } = useContext(AppContext);
+    const { user, upgradeSubmitted, isDriver } = useContext(AppContext);
     //console.log(user);
     useEffect(() => {
         setProfileBox(
@@ -90,7 +91,7 @@ function CustomDrawerContent({ navigation, ...props }) {
                     {profileBox}
 
                     <Spacer height={10} />
-                    {renderUpgradeDrawerItems()}
+                    {!isDriver && renderUpgradeDrawerItems()}
                 </View>
             </DrawerContentScrollView>
         );
@@ -253,6 +254,7 @@ function MyDrawer() {
             <Drawer.Screen name="ResetPassword2" component={ResetPassword2} />
             <Drawer.Screen name="SetName" component={SetName} />
             <Drawer.Screen name="VerifyPhone" component={VerifyPhone} />
+            <Drawer.Screen name="SuccessApproved" component={SuccessApproved} />
             <Drawer.Screen
                 name="SuccessResetPassword"
                 component={SuccessResetPassword}
@@ -282,20 +284,20 @@ const styles = StyleSheet.create({
     header: {
         width: "100%",
         backgroundColor: colors.primary,
-        height: 200,
+        height: 160,
         justifyContent: "center",
         alignItems: "center",
     },
     logoText: {
         color: colors.textDarker,
         fontFamily: "Poppins_400Regular",
-        fontSize: 60,
+        fontSize: 40,
         color: colors.white,
     },
     tagline: {
         color: colors.textLighter,
         fontFamily: "Inter_500Medium",
-        fontSize: 20,
+        fontSize: 14,
         color: colors.white,
     },
     center: {
