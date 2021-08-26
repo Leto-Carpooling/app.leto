@@ -56,6 +56,7 @@ const Map = () => {
                     onReady={(result) => {
                         console.log(`Distance: ${result.distance} km`);
                         console.log(`Duration: ${result.duration} min.`);
+                        // console.log(result);
                     }}
                 />
             )}

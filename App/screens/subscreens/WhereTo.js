@@ -14,17 +14,18 @@ import PlaceView from "../../components/PlaceView";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/core";
 import { AppContext } from "../../util/AppContext";
+import { Log } from "../../util/Logger";
 
 const WhereTo = () => {
     const navigation = useNavigation();
+    const { origin, setOrigin, setDest, dest } = useContext(AppContext);
     const [whereTo, onChangeWhereTo] = useState("");
-    const [whereFrom, onChangeWhereFrom] = useState("Current location");
+    const [whereFrom, onChangeWhereFrom] = useState(origin.name);
     const [toLoading, setToLoading] = useState(false);
     const [fromLoading, setFromLoading] = useState(false);
     const [timeoutId, setTimeoutId] = useState(null);
     // const [origin, setOrigin] = useState(null);
     // const [dest, setDest] = useState(null);
-    const { origin, setOrigin, setDest, dest } = useContext(AppContext);
     const [places, setPlaces] = useState([]);
     const [isTo, setIsTo] = useState(false);
 
@@ -124,17 +125,47 @@ const WhereTo = () => {
         console.log(place);
         if (isTo) {
             onChangeWhereTo(place.name);
+            var config = {
+                method: "get",
+                url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
+                headers: {},
+            };
+
+            axios(config)
+                .then(function (response) {
+                    console.log("place geo");
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             setDest({
-                lat: place.loc.lat,
-                lng: place.loc.lng,
+                // lat: place.loc.lat,
+                // lng: place.loc.lng,
                 name: place.name,
+                placeId: place.placeId,
             });
         } else {
             onChangeWhereFrom(place.name);
+            var config = {
+                method: "get",
+                url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
+                headers: {},
+            };
+
+            axios(config)
+                .then(function (response) {
+                    console.log("place geo");
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             setOrigin({
-                lat: place.loc.lat,
-                lng: place.loc.lng,
+                // lat: place.loc.lat,
+                // lng: place.loc.lng,
                 name: place.name,
+                placeId: place.placeId,
             });
         }
     }
@@ -143,23 +174,24 @@ const WhereTo = () => {
 function getPlaces(whereTo, setPlaces, isTo, setToLoading, setFromLoading) {
     var config = {
         method: "get",
-        url: `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${whereTo}&inputtype=textquery&language=en&fields=formatted_address,name,geometry&key=${GOOGLE_MAPS_API_KEY}`,
+        url: `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${whereTo}&types=address&language=en&key=${GOOGLE_MAPS_API_KEY}`,
         headers: {},
     };
 
     axios(config)
         .then(function (response) {
-            const candidates = response.data.candidates;
+            Log("autocomplete", response.data);
+            const candidates = response.data.predictions;
             const results = [];
             candidates.forEach((cand) => {
                 results.push({
-                    name: cand.name,
-                    addr: cand.formatted_address,
-                    loc: cand.geometry.location,
+                    mainText: cand.structured_formatting.main_text,
+                    secondaryText: cand.structured_formatting.secondary_text,
+                    placeId: cand.place_id,
                 });
             });
             isTo ? setToLoading(false) : setFromLoading(false);
-            //console.log(results);
+            Log("candidates", candidates);
             setPlaces(results);
         })
         .catch(function (error) {
