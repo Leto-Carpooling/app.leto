@@ -26,3 +26,27 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 export const database = firebase.database();
+
+/**
+ * Writes to the firebase database
+ * @param {string} url - the string of the path to which you are writing
+ * @param {JSON} data - the json data you want to write to the database
+ * @param {firebase.database.Database} db - the firebase database object
+ */
+export const writeToDatabase = async function (url, data, db){
+    return await db.ref(url).set(
+        data
+    );
+}
+
+
+
+/**
+ * Delete from firebase realtime db
+ * @param {string} url 
+ * @param {firebase.database.Database} db 
+ */
+export const deleteFromDatabase = async function (url, db){
+    return await db.ref(url).remove();
+}
+

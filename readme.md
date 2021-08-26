@@ -24,7 +24,7 @@ Now inside your functional component add this line which will extract the db obj
 
 `const {db} = useContext(AppContext)`
 
-#### Step 4: Use the extractec object
+#### Step 4: Use the extracted object
 
 You can then use the data as you wish
 
