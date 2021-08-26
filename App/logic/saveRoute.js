@@ -144,7 +144,11 @@ async function saveToFirebase(route, groupTimer, response) {
     });
 
     //save the group
-    
+    let usersIndex = {};
+    let locations = {};
+    let fares = {};
+    let onlineStatus = {};
+
     usersIndex[`uid-${userId}`] = true;
 
     locations[`uid-${userId}`] = {
@@ -154,11 +158,18 @@ async function saveToFirebase(route, groupTimer, response) {
 
     fares[`uid-${userId}`] = -1; //will calculate fare later.
 
-    updated = onlineStatus[`uid-${userId}`] = {
+    onlineStatus[`uid-${userId}`] = {
         updated: db.ServerValue.TIMESTAMP,
     };
 
     if(groupExists){
+        let updates = {};
+        updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
+        updates[`groups/gid-${groupId}/locations/uid-${userId}`] = locations[`uid-${userId}`];
+        updates[`groups/gid-${groupId}/fares/uid-${userId}`] = fares[`uid-${userId}`];
+        updates[`groups/gid-${groupId}/onlineStatus/uid-${userId}`] = onlineStatus[`uid-${userId}`];
+
+        await updateDatabase(updates, db);
 
     }
     else{
