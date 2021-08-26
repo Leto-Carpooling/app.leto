@@ -14,39 +14,15 @@ import {
 
 const firebaseConfig = {
     apiKey: FIREBASE_APP_API_KEY,
-    authDomain: "leto-322311.firebaseapp.com",
-    databaseURL: "https://leto-322311-default-rtdb.firebaseio.com",
-    projectId: "leto-322311",
-    storageBucket: "leto-322311.appspot.com",
-    messagingSenderId: "940009095847",
-    appId: "1:940009095847:web:e82f40e2ed4bf301e81182",
-    measurementId: "G-NJ7P1YNWZ9",
+    authDomain: FIREBASE_APP_AUTH_DOMAIN,
+    databaseURL: FIREBASE_APP_DATABASE_URL,
+    projectId: FIREBASE_APP_PROJECT_ID,
+    storageBucket: FIREBASE_APP_STORAGE_BUCKET,
+    messagingSenderId: FIREBASE_APP_MESSAGING_SENDER_ID,
+    appId: FIREBASE_APP_APP_ID,
+    measurementId: FIREBASE_APP_MEASUREMENT_ID,
 };
 
 firebase.initializeApp(firebaseConfig);
 
 export const database = firebase.database();
-
-/**
- * Writes to the firebase database
- * @param {string} url - the string of the path to which you are writing
- * @param {JSON} data - the json data you want to write to the database
- * @param {firebase.database.Database} db - the firebase database object
- */
-export const writeToDatabase = async function (url, data, db){
-    return await db.ref(url).set(
-        data
-    );
-}
-
-
-
-/**
- * Delete from firebase realtime db
- * @param {string} url 
- * @param {firebase.database.Database} db 
- */
-export const deleteFromDatabase = async function (url, db){
-    return await db.ref(url).remove();
-}
-

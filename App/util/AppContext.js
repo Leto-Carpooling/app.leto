@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { database, writeToDatabase, deleteFromDatabase } from "./firebase";
+import { database } from "../util/firebase";
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
@@ -10,9 +10,7 @@ export const AppContextProvider = ({ children }) => {
     const [dest, setDest] = useState(null);
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
     const [db] = useState(database);
-    const [writeToDb] = useState(writeToDatabase);
-    const [deleteFromDb] = useState(deleteFromDatabase);
-    
+
     useEffect(() => {
         getUser(setUser);
         getIsDriver(setIsDriver);
@@ -46,7 +44,7 @@ async function getUser(setUser) {
 async function getIsDriver(setIsDriver) {
     const is_driver = await AsyncStorage.getItem("@is_driver");
     //Log("getUser", user);
-    setIsDriver(is_driver ? true : false);
+    setIsDriver(is_driver ? false : false);
 }
 
 async function getUpgradeSubmitted(setUpgradeSubmitted) {

@@ -8,7 +8,7 @@ import colors from "../assets/colors/colors";
 const PlaceView = ({ place, onPress }) => {
     return (
         <TouchableOpacity
-            style={tw`bg-gray-100 rounded p-2 flex-row items-center`}
+            style={tw`bg-gray-100 rounded p-2 flex-row items-center mb-1`}
             onPress={onPress}
         >
             <MaterialIcons
@@ -24,7 +24,7 @@ const PlaceView = ({ place, onPress }) => {
                         { fontFamily: fonts.interMedium },
                     ]}
                 >
-                    {place.name}
+                    {place.mainText}
                 </Text>
                 <Text
                     style={[
@@ -32,7 +32,7 @@ const PlaceView = ({ place, onPress }) => {
                         { fontFamily: fonts.interMedium },
                     ]}
                 >
-                    {place.addr}
+                    {place.secondaryText}
                 </Text>
             </View>
         </TouchableOpacity>
