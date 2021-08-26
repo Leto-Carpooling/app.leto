@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { database } from "./firebase";
+import { database, writeToDatabase, deleteFromDatabase } from "./firebase";
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
@@ -10,6 +10,9 @@ export const AppContextProvider = ({ children }) => {
     const [dest, setDest] = useState(null);
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
     const [db] = useState(database);
+    const [writeToDb] = useState(writeToDatabase);
+    const [deleteFromDb] = useState(deleteFromDatabase);
+    
     useEffect(() => {
         getUser(setUser);
         getUpgradeSubmitted(setUpgradeSubmitted);
