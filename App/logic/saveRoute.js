@@ -5,6 +5,7 @@ import {
     deleteFromDatabase,
     updateDatabase,
 } from "./rtdbFunctions";
+import firebase from "firebase/app";
 
 /**
  * This function saves the route to firebase after receiving its id from the OT server.
@@ -16,7 +17,7 @@ import {
  *
  */
 
-export const saveRoute = (route, user, db, callback) => {
+export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
     const config = {
         headers: {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -29,27 +30,30 @@ export const saveRoute = (route, user, db, callback) => {
 
     const formData = new FormData();
     let route0leg0 = route.routes[0].legs[0];
-    start_latitude = route0leg0.start_location.lat;
-    start_longitude = route0leg0.start_location.lng;
-    end_latitude = route0leg0.end_location.lat;
-    end_longitude = route0leg0.end_location.lng;
+    let start_latitude = route0leg0.start_location.lat;
+    let start_longitude = route0leg0.start_location.lng;
+    let end_latitude = route0leg0.end_location.lat;
+    let end_longitude = route0leg0.end_location.lng;
 
-    routePoints = {
+    let routePoints = {
         start_latitude,
         start_longitude,
         end_latitude,
         end_longitude,
+        rideType,
     };
 
     formData.append("route-points", JSON.stringify(routePoints));
 
-    api.post(`route/saveRoute.php`, formData, config)
+    Log("token", user);
+
+    api.post(`route/saveAndGroup.php`, formData, config)
         .then((resp) => {
             Log("Adding route", resp.data);
 
             if (resp.data.status == "OK") {
-                deleteFromFirebase(route, resp, db);
-                saveToFirebase(route, resp, db).then(callback);
+                deleteFromFirebase(resp, db);
+                saveToFirebase(route, groupTimer, resp, db).then(callback);
             } else {
                 console.log(resp.data);
             }
@@ -66,7 +70,8 @@ export const saveRoute = (route, user, db, callback) => {
  * @param {int} groupTimer - the time the user will like to wait for others to join
  */
 async function saveToFirebase(route, groupTimer, response, db) {
-    message = response.data.message;
+    let message = JSON.parse(response.data.message);
+    Log("msg", message);
 
     let routeId = message.routeId;
     let userId = message.userId;
@@ -141,9 +146,10 @@ async function saveToFirebase(route, groupTimer, response, db) {
     fares[`uid-${userId}`] = -1; //will calculate fare later.
 
     onlineStatus[`uid-${userId}`] = {
-        updated: db.ServerValue.TIMESTAMP,
+        updated: firebase.database.ServerValue.TIMESTAMP,
     };
 
+    Log("151", groupId);
     if (groupExists) {
         let updates = {};
         updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
@@ -189,7 +195,8 @@ async function saveToFirebase(route, groupTimer, response, db) {
  * @param {JSON} response - response from the OT server
  */
 function deleteFromFirebase(response, db) {
-    let message = response.data.message;
+    let message = JSON.parse(response.data.message);
+    //console.log(message);
 
     //delete from groups
     if (message.deletedGroups.length > 0) {
@@ -199,8 +206,8 @@ function deleteFromFirebase(response, db) {
     }
 
     //delete from the routes
-    if (message.deleteRoutes.length > 0) {
-        message.deleteRoutes.forEach((routeId) => {
+    if (message.deletedRoutes.length > 0) {
+        message.deletedRoutes.forEach((routeId) => {
             //delete steps
             deleteFromDatabase(`routes/steps/rid-${routeId}`, db);
 

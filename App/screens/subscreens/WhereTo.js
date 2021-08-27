@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/core";
 import { AppContext } from "../../util/AppContext";
 import { Log } from "../../util/Logger";
 
-const WhereTo = () => {
+const WhereTo = ({ route }) => {
     const navigation = useNavigation();
     const { origin, setOrigin, setDest, dest } = useContext(AppContext);
     const [whereTo, onChangeWhereTo] = useState("");
@@ -35,7 +35,7 @@ const WhereTo = () => {
     /** when both origin and destination are set route.. */
     useEffect(() => {
         if (dest != null && origin != null) {
-            navigation.navigate("HangTight");
+            navigation.navigate("HangTight", route.params);
         }
     }, [dest, origin]);
 

@@ -28,7 +28,7 @@ const RideTypeChooser = () => {
                         />
                     }
                     onPress={() => {
-                        navigation.navigate("WhereTo");
+                        navigation.navigate("WhereTo", { rideType: 0 });
                     }}
                 />
                 <CardButton
@@ -41,7 +41,7 @@ const RideTypeChooser = () => {
                         />
                     }
                     onPress={() => {
-                        navigation.navigate("WhereTo");
+                        navigation.navigate("WhereTo", { rideType: 0 });
                     }}
                 />
             </View>
