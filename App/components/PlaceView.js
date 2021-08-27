@@ -19,16 +19,18 @@ const PlaceView = ({ place, onPress }) => {
             />
             <View>
                 <Text
+                    numberOfLines={1}
                     style={[
-                        tw`text-gray-600 text-lg`,
+                        tw`text-gray-600 text-lg w-11/12`,
                         { fontFamily: fonts.interMedium },
                     ]}
                 >
                     {place.mainText}
                 </Text>
                 <Text
+                    numberOfLines={1}
                     style={[
-                        tw`text-gray-500 text-sm`,
+                        tw`text-gray-500 text-sm w-11/12`,
                         { fontFamily: fonts.interMedium },
                     ]}
                 >

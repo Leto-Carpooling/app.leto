@@ -40,6 +40,9 @@ const RideTypeChooser = () => {
                             color={colors.textDarker}
                         />
                     }
+                    onPress={() => {
+                        navigation.navigate("WhereTo");
+                    }}
                 />
             </View>
             <Spacer height={20} />
