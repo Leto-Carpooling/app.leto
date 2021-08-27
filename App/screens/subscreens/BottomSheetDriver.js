@@ -21,7 +21,7 @@ const BottomSheetDriver = () => {
         >
             {renderHeader()}
 
-            <Stack.Navigator initialRouteName="DriverStatus">
+            <Stack.Navigator initialRouteName="RideStatus">
                 <Stack.Screen
                     name="DriverStatus"
                     component={DriverStatus}

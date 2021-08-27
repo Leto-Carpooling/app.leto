@@ -12,18 +12,22 @@ import { useNavigation } from "@react-navigation/core";
 import PriceLabel from "../../components/PriceLabel";
 import { Button } from "../../components/Button";
 import { getRoute } from "../../logic/getRoute";
+import { saveRoute } from "../../logic/saveRoute";
 import { Log } from "../../util/Logger";
 
 const HangTight = () => {
     const navigation = useNavigation();
     const [status, setstatus] = useState(0);
-    const { origin, dest } = useContext(AppContext);
+    const { origin, dest, user, db } = useContext(AppContext);
 
     //get the riders route
     useEffect(() => {
         (async () => {
             const route = await getRoute(origin.placeId, dest.placeId);
-            Log("riders route", route);
+            //Log("riders route", route);
+            saveRoute(route, 300, user, db, (routeInfo) => {
+                console.log(routeInfo);
+            });
         })();
     }, []);
 
