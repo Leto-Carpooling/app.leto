@@ -32,11 +32,12 @@ const WhereTo = () => {
     useEffect(() => {
         setPlaces([]);
     }, [whereTo, whereFrom]);
+
     useEffect(() => {
         if (dest != null && origin != null) {
             navigation.navigate("HangTight");
         }
-    }, [dest]);
+    }, [dest, origin]);
 
     useEffect(() => {
         if (timeoutId) {
@@ -124,7 +125,7 @@ const WhereTo = () => {
     function handlePress(place) {
         console.log(place);
         if (isTo) {
-            onChangeWhereTo(place.name);
+            onChangeWhereTo(place.mainText);
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -132,21 +133,21 @@ const WhereTo = () => {
             };
 
             axios(config)
-                .then(function (response) {
-                    console.log("place geo");
-                    console.log(JSON.stringify(response.data));
+                .then(function (resp) {
+                    //console.log("place geo");
+                    //console.log(JSON.stringify(response.data));
+                    setDest({
+                        lat: resp.data.result.geometry.location.lat,
+                        lng: resp.data.result.geometry.location.lng,
+                        name: place.mainText,
+                        placeId: place.placeId,
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
-            setDest({
-                // lat: place.loc.lat,
-                // lng: place.loc.lng,
-                name: place.name,
-                placeId: place.placeId,
-            });
         } else {
-            onChangeWhereFrom(place.name);
+            onChangeWhereFrom(place.mainText);
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -154,19 +155,19 @@ const WhereTo = () => {
             };
 
             axios(config)
-                .then(function (response) {
-                    console.log("place geo");
-                    console.log(JSON.stringify(response.data));
+                .then(function (resp) {
+                    //console.log("place geo");
+                    //console.log(resp.data);
+                    setOrigin({
+                        lat: resp.data.result.geometry.location.lat,
+                        lng: resp.data.result.geometry.location.lng,
+                        name: place.mainText,
+                        placeId: place.placeId,
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
-            setOrigin({
-                // lat: place.loc.lat,
-                // lng: place.loc.lng,
-                name: place.name,
-                placeId: place.placeId,
-            });
         }
     }
 };
