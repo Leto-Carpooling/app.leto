@@ -2,7 +2,7 @@ import { api } from "../config/api";
 import React, { useContext } from "react";
 import { AppContext } from "../util/AppContext";
 import { Log } from "../util/Logger";
-
+import { writeToDatabase, deleteFromDatabase, updateDatabase} from "./rtdbFunctions";
 const { db, user } = useContext(AppContext);
 
 /**
@@ -45,7 +45,23 @@ export default function saveRoute(route, callback) {
     const params = new URLSearchParams();
     params.append("route-id", "new");
 
-    api.post(`route/saveRoute.php`, params, config)
+    const formData = new FormData();
+    let route0leg0 = route.routes[0].legs[0];
+    start_latitude = route0leg0.start_location.lat;
+    start_longitude = route0leg0.start_location.lng;
+    end_latitude = route0leg0.end_location.lat;
+    end_longitude = route0leg0.end_location.lng;
+
+    routePoints = {
+        start_latitude,
+        start_longitude,
+        end_latitude,
+        end_longitude
+    }
+
+    formData.append("route-points", JSON.stringify(routePoints));
+
+    api.post(`route/saveRoute.php`, formData, config)
         .then((resp) => {
             Log("Adding route", resp.data);
 
@@ -74,6 +90,7 @@ async function saveToFirebase(route, groupTimer, response) {
     let userId = message.userId;
     let groupId = message.groupId;
     let route0 = route.routes[0];
+    let groupExists = message.groupExists;
 
     let legs = route0.legs;
 
@@ -127,6 +144,11 @@ async function saveToFirebase(route, groupTimer, response) {
     });
 
     //save the group
+    let usersIndex = {};
+    let locations = {};
+    let fares = {};
+    let onlineStatus = {};
+
     usersIndex[`uid-${userId}`] = true;
 
     locations[`uid-${userId}`] = {
@@ -136,25 +158,39 @@ async function saveToFirebase(route, groupTimer, response) {
 
     fares[`uid-${userId}`] = -1; //will calculate fare later.
 
-    updated = onlineStatus[`uid-${userId}`] = {
+    onlineStatus[`uid-${userId}`] = {
         updated: db.ServerValue.TIMESTAMP,
     };
 
-    await writeToDatabase(
-        `groups/gid-${groupId}`,
-        {
-            startPlaceId: geocodedWp[0].place_id,
-            endPlaceId: geocodedWp[geocodedWp.length - 1].place_id,
-            usersIndex,
-            pickUpPointId: geocodedWp[0].place_id,
-            fares,
-            locations,
-            timer: groupTimer,
-            onlineStatus,
-        },
-        db
-    );
+    if(groupExists){
+        let updates = {};
+        updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
+        updates[`groups/gid-${groupId}/locations/uid-${userId}`] = locations[`uid-${userId}`];
+        updates[`groups/gid-${groupId}/fares/uid-${userId}`] = fares[`uid-${userId}`];
+        updates[`groups/gid-${groupId}/onlineStatus/uid-${userId}`] = onlineStatus[`uid-${userId}`];
 
+        await updateDatabase(updates, db);
+
+    }
+    else{
+    
+        await writeToDatabase(
+            `groups/gid-${groupId}`,
+            {
+                startPlaceId: geocodedWp[0].place_id,
+                endPlaceId: geocodedWp[geocodedWp.length - 1].place_id,
+                usersIndex,
+                pickUpPointId: geocodedWp[0].place_id,
+                fares,
+                locations,
+                timer: groupTimer,
+                onlineStatus,
+            },
+            db
+        );
+    
+    }
+    
     return {
         groupId,
         userId,
