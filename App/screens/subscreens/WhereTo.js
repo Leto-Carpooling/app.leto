@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_API_KEY } from "@env";
@@ -24,28 +24,29 @@ const WhereTo = () => {
     const [toLoading, setToLoading] = useState(false);
     const [fromLoading, setFromLoading] = useState(false);
     const [timeoutId, setTimeoutId] = useState(null);
-    // const [origin, setOrigin] = useState(null);
-    // const [dest, setDest] = useState(null);
     const [places, setPlaces] = useState([]);
     const [isTo, setIsTo] = useState(false);
 
+    /** Clear results */
     useEffect(() => {
         setPlaces([]);
     }, [whereTo, whereFrom]);
 
+    /** when both origin and destination are set route.. */
     useEffect(() => {
         if (dest != null && origin != null) {
             navigation.navigate("HangTight");
         }
     }, [dest, origin]);
 
+    /** run timer to implement a debounce of 400ms for WhereTo */
     useEffect(() => {
         if (timeoutId) {
             clearTimeout(timeoutId);
         }
 
         let newTimeoutId;
-        if (whereTo != "") {
+        if (whereTo != "" && whereTo != dest?.name) {
             setToLoading(true);
             setIsTo(true);
             newTimeoutId = setTimeout(() => {
@@ -61,15 +62,15 @@ const WhereTo = () => {
         setTimeoutId(newTimeoutId);
     }, [whereTo]);
 
+    /** run timer to implement a debounce of 400ms for WhereFrom */
     useEffect(() => {
         if (timeoutId) {
             clearTimeout(timeoutId);
         }
 
         let newTimeoutId;
-        if (whereFrom != "" && whereFrom != "Current location") {
+        if (whereFrom != "" && whereFrom != origin.name) {
             setFromLoading(true);
-
             setIsTo(false);
             newTimeoutId = setTimeout(() => {
                 getPlaces(
@@ -83,6 +84,7 @@ const WhereTo = () => {
         }
         setTimeoutId(newTimeoutId);
     }, [whereFrom]);
+
     return (
         <View style={tw`flex-1 bg-white flex-col p-2`}>
             <Text
@@ -110,22 +112,29 @@ const WhereTo = () => {
                     loading={toLoading}
                 />
             </View>
-            <View style={tw`p-2`}>
-                {places.map((place, index) => (
-                    <PlaceView
-                        key={index}
-                        place={place}
-                        onPress={() => handlePress(place)}
-                    />
-                ))}
-            </View>
+            <ScrollView>
+                <View style={tw`p-2`}>
+                    {places.map((place, index) => (
+                        <PlaceView
+                            key={index}
+                            place={place}
+                            onPress={() => handlePress(place)}
+                        />
+                    ))}
+                </View>
+            </ScrollView>
         </View>
     );
 
+    /**
+     *
+     * @param {Object} place place object with coordinates
+     * sets the location details on press.
+     */
     function handlePress(place) {
         console.log(place);
         if (isTo) {
-            onChangeWhereTo(place.mainText);
+            //set text on the textfield
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -134,20 +143,18 @@ const WhereTo = () => {
 
             axios(config)
                 .then(function (resp) {
-                    //console.log("place geo");
-                    //console.log(JSON.stringify(response.data));
                     setDest({
                         lat: resp.data.result.geometry.location.lat,
                         lng: resp.data.result.geometry.location.lng,
                         name: place.mainText,
                         placeId: place.placeId,
                     });
+                    onChangeWhereTo(place.mainText);
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
         } else {
-            onChangeWhereFrom(place.mainText);
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -156,14 +163,13 @@ const WhereTo = () => {
 
             axios(config)
                 .then(function (resp) {
-                    //console.log("place geo");
-                    //console.log(resp.data);
                     setOrigin({
                         lat: resp.data.result.geometry.location.lat,
                         lng: resp.data.result.geometry.location.lng,
                         name: place.mainText,
                         placeId: place.placeId,
                     });
+                    onChangeWhereFrom(place.mainText);
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -175,7 +181,7 @@ const WhereTo = () => {
 function getPlaces(whereTo, setPlaces, isTo, setToLoading, setFromLoading) {
     var config = {
         method: "get",
-        url: `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${whereTo}&types=address&language=en&key=${GOOGLE_MAPS_API_KEY}`,
+        url: `https://maps.googleapis.com/maps/api/place/autocomplete/json?components=country:ke&input=${whereTo}&types=establishment&language=en&key=${GOOGLE_MAPS_API_KEY}`,
         headers: {},
     };
 
@@ -192,7 +198,6 @@ function getPlaces(whereTo, setPlaces, isTo, setToLoading, setFromLoading) {
                 });
             });
             isTo ? setToLoading(false) : setFromLoading(false);
-            Log("candidates", candidates);
             setPlaces(results);
         })
         .catch(function (error) {

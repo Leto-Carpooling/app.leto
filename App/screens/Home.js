@@ -129,13 +129,13 @@ export default ({ navigation }) => {
         await Location.watchPositionAsync({}, (location) => {
             var config = {
                 method: "get",
-                url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&radius=400&key=${GOOGLE_MAPS_API_KEY}`,
+                url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&rankby=distance&type=route&key=${GOOGLE_MAPS_API_KEY}`,
                 headers: {},
             };
 
             axios(config)
                 .then(function (response) {
-                    //console.log(response.data.results[0].place_id);
+                    console.log(response.data.results);
                     setOrigin({
                         lat: location.coords.latitude,
                         lng: location.coords.longitude,
