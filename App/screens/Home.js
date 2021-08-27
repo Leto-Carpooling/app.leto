@@ -126,28 +126,32 @@ export default ({ navigation }) => {
             Log("location", "denied");
             return;
         }
-        //console.log(await Location.hasServicesEnabledAsync());
-        let location = await Location.getLastKnownPositionAsync({});
-        console.log(location);
-        var config = {
-            method: "get",
-            url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&radius=400&key=${GOOGLE_MAPS_API_KEY}`,
-            headers: {},
-        };
+        await Location.watchPositionAsync({}, (location) => {
+            var config = {
+                method: "get",
+                url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.coords.latitude},${location.coords.longitude}&radius=400&key=${GOOGLE_MAPS_API_KEY}`,
+                headers: {},
+            };
 
-        axios(config)
-            .then(function (response) {
-                //console.log(response.data.results[0].place_id);
-                setOrigin({
-                    lat: location.coords.latitude,
-                    lng: location.coords.longitude,
-                    name: response.data.results[0].name,
-                    placeId: response.data.results[0].place_id,
+            axios(config)
+                .then(function (response) {
+                    //console.log(response.data.results[0].place_id);
+                    setOrigin({
+                        lat: location.coords.latitude,
+                        lng: location.coords.longitude,
+                        name: response.data.results[0].name,
+                        placeId: response.data.results[0].place_id,
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
                 });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        });
+
+        // let location = await Location.getCurrentPositionAsync({
+        //     enableHighAccuracy: true,
+        // });
+        //console.log(location);
     }
 };
 
