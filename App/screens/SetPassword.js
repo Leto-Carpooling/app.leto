@@ -131,7 +131,7 @@ export default ({ route, navigation }) => {
                         "application/x-www-form-urlencoded; charset=UTF-8",
                 },
             };
-            api.post(`signup.php`, params, config)
+            api.post(`user/signup.php`, params, config)
                 .then((resp) => {
                     Log("checkPassword:134", resp.data);
                     if (resp.data.status !== "OK") {

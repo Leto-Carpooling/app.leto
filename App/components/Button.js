@@ -13,7 +13,7 @@ export const Button = ({ onPress, text, loading, iconName, disabled }) => {
     const styles = StyleSheet.create({
         button: {
             backgroundColor: disabled ? colors.disbaled : colors.primary,
-            elevation: 5,
+            elevation: 1,
             flexDirection: "row",
             paddingHorizontal: 15,
             paddingVertical: 13,

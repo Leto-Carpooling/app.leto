@@ -116,7 +116,7 @@ export default ({ route, navigation }) => {
                         auth: token,
                     },
                 };
-                api.post(`editProfile.php`, params, config)
+                api.post(`user/editProfile.php`, params, config)
                     .then((resp) => {
                         console.log(resp.data); //OK
                         if (resp.data.status !== "OK") {
