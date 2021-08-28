@@ -11,7 +11,6 @@ import firebase from "firebase/app";
  * This function saves the route to firebase after receiving its id from the OT server.
  * Every user can only have one active route, so every other uncompleted routes will be deleted
  * and completed routes will remain
- *
  * @param {MapAPIRoute} route
  * @param {Function} callback - the callback function to handle the response.
  *
