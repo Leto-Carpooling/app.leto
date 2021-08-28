@@ -46,14 +46,15 @@ import { api } from "./api";
 import { Log } from "../util/Logger";
 import SuccessApproved from "../screens/SuccessApproved";
 import BottomSheetTest from "../test/BottomSheetTest";
+import {
+    removeUpgradeStatus,
+    removeDriverStatus,
+    removeDocSubmissions,
+} from "../util/cleanup";
 
 function CustomDrawerContent({ navigation, ...props }) {
-    //const [user, setUser] = useState({});
     const [profileBox, setProfileBox] = useState(null);
-    // const [loading, setLoading] = useState(true);
-    // //console.log(user);
     const { user, upgradeSubmitted, isDriver } = useContext(AppContext);
-    //console.log(user);
     useEffect(() => {
         setProfileBox(
             user && (
@@ -147,6 +148,9 @@ const logout = async (navigation) => {
     try {
         await invalidateToken();
         await AsyncStorage.removeItem("@user");
+        await removeDocSubmissions();
+        await removeDriverStatus();
+        await removeUpgradeStatus();
         navigation.reset({
             index: 0,
             routes: [{ name: "OnBoarding" }],

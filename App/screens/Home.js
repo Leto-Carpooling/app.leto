@@ -23,6 +23,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 import AppBottomSheet from "../components/AppBottomSheet";
+import { removeDocSubmissions, removeUpgradeStatus } from "../util/cleanup";
 
 export default ({ navigation }) => {
     const {
@@ -96,6 +97,8 @@ export default ({ navigation }) => {
                         resp.data.message === "approved"
                     ) {
                         setIsDriver(true);
+                        removeUpgradeStatus();
+                        removeDocSubmissions();
                         navigation.navigate("SuccessApproved");
                         setUserIsDriver();
                     }
