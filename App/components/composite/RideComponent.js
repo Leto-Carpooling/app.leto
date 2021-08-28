@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import colors from "../../assets/colors/colors";
-import { Avatar } from "../Avatar";
-import FontStyles from "../FontStyles";
-import PriceLabel from "../PriceLabel";
-import Spacer from "../Spacer";
+import { Avatar } from "../img/Avatar";
+import FontStyles from "../../assets/fonts/FontStyles";
+import PriceLabel from "../display/PriceLabel";
 import { MaterialIcons } from "@expo/vector-icons";
 const RideComponent = ({ actionText, onPress }) => {
     const [riders, setRiders] = useState([
