@@ -54,8 +54,6 @@ const Map = () => {
                     strokeWidth={5}
                     strokeColor="black"
                     onReady={(result) => {
-                        console.log(`Distance: ${result.distance} km`);
-                        console.log(`Duration: ${result.duration} min.`);
                         // console.log(result);
                     }}
                 />
@@ -66,8 +64,8 @@ const Map = () => {
                         latitude: origin.lat,
                         longitude: origin.lng,
                     }}
-                    title="You"
-                    description={"Current location"}
+                    title={origin.mainText}
+                    description={origin.secondaryText}
                     identifier="origin"
                 />
             )}
