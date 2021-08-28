@@ -29,7 +29,7 @@ const Map = () => {
 
     return (
         <MapView
-            style={tw`flex-1`}
+            style={{ height: "75%" }}
             mapType="mutedStandard"
             ref={mapRef}
             initialRegion={{

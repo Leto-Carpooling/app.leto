@@ -1,10 +1,6 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { View } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
-import colors from "../assets/colors/colors";
-import PlaceView from "../components/PlaceView";
-import { ScrollView } from "react-native-gesture-handler";
-import { TextField } from "../components/TextField";
 import tw from "tailwind-react-native-classnames";
 
 export default ({ children }) => {
