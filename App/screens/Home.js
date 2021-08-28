@@ -22,6 +22,7 @@ import { Log } from "../util/Logger";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GOOGLE_MAPS_API_KEY } from "@env";
+import AppBottomSheet from "../components/AppBottomSheet";
 
 export default ({ navigation }) => {
     const {
@@ -54,38 +55,27 @@ export default ({ navigation }) => {
         return <AppLoading />;
     } else {
         return (
-            <ScrollView>
-                <View>
-                    <View
-                        style={{
-                            height: Dimensions.get("window").height * 0.7,
-                        }}
-                    >
-                        <Map />
-                        <SafeAreaView style={tw`absolute top-5 right-5`}>
-                            <View style={tw`rounded-full p-2 bg-white`}>
-                                <IconButton
-                                    icon={
-                                        <MaterialIcons
-                                            name="menu"
-                                            size={25}
-                                            color={colors.iconDark}
-                                        />
-                                    }
-                                    onPress={() => navigation.toggleDrawer()}
+            <View style={[tw`flex-1`]}>
+                <Map />
+                <SafeAreaView style={tw`absolute top-5 right-5`}>
+                    <View style={tw`rounded-full p-2 bg-white`}>
+                        <IconButton
+                            icon={
+                                <MaterialIcons
+                                    name="menu"
+                                    size={25}
+                                    color={colors.iconDark}
                                 />
-                            </View>
-                        </SafeAreaView>
+                            }
+                            onPress={() => navigation.toggleDrawer()}
+                        />
                     </View>
-                    <View style={styles.height_90}>
-                        {isDriver ? (
-                            <BottomSheetDriver />
-                        ) : (
-                            <BottomSheetRider />
-                        )}
-                    </View>
-                </View>
-            </ScrollView>
+                </SafeAreaView>
+
+                <AppBottomSheet>
+                    {isDriver ? <BottomSheetDriver /> : <BottomSheetRider />}
+                </AppBottomSheet>
+            </View>
         );
     }
 
