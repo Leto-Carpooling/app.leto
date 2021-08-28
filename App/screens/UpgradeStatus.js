@@ -22,6 +22,7 @@ import FontStyles from "../components/FontStyles";
 import ApprovalStatus from "../components/info/ApprovalStatus";
 import { api } from "../config/api";
 import { Log } from "../util/Logger";
+import { removeUpgradeStatus, removeDocSubmissions } from "../util/cleanup";
 
 export default ({ navigation }) => {
     const { setUpgradeSubmitted, user } = useContext(AppContext);
@@ -124,62 +125,13 @@ export default ({ navigation }) => {
     }
 
     async function reset() {
-        const choosers = [
-            {
-                id: "nid-image",
-                label: "National ID",
-                endPoint: "driverUploads.php",
-            },
-            ,
-            {
-                id: "reg-li-image",
-                label: "Driver's License",
-                endPoint: "driverUploads.php",
-            },
-            ,
-            {
-                id: "psv-li-image",
-                label: "PSV License",
-                endPoint: "driverUploads.php",
-            },
-            ,
-            {
-                id: "good-conduct-image",
-                label: "Good Conduct Certificate",
-                endPoint: "driverUploads.php",
-            },
-            {
-                id: "v-ins-image",
-                label: "Vehicle Insurance",
-                endPoint: "vehicleUploads.php",
-            },
-            {
-                id: "v-reg-image",
-                label: "Logbook",
-                endPoint: "vehicleUploads.php",
-            },
-            {
-                id: "v-ir-image",
-                label: "NTSA Inspection Report",
-                endPoint: "vehicleUploads.php",
-            },
-        ];
-        choosers.map((chooser) => {
-            rmChooserId(chooser.id);
+        removeDocSubmissions();
+        removeUpgradeStatus();
+        setUpgradeSubmitted(false);
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
         });
-        await AsyncStorage.removeItem("@upgrade", async () => {
-            await AsyncStorage.removeItem("@upgradeSubmitted", () => {
-                setUpgradeSubmitted(false);
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Home" }],
-                });
-            });
-        });
-    }
-
-    async function rmChooserId(id) {
-        await AsyncStorage.removeItem(`@${id}`);
     }
 };
 
