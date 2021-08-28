@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import colors from "../assets/colors/colors";
-import PlaceView from "../components/PlaceView";
+import PlaceView from "../components/display/PlaceView";
 import { ScrollView } from "react-native-gesture-handler";
-import { TextField } from "../components/TextField";
+import { TextField } from "../components/input/TextField";
 
 export default () => {
     const [views, setViews] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);

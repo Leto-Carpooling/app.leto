@@ -1,51 +1,47 @@
 import React, { useState, useEffect, useContext } from "react";
+import { Text, View, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MaterialIcons } from "@expo/vector-icons";
 import {
     createDrawerNavigator,
     DrawerContentScrollView,
-    DrawerItemList,
     DrawerItem,
 } from "@react-navigation/drawer";
-
-import OnBoarding from "../screens/OnBoarding";
-import SignUp from "../screens/SignUp";
-import SetPassword from "../screens/SetPassword";
-import SuccessSignUp from "../screens/SuccessSignUp";
-import Login from "../screens/Login";
-import Home from "../screens/Home";
-import { Text, View, StyleSheet } from "react-native";
-import colors from "../assets/colors/colors";
-
+import { MaterialIcons } from "@expo/vector-icons";
 import { AppContext } from "../util/AppContext";
-
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import AppLoading from "expo-app-loading";
-import VerifyEmail from "../screens/VerifyEmail";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ProfileBox } from "../components/ProfileBox";
-import Spacer from "../components/Spacer";
-import Profile from "../screens/Profile";
-import UpgradeOne from "../screens/UpgradeOne";
-import UpgradeTwo from "../screens/UpgradeTwo";
-import UpgradeThree from "../screens/UpgradeThree";
-import UpgradeSubmitted from "../screens/UpgradeSubmitted";
-import UpgradeStatus from "../screens/UpgradeStatus";
-import ForgotPassword from "../screens/ForgotPassword";
-import ResetPassword from "../screens/ResetPassword";
-import ResetPassword2 from "../screens/ResetPassword2";
-import SuccessResetPassword from "../screens/SuccessResetPassword";
-import SuccessResetPassword2 from "../screens/SuccessResetPassword2";
-import SetName from "../screens/SetName";
-import VerifyPhone from "../screens/VerifyPhone";
 
-import { api } from "./api";
+import { ProfileBox } from "../components/display/ProfileBox";
+import colors from "../assets/colors/colors";
+import Spacer from "../components/aux/Spacer";
+import { api } from "../util/api";
 import { Log } from "../util/Logger";
-import SuccessApproved from "../screens/SuccessApproved";
-import BottomSheetTest from "../test/BottomSheetTest";
+
+import OnBoarding from "../screens/onboarding/OnBoarding";
+import SignUp from "../screens/auth/SignUp";
+import SetPassword from "../screens/auth/SetPassword";
+import SuccessSignUp from "../screens/info/SuccessSignUp";
+import Login from "../screens/auth/Login";
+import Home from "../screens/home/Home";
+import VerifyEmail from "../screens/auth/VerifyEmail";
+import Profile from "../screens/profile/Profile";
+import UpgradeOne from "../screens/upgrade/UpgradeOne";
+import UpgradeTwo from "../screens/upgrade/UpgradeTwo";
+import UpgradeThree from "../screens/upgrade/UpgradeThree";
+import UpgradeSubmitted from "../screens/upgrade/UpgradeSubmitted";
+import UpgradeStatus from "../screens/upgrade/UpgradeStatus";
+import ForgotPassword from "../screens/auth/ForgotPassword";
+import ResetPassword from "../screens/auth/ResetPassword";
+import ResetPassword2 from "../screens/auth/ResetPassword2";
+import SuccessResetPassword from "../screens/info/SuccessResetPassword";
+import SuccessResetPassword2 from "../screens/info/SuccessResetPassword2";
+import SetName from "../screens/auth/SetName";
+import VerifyPhone from "../screens/profile/VerifyPhone";
+import SuccessApproved from "../screens/info/SuccessApproved";
+
 import {
     removeUpgradeStatus,
     removeDriverStatus,
