@@ -19,8 +19,6 @@ const BottomSheetDriver = () => {
         <View
             style={[tw`bg-white rounded-tl-lg rounded-tr-lg shadow-lg flex-1`]}
         >
-            {renderHeader()}
-
             <Stack.Navigator initialRouteName="RideStatus">
                 <Stack.Screen
                     name="DriverStatus"

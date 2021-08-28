@@ -17,8 +17,6 @@ const BottomSheetRider = () => {
         <View
             style={[tw`bg-white rounded-tl-lg rounded-tr-lg shadow-lg flex-1`]}
         >
-            {renderHeader()}
-
             <Stack.Navigator initialRouteName="RideTypeChooser">
                 <Stack.Screen
                     name="RideTypeChooser"
