@@ -12,6 +12,7 @@ import tw from "tailwind-react-native-classnames";
 import * as Location from "expo-location";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import firebase from "firebase/app";
 
 import { GOOGLE_MAPS_API_KEY } from "@env";
 
@@ -37,6 +38,8 @@ export default ({ navigation }) => {
         user,
         db,
         ready,
+        setCurLoc,
+        curLoc,
     } = useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
@@ -51,6 +54,7 @@ export default ({ navigation }) => {
         if (ready) {
             if (!isDriver) checkUpgradeApproval();
             getCurrentLocation();
+            if (isDriver) updateCurLoc();
         }
     }, [ready]);
 
@@ -115,6 +119,17 @@ export default ({ navigation }) => {
         await AsyncStorage.setItem("@is_driver", "is_driver");
     }
 
+    /**
+     * Updates the current location to the OT_Server
+     * sends the timestamp and curLoc object keys
+     */
+    function updateCurLoc() {
+        const timestamp = firebase.database.ServerValue.TIMESTAMP;
+
+        //send update to server every minute
+        setInterval(() => {}, 1000 * 60);
+    }
+
     async function getCurrentLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
@@ -139,14 +154,20 @@ export default ({ navigation }) => {
                             placeId: response.data.results[0].place_id,
                         });
                     }
+
+                    const coords = {
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,
+                    };
+
+                    //setting the current location in AppContext
+                    setCurLoc(coords);
+
                     if (isDriver) {
                         const driverId = user?.token.split("-")[0];
                         writeToDatabase(
                             `drivers/${driverId}/cLocation`,
-                            {
-                                latitude: location.coords.latitude,
-                                longitude: location.coords.longitude,
-                            },
+                            coords,
                             db
                         );
                     } else {
@@ -154,8 +175,10 @@ export default ({ navigation }) => {
                         writeToDatabase(
                             `users/${userId}/cLocation`,
                             {
-                                latitude: location.coords.latitude,
-                                longitude: location.coords.longitude,
+                                ...coords,
+                                profileImage: user.profileImage,
+                                firstname: user.firstname,
+                                lastname: user.lastname,
                             },
                             db
                         );
