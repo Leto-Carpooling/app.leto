@@ -156,24 +156,6 @@ const logout = async (navigation) => {
     }
 };
 
-async function getUser(setUser) {
-    const user = await AsyncStorage.getItem("@user");
-    Log("getUser", user);
-    setUser(JSON.parse(user));
-}
-
-function renderProfileBox() {
-    return (
-        user && (
-            <ProfileBox
-                toProfile={() => navigation.navigate("Profile")}
-                signout={() => logout(navigation)}
-                user={user}
-            />
-        )
-    );
-}
-
 const invalidateToken = async () => {
     try {
         const user = JSON.parse(await AsyncStorage.getItem("@user"));
@@ -210,12 +192,13 @@ const invalidateToken = async () => {
 const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
+    const { user } = useContext(AppContext);
     return (
         <>
             <StatusBar backgroundColor={colors.primary} />
 
             <Drawer.Navigator
-                initialRouteName="OnBoarding"
+                initialRouteName={user ? `OnBoarding` : `Home`}
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
             >
                 <Drawer.Screen name="Home" component={Home} />

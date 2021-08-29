@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { View, SafeAreaView, StyleSheet } from "react-native";
+import { View, SafeAreaView } from "react-native";
 import {
     useFonts,
     Poppins_400Regular,
@@ -9,7 +9,6 @@ import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
 import { MaterialIcons } from "@expo/vector-icons";
 import AppLoading from "expo-app-loading";
 import tw from "tailwind-react-native-classnames";
-import { Dimensions } from "react-native";
 import * as Location from "expo-location";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,9 +25,10 @@ import { api } from "../../util/api";
 import { Log } from "../../util/Logger";
 import AppBottomSheet from "../../components/containers/AppBottomSheet";
 import { removeDocSubmissions, removeUpgradeStatus } from "../../util/cleanup";
+import { writeToDatabase } from "../../logic/rtdbFunctions";
 
 export default ({ navigation }) => {
-    const { isDriver, setIsDriver, setOrigin, upgradeSubmitted, user } =
+    const { isDriver, setIsDriver, setOrigin, upgradeSubmitted, user, db } =
         useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
@@ -129,6 +129,17 @@ export default ({ navigation }) => {
                         name: response.data.results[0].name,
                         placeId: response.data.results[0].place_id,
                     });
+                    if (isDriver) {
+                        const driverId = user.token.split("-")[0];
+                        writeToDatabase(
+                            `drivers/${driverId}/cLocation`,
+                            {
+                                latitude: location.coords.latitude,
+                                longitude: location.coords.longitude,
+                            },
+                            db
+                        );
+                    }
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -141,56 +152,3 @@ export default ({ navigation }) => {
         //console.log(location);
     }
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: "column",
-    },
-    backIcon: {},
-    logoText: {
-        color: colors.textDarker,
-        fontFamily: "Poppins_400Regular",
-        fontSize: 60,
-        marginLeft: 30,
-    },
-    tagline: {
-        color: colors.textLighter,
-        fontFamily: "Inter_500Medium",
-        fontSize: 20,
-        marginBottom: 15,
-        marginLeft: 40,
-    },
-    title: {
-        fontFamily: "Inter_400Regular",
-        fontSize: 22,
-        color: colors.textLighter,
-    },
-    label: {
-        color: colors.textLighter,
-        fontFamily: "Inter_500Medium",
-        fontSize: 17,
-        marginBottom: 8,
-        marginLeft: 20,
-    },
-    center: {
-        justifyContent: "center",
-        alignItems: "center",
-        marginVertical: 10,
-    },
-    btnContainer: {
-        padding: 20,
-        marginTop: 10,
-    },
-    topBar: {
-        alignItems: "center",
-        justifyContent: "flex-end",
-        marginTop: 40,
-        marginHorizontal: 30,
-        marginBottom: 30,
-        flexDirection: "row",
-    },
-    height_90: {
-        height: Dimensions.get("window").height * 0.9,
-    },
-});
