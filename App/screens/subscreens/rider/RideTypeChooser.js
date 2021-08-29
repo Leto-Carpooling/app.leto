@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import colors from "../../../assets/colors/colors";
-import fonts from "../../assets/fonts/fonts";
+import fonts from "../../../assets/fonts/fonts";
 
 import LogoTagline from "../../../components/display/LogoTagline";
 import Spacer from "../../../components/auxx/Spacer";

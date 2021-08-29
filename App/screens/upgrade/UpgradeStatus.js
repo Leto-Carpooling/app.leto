@@ -20,7 +20,7 @@ import { Button } from "../../components/btn/Button";
 import ApprovalStatus from "../../components/display/ApprovalStatus";
 
 import { AppContext } from "../../util/AppContext";
-import { api } from "../../config/api";
+import { api } from "../../util/api";
 import { Log } from "../../util/Logger";
 import { removeUpgradeStatus, removeDocSubmissions } from "../../util/cleanup";
 
