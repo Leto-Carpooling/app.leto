@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import fonts from "../assets/fonts/fonts";
+import fonts from "./fonts";
 
 export default StyleSheet.create({
     fp: {

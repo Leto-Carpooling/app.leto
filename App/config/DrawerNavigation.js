@@ -256,7 +256,6 @@ function MyDrawer() {
             <Drawer.Screen name="SetName" component={SetName} />
             <Drawer.Screen name="VerifyPhone" component={VerifyPhone} />
             <Drawer.Screen name="SuccessApproved" component={SuccessApproved} />
-            <Drawer.Screen name="BottomSheetTest" component={BottomSheetTest} />
             <Drawer.Screen
                 name="SuccessResetPassword"
                 component={SuccessResetPassword}

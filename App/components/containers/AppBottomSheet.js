@@ -12,7 +12,7 @@ export default ({ children }) => {
 
     // callbacks
     const handleSheetChanges = useCallback((index) => {
-        console.log("handleSheetChanges", index);
+        // console.log("handleSheetChanges", index);
     }, []);
 
     // renders

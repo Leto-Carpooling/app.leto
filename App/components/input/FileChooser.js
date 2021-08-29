@@ -11,7 +11,7 @@ import colors from "../../assets/colors/colors";
 import fonts from "../../assets/fonts/fonts";
 import * as DocumentPicker from "expo-document-picker";
 import { AppContext } from "../../util/AppContext";
-import { api } from "../../config/api";
+import { api } from "../../util/api";
 import { Log } from "../../util/Logger";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
