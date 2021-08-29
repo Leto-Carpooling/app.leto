@@ -52,6 +52,10 @@ export default ({ navigation }) => {
         return (
             <View style={[tw`flex-1`]}>
                 <Map />
+
+                <AppBottomSheet>
+                    {isDriver ? <BottomSheetDriver /> : <BottomSheetRider />}
+                </AppBottomSheet>
                 <SafeAreaView style={tw`absolute top-5 right-5`}>
                     <View style={tw`rounded-full p-2 bg-white shadow-lg`}>
                         <IconButton
@@ -66,10 +70,6 @@ export default ({ navigation }) => {
                         />
                     </View>
                 </SafeAreaView>
-
-                <AppBottomSheet>
-                    {isDriver ? <BottomSheetDriver /> : <BottomSheetRider />}
-                </AppBottomSheet>
             </View>
         );
     }
@@ -122,7 +122,7 @@ export default ({ navigation }) => {
 
             axios(config)
                 .then(function (response) {
-                    console.log(response.data.results);
+                    //console.log(response.data.results);
                     setOrigin({
                         lat: location.coords.latitude,
                         lng: location.coords.longitude,
