@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import {
     View,
     Text,
-    StatusBar,
     SafeAreaView,
     StyleSheet,
     ImageBackground,
@@ -21,12 +20,6 @@ export default ({ navigation }) => {
         Inter_500Medium,
         Inter_400Regular,
     });
-
-    useEffect(() => {
-        if (fontsLoaded) {
-            isAuthenticated(navigation);
-        }
-    }, [fontsLoaded]);
 
     if (!fontsLoaded) {
         return <AppLoading />;

@@ -102,7 +102,7 @@ const WhereTo = ({ route }) => {
                     onChangeText={onChangeWhereFrom}
                     loading={fromLoading}
                 />
-                <Spacer height={1} />
+                <Spacer height={3} />
                 <TextField
                     iconName="place"
                     placeholder="Where to?"

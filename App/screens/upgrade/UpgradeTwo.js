@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, Alert } from "react";
 import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import { useFonts, Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Inter_500Medium, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -198,7 +198,7 @@ export default ({ navigation }) => {
                 if (resp.data.status === "OK") {
                     setUpgradeStage();
                 } else {
-                    Alert.alert("Error", resp.data.message);
+                    Alert.alert("Error", resp.data?.message);
                 }
             })
             .catch((err) => {
