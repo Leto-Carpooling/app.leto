@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import colors from "../../assets/colors/colors";

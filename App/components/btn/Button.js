@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
-    TouchableHighlight,
     View,
     Text,
     StyleSheet,
     ActivityIndicator,
+    TouchableOpacity,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../../assets/colors/colors";
@@ -61,13 +61,13 @@ export const Button = ({ onPress, text, loading, iconName, disabled }) => {
     }
 
     return (
-        <TouchableHighlight onPress={onPress}>
+        <TouchableOpacity onPress={onPress}>
             <View style={styles.button}>
                 <View style={styles.textHolder}>
                     <Text style={styles.btnTxt}>{text}</Text>
                 </View>
                 {icon}
             </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
     );
 };

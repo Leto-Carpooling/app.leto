@@ -33,7 +33,6 @@ export default ({ navigation }) => {
     } else {
         return (
             <SafeAreaView>
-                <StatusBar backgroundColor={colors.primary} />
                 <ImageBackground
                     source={require("./../../assets/img/onboarding.png")}
                     style={styles.container}

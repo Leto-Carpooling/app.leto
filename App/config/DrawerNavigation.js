@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -211,65 +211,75 @@ const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
     return (
-        <Drawer.Navigator
-            initialRouteName="OnBoarding"
-            drawerContent={(props) => <CustomDrawerContent {...props} />}
-        >
-            <Drawer.Screen name="Home" component={Home} />
-            <Drawer.Screen name="Profile" component={Profile} />
-            <Drawer.Screen name="Login" component={Login} />
-            <Drawer.Screen
-                name="OnBoarding"
-                component={OnBoarding}
-                options={{ swipeEnabled: false }}
-            />
-            <Drawer.Screen
-                name="SignUp"
-                component={SignUp}
-                options={{ swipeEnabled: false }}
-            />
-            <Drawer.Screen
-                name="SetPassword"
-                component={SetPassword}
-                options={{ swipeEnabled: false }}
-            />
-            <Drawer.Screen
-                name="SuccessSignUp"
-                component={SuccessSignUp}
-                options={{ swipeEnabled: false }}
-            />
-            <Drawer.Screen
-                name="VerifyEmail"
-                component={VerifyEmail}
-                options={{ swipeEnabled: false }}
-            />
-            <Drawer.Screen name="UpgradeOne" component={UpgradeOne} />
-            <Drawer.Screen name="UpgradeTwo" component={UpgradeTwo} />
-            <Drawer.Screen name="UpgradeThree" component={UpgradeThree} />
-            <Drawer.Screen
-                name="ForgotPassword"
-                component={ForgotPassword}
-                options={{ swipeEnabled: false }}
-            />
-            <Drawer.Screen name="ResetPassword" component={ResetPassword} />
-            <Drawer.Screen name="ResetPassword2" component={ResetPassword2} />
-            <Drawer.Screen name="SetName" component={SetName} />
-            <Drawer.Screen name="VerifyPhone" component={VerifyPhone} />
-            <Drawer.Screen name="SuccessApproved" component={SuccessApproved} />
-            <Drawer.Screen
-                name="SuccessResetPassword"
-                component={SuccessResetPassword}
-            />
-            <Drawer.Screen
-                name="SuccessResetPassword2"
-                component={SuccessResetPassword2}
-            />
-            <Drawer.Screen
-                name="UpgradeSubmitted"
-                component={UpgradeSubmitted}
-            />
-            <Drawer.Screen name="UpgradeStatus" component={UpgradeStatus} />
-        </Drawer.Navigator>
+        <>
+            <StatusBar backgroundColor={colors.primary} />
+
+            <Drawer.Navigator
+                initialRouteName="OnBoarding"
+                drawerContent={(props) => <CustomDrawerContent {...props} />}
+            >
+                <Drawer.Screen name="Home" component={Home} />
+                <Drawer.Screen name="Profile" component={Profile} />
+                <Drawer.Screen name="Login" component={Login} />
+                <Drawer.Screen
+                    name="OnBoarding"
+                    component={OnBoarding}
+                    options={{ swipeEnabled: false }}
+                />
+                <Drawer.Screen
+                    name="SignUp"
+                    component={SignUp}
+                    options={{ swipeEnabled: false }}
+                />
+                <Drawer.Screen
+                    name="SetPassword"
+                    component={SetPassword}
+                    options={{ swipeEnabled: false }}
+                />
+                <Drawer.Screen
+                    name="SuccessSignUp"
+                    component={SuccessSignUp}
+                    options={{ swipeEnabled: false }}
+                />
+                <Drawer.Screen
+                    name="VerifyEmail"
+                    component={VerifyEmail}
+                    options={{ swipeEnabled: false }}
+                />
+                <Drawer.Screen name="UpgradeOne" component={UpgradeOne} />
+                <Drawer.Screen name="UpgradeTwo" component={UpgradeTwo} />
+                <Drawer.Screen name="UpgradeThree" component={UpgradeThree} />
+                <Drawer.Screen
+                    name="ForgotPassword"
+                    component={ForgotPassword}
+                    options={{ swipeEnabled: false }}
+                />
+                <Drawer.Screen name="ResetPassword" component={ResetPassword} />
+                <Drawer.Screen
+                    name="ResetPassword2"
+                    component={ResetPassword2}
+                />
+                <Drawer.Screen name="SetName" component={SetName} />
+                <Drawer.Screen name="VerifyPhone" component={VerifyPhone} />
+                <Drawer.Screen
+                    name="SuccessApproved"
+                    component={SuccessApproved}
+                />
+                <Drawer.Screen
+                    name="SuccessResetPassword"
+                    component={SuccessResetPassword}
+                />
+                <Drawer.Screen
+                    name="SuccessResetPassword2"
+                    component={SuccessResetPassword2}
+                />
+                <Drawer.Screen
+                    name="UpgradeSubmitted"
+                    component={UpgradeSubmitted}
+                />
+                <Drawer.Screen name="UpgradeStatus" component={UpgradeStatus} />
+            </Drawer.Navigator>
+        </>
     );
 }
 

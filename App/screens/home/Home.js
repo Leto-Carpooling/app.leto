@@ -53,7 +53,7 @@ export default ({ navigation }) => {
             <View style={[tw`flex-1`]}>
                 <Map />
                 <SafeAreaView style={tw`absolute top-5 right-5`}>
-                    <View style={tw`rounded-full p-2 bg-white`}>
+                    <View style={tw`rounded-full p-2 bg-white shadow-lg`}>
                         <IconButton
                             icon={
                                 <MaterialIcons

@@ -138,7 +138,7 @@ export default ({ navigation }) => {
 
     function toUpgradeSubmitted() {
         Log("toUpgradeSubmitted", docCount);
-        if (docCount === 7) {
+        if (docCount >= 7) {
             navigation.reset({
                 index: 0,
                 routes: [{ name: "UpgradeSubmitted" }],
