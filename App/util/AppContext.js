@@ -11,11 +11,15 @@ export const AppContextProvider = ({ children }) => {
     const [dest, setDest] = useState(null);
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
     const [db] = useState(database);
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
-        getUser(setUser);
-        getIsDriver(setIsDriver);
-        getUpgradeSubmitted(setUpgradeSubmitted);
+        (async () => {
+            await getUser(setUser);
+            await getIsDriver(setIsDriver);
+            await getUpgradeSubmitted(setUpgradeSubmitted);
+            setReady(true);
+        })();
     }, []);
 
     const context = {
@@ -30,6 +34,7 @@ export const AppContextProvider = ({ children }) => {
         isDriver,
         setIsDriver,
         db,
+        ready,
     };
     return (
         <AppContext.Provider value={context}>{children}</AppContext.Provider>
@@ -38,19 +43,16 @@ export const AppContextProvider = ({ children }) => {
 
 async function getUser(setUser) {
     const user = await AsyncStorage.getItem("@user");
-    //Log("getUser", user);
     setUser(JSON.parse(user));
 }
 
 async function getIsDriver(setIsDriver) {
     const is_driver = await AsyncStorage.getItem("@is_driver");
-    //Log("getUser", user);
     setIsDriver(is_driver ? true : true);
 }
 
 async function getUpgradeSubmitted(setUpgradeSubmitted) {
     const submitted = await AsyncStorage.getItem("@upgradeSubmitted");
-    //Log("getUser", user);
     if (submitted) {
         setUpgradeSubmitted(true);
     }

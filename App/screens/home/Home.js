@@ -28,8 +28,16 @@ import { removeDocSubmissions, removeUpgradeStatus } from "../../util/cleanup";
 import { writeToDatabase } from "../../logic/rtdbFunctions";
 
 export default ({ navigation }) => {
-    const { isDriver, setIsDriver, setOrigin, upgradeSubmitted, user, db } =
-        useContext(AppContext);
+    const {
+        isDriver,
+        setIsDriver,
+        setOrigin,
+        origin,
+        upgradeSubmitted,
+        user,
+        db,
+        ready,
+    } = useContext(AppContext);
 
     let [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -38,13 +46,13 @@ export default ({ navigation }) => {
         Poppins_500Medium,
     });
 
+    //when the context is ready call these functions
     useEffect(() => {
-        if (!isDriver) checkUpgradeApproval();
-    }, []);
-
-    useEffect(() => {
-        getCurrentLocation();
-    }, []);
+        if (ready) {
+            if (!isDriver) checkUpgradeApproval();
+            getCurrentLocation();
+        }
+    }, [ready]);
 
     if (!fontsLoaded) {
         return <AppLoading />;
@@ -113,6 +121,7 @@ export default ({ navigation }) => {
             Log("location", "denied");
             return;
         }
+
         await Location.watchPositionAsync({}, (location) => {
             var config = {
                 method: "get",
@@ -122,17 +131,28 @@ export default ({ navigation }) => {
 
             axios(config)
                 .then(function (response) {
-                    //console.log(response.data.results);
-                    setOrigin({
-                        lat: location.coords.latitude,
-                        lng: location.coords.longitude,
-                        name: response.data.results[0].name,
-                        placeId: response.data.results[0].place_id,
-                    });
+                    if (!origin) {
+                        setOrigin({
+                            lat: location.coords.latitude,
+                            lng: location.coords.longitude,
+                            name: response.data.results[0].name,
+                            placeId: response.data.results[0].place_id,
+                        });
+                    }
                     if (isDriver) {
-                        const driverId = user.token.split("-")[0];
+                        const driverId = user?.token.split("-")[0];
                         writeToDatabase(
                             `drivers/${driverId}/cLocation`,
+                            {
+                                latitude: location.coords.latitude,
+                                longitude: location.coords.longitude,
+                            },
+                            db
+                        );
+                    } else {
+                        const userId = user?.token.split("-")[0];
+                        writeToDatabase(
+                            `users/${userId}/cLocation`,
                             {
                                 latitude: location.coords.latitude,
                                 longitude: location.coords.longitude,
@@ -145,10 +165,5 @@ export default ({ navigation }) => {
                     console.log(error);
                 });
         });
-
-        // let location = await Location.getCurrentPositionAsync({
-        //     enableHighAccuracy: true,
-        // });
-        //console.log(location);
     }
 };
