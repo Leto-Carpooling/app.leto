@@ -23,12 +23,12 @@ import colors from "../../assets/colors/colors";
 import fonts from "../../assets/fonts/fonts";
 
 import { IconButton } from "../../components/btn/IconButton";
-import Spacer from "../../components/aux/Spacer";
+import Spacer from "../../components/auxx/Spacer";
 import { Avatar } from "../../components/img/Avatar";
 import { Button } from "../../components/btn/Button";
 import { LabelledTextInput } from "../../components/input/LabelledTextInput";
-import Divider from "../../components/aux/Divider";
-import { KeyboardSpacer } from "../../components/aux/KeyboardSpacer";
+import Divider from "../../components/auxx/Divider";
+import { KeyboardSpacer } from "../../components/auxx/KeyboardSpacer";
 
 import { api } from "../../util/api";
 import { AppContext } from "../../util/AppContext";

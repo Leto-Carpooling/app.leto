@@ -8,13 +8,13 @@ import fonts from "../../assets/fonts/fonts";
 import AppLoading from "expo-app-loading";
 import { IconButton } from "../../components/btn/IconButton";
 import { LabelledTextInput } from "../../components/input/LabelledTextInput";
-import Spacer from "../../components/aux/Spacer";
+import Spacer from "../../components/auxx/Spacer";
 import { Button } from "../../components/btn/Button";
 import { validate } from "validate.js";
 import { constraintsEmail } from "../../util/constraints";
 import { Toast } from "../../components/display/Toast";
 import { api } from "../../util/api";
-import { KeyboardSpacer } from "../../components/aux/KeyboardSpacer";
+import { KeyboardSpacer } from "../../components/auxx/KeyboardSpacer";
 
 export default ({ navigation }) => {
     const [email, onChangeEmail] = useState("");

@@ -19,7 +19,7 @@ import fonts from "../../assets/fonts/fonts";
 import { IconButton } from "../../components/btn/IconButton";
 import { LabelledTextInput } from "../../components/input/LabelledTextInput";
 import { Button } from "../../components/btn/Button";
-import { KeyboardSpacer } from "../../components/aux/KeyboardSpacer";
+import { KeyboardSpacer } from "../../components/auxx/KeyboardSpacer";
 
 import { api } from "../../util/api";
 import { AppContext } from "../../util/AppContext";

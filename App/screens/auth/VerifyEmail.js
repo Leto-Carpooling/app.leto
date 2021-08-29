@@ -9,7 +9,7 @@ import { IconButton } from "../../components/btn/IconButton";
 import { LabelledTextInput } from "../../components/input/LabelledTextInput";
 import { Button } from "../../components/btn/Button";
 import { Toast } from "../../components/display/Toast";
-import { KeyboardSpacer } from "../../components/aux/KeyboardSpacer";
+import { KeyboardSpacer } from "../../components/auxx/KeyboardSpacer";
 import { api } from "../../util/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppContext } from "../../util/AppContext";

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import SwitchButton from "../../../components/btn/SwitchButton";
 import FontStyles from "../../../assets/fonts/FontStyles";
-import Spacer from "../../../components/aux/Spacer";
+import Spacer from "../../../components/auxx/Spacer";
 import LogoTagline from "../../../components/display/LogoTagline";
 
 const DriverStatus = () => {

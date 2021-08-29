@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ProfileBox } from "../components/display/ProfileBox";
 import colors from "../assets/colors/colors";
-import Spacer from "../components/aux/Spacer";
+import Spacer from "../components/auxx/Spacer";
 import { api } from "../util/api";
 import { Log } from "../util/Logger";
 

@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/core";
 import fonts from "../../../assets/fonts/fonts";
 
 import { TextField } from "../../../components/input/TextField";
-import Spacer from "../../../components/aux/Spacer";
+import Spacer from "../../../components/auxx/Spacer";
 import PlaceView from "../../../components/display/PlaceView";
 
 import { AppContext } from "../../../util/AppContext";
