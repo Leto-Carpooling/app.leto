@@ -1,4 +1,4 @@
-import { api } from "../config/api";
+import { api } from "../util/api";
 import { Log } from "../util/Logger";
 import {
     writeToDatabase,

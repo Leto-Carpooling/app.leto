@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import RideComponent from "../../../components/composite/RideComponent";
-import FontStyles from "../../../components/FontStyles";
-import Spacer from "../../../components/Spacer";
 import { MaterialIcons } from "@expo/vector-icons";
+
 import colors from "../../../assets/colors/colors";
-import PlaceView from "../../../components/PlaceView";
+import RideComponent from "../../../components/composite/RideComponent";
+import FontStyles from "../../../assets/fonts/FontStyles";
+import Spacer from "../../../components/auxx/Spacer";
+import PlaceView from "../../../components/display/PlaceView";
 
 const RideStatus = () => {
     const [status, setStatus] = useState(3);
