@@ -7,10 +7,10 @@ import colors from "../../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { Toast } from "../../components/display/Toast";
 import { Button } from "../../components/btn/Button";
-import { KeyboardSpacer } from "../../components/aux/KeyboardSpacer";
+import { KeyboardSpacer } from "../../components/auxx/KeyboardSpacer";
 import { IconButton } from "../../components/btn/IconButton";
 import { LabelledTextInput } from "../../components/input/LabelledTextInput";
-import Spacer from "../../components/aux/Spacer";
+import Spacer from "../../components/auxx/Spacer";
 import { api } from "../../util/api";
 
 export default ({ route, navigation }) => {

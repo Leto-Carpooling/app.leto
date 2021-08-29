@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/core";
 import colors from "../../../assets/colors/colors";
 import fonts from "../../../assets/fonts/fonts";
 
-import Spacer from "../../../components/aux/Spacer";
+import Spacer from "../../../components/auxx/Spacer";
 import { TextField } from "../../../components/input/TextField";
 import DriverItem from "../../../components/display/DriverItem";
 import PriceLabel from "../../../components/display/PriceLabel";

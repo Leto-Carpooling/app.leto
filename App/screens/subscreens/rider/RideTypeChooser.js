@@ -8,7 +8,7 @@ import colors from "../../../assets/colors/colors";
 import fonts from "../../assets/fonts/fonts";
 
 import LogoTagline from "../../../components/display/LogoTagline";
-import Spacer from "../../../components/aux/Spacer";
+import Spacer from "../../../components/auxx/Spacer";
 import CardButton from "../../../components/btn/CardButton";
 
 const RideTypeChooser = () => {

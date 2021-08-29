@@ -14,7 +14,7 @@ import { IconButton } from "../../components/btn/IconButton";
 import { Button } from "../../components/btn/Button";
 import UpgradeProgressIndicator from "../../components/display/UpgradeProgressIndicator";
 import { LabelledTextInput } from "../../components/input/LabelledTextInput";
-import Spacer from "../../components/aux/Spacer";
+import Spacer from "../../components/auxx/Spacer";
 
 import { Log } from "../../util/Logger";
 import { AppContext } from "../../util/AppContext";

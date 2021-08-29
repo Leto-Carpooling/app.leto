@@ -9,7 +9,7 @@ import colors from "../../../assets/colors/colors";
 import FontStyles from "../../../assets/fonts/FontStyles";
 import PriceLabel from "../../../components/display/PriceLabel";
 import { TextField } from "../../../components/input/TextField";
-import Spacer from "../../../components/aux/Spacer";
+import Spacer from "../../../components/auxx/Spacer";
 import { Button } from "../../../components/btn/Button";
 import LogoTagline from "../../../components/display/LogoTagline";
 

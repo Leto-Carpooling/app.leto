@@ -7,7 +7,7 @@ import colors from "../../assets/colors/colors";
 import AppLoading from "expo-app-loading";
 import { Toast } from "../../components/display/Toast";
 import { Button } from "../../components/btn/Button";
-import { KeyboardSpacer } from "../../components/aux/KeyboardSpacer";
+import { KeyboardSpacer } from "../../components/auxx/KeyboardSpacer";
 import { IconButton } from "../../components/btn/IconButton";
 import { LabelledAutoTextField } from "../../components/input/LabelledAutoTextField";
 import { api } from "../../util/api";

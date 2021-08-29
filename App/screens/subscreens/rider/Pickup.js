@@ -8,7 +8,7 @@ import fonts from "../../../assets/fonts/fonts";
 import { Button } from "../../../components/btn/Button";
 import DriverItem from "../../../components/display/DriverItem";
 import PlaceView from "../../../components/display/PlaceView";
-import Spacer from "../../../components/aux/Spacer";
+import Spacer from "../../../components/auxx/Spacer";
 
 const Pickup = () => {
     const navigation = useNavigation();

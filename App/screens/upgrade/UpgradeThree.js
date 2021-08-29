@@ -17,7 +17,7 @@ import fonts from "../../assets/fonts/fonts";
 
 import { IconButton } from "../../components/btn/IconButton";
 import UpgradeProgressIndicator from "../../components/display/UpgradeProgressIndicator";
-import Spacer from "../../components/aux/Spacer";
+import Spacer from "../../components/auxx/Spacer";
 import { Button } from "../../components/btn/Button";
 import { FileChooser } from "../../components/input/FileChooser";
 

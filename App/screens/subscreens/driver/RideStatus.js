@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../../../assets/colors/colors";
 import RideComponent from "../../../components/composite/RideComponent";
 import FontStyles from "../../../assets/fonts/FontStyles";
-import Spacer from "../../../components/aux/Spacer";
+import Spacer from "../../../components/auxx/Spacer";
 import PlaceView from "../../../components/display/PlaceView";
 
 const RideStatus = () => {
