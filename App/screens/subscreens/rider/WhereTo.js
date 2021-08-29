@@ -13,6 +13,7 @@ import PlaceView from "../../../components/display/PlaceView";
 
 import { AppContext } from "../../../util/AppContext";
 import { Log } from "../../../util/Logger";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const WhereTo = ({ route }) => {
     const navigation = useNavigation();
@@ -110,7 +111,7 @@ const WhereTo = ({ route }) => {
                     loading={toLoading}
                 />
             </View>
-            <ScrollView>
+            <BottomSheetScrollView>
                 <View style={tw`p-2`}>
                     {places.map((place, index) => (
                         <PlaceView
@@ -120,7 +121,7 @@ const WhereTo = ({ route }) => {
                         />
                     ))}
                 </View>
-            </ScrollView>
+            </BottomSheetScrollView>
         </View>
     );
 
@@ -185,8 +186,9 @@ function getPlaces(whereTo, setPlaces, isTo, setToLoading, setFromLoading) {
 
     axios(config)
         .then(function (response) {
-            Log("autocomplete", response.data);
+            //Log("autocomplete", response.data);
             const candidates = response.data.predictions;
+            console.log("num:" + candidates.length);
             const results = [];
             candidates.forEach((cand) => {
                 results.push({
