@@ -21,11 +21,10 @@ export default ({ route, navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastGroup, setToastGroup] = useState([]);
     const [textFieldTheme, settextFieldTheme] = useState("neutral");
-    const [password, onChangePassword] = useState("mogoaOmbaso2021");
-    const [oldPassword, onChangeOldPassword] = useState("mogoaOmbaso2001");
-    const [code, onChangeCode] = useState("");
+    const [password, onChangePassword] = useState("mogoaOmbaso2001");
+    const [oldPassword, onChangeOldPassword] = useState("mogoaOmbaso2021");
     const [passwordConfir, onChangePasswordConfir] =
-        useState("mogoaOmbaso2021");
+        useState("mogoaOmbaso2001");
     const [btnLoading, setBtnLoading] = useState(false);
     const { user } = useContext(AppContext);
 

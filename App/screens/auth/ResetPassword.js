@@ -19,10 +19,10 @@ export default ({ route, navigation }) => {
     const [scrollEnabled, setScrollEnabled] = useState(false);
     const [toastGroup, setToastGroup] = useState([]);
     const [textFieldTheme, settextFieldTheme] = useState("neutral");
-    const [password, onChangePassword] = useState("mogoaOmbaso2001");
+    const [password, onChangePassword] = useState("mogoaOmbaso2021");
     const [code, onChangeCode] = useState("");
     const [passwordConfir, onChangePasswordConfir] =
-        useState("mogoaOmbaso2001");
+        useState("mogoaOmbaso2021");
     const [btnLoading, setBtnLoading] = useState(false);
 
     const { msg } = route.params;
@@ -54,7 +54,9 @@ export default ({ route, navigation }) => {
                         </View>
                         <Text style={styles.title}>Reset Password</Text>
                         <View style={styles.subtitleContainer}>
-                            <Text style={styles.subtitle}>{msg}</Text>
+                            <Text style={styles.subtitle} numberOfLines={3}>
+                                {msg}
+                            </Text>
                         </View>
 
                         <View style={[styles.center, { marginVertical: 20 }]}>

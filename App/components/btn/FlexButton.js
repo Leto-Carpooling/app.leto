@@ -1,11 +1,11 @@
 import React from "react";
-import { TouchableHighlight, View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../../assets/colors/colors";
 
 const FlexButton = ({ text, iconName, onPress }) => {
     return (
-        <TouchableHighlight onPress={onPress}>
+        <TouchableOpacity onPress={onPress}>
             <View style={styles.button}>
                 <View style={styles.textHolder}>
                     <Text style={styles.btnTxt}>{text}</Text>
@@ -17,7 +17,7 @@ const FlexButton = ({ text, iconName, onPress }) => {
                     color={colors.white}
                 />
             </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
     );
 };
 

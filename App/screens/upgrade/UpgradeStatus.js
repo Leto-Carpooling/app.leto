@@ -85,9 +85,16 @@ export default ({ navigation }) => {
                             />
                         )}
 
-                        {status === 1 && (
+                        {status === 1 ? (
                             <View style={styles.btnContainer}>
                                 <Button onPress={reset} text="Retry" />
+                            </View>
+                        ) : (
+                            <View style={styles.btnContainer}>
+                                <Button
+                                    onPress={reset}
+                                    text="Widthdraw submission"
+                                />
                             </View>
                         )}
                     </View>
