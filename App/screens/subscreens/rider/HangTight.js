@@ -128,7 +128,7 @@ const HangTight = ({ route }) => {
                 {renderDriverItem()}
                 <Spacer height={5} />
 
-                <View style={tw`flex-1 bg-red-400`}>
+                <View style={tw`bg-red-400 p-2`}>
                     <Button
                         text="Cancel ride"
                         iconName="close"
