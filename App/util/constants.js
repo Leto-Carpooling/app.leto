@@ -1,3 +1,5 @@
+import { SERVER_URL } from "@env";
+
 export default {
-    serverUrl: "http://10.20.195.113/leto_apis/OT_server/src/",
+    serverUrl: `${SERVER_URL}/leto_apis/OT_server/src/`,
 };

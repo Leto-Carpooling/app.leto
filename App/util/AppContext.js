@@ -12,6 +12,8 @@ export const AppContextProvider = ({ children }) => {
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
     const [db] = useState(database);
     const [ready, setReady] = useState(false);
+    //current location
+    const [curLoc, setCurLoc] = useState({});
 
     useEffect(() => {
         (async () => {
@@ -35,6 +37,8 @@ export const AppContextProvider = ({ children }) => {
         setIsDriver,
         db,
         ready,
+        curLoc,
+        setCurLoc,
     };
     return (
         <AppContext.Provider value={context}>{children}</AppContext.Provider>
@@ -48,7 +52,7 @@ async function getUser(setUser) {
 
 async function getIsDriver(setIsDriver) {
     const is_driver = await AsyncStorage.getItem("@is_driver");
-    setIsDriver(is_driver ? true : true);
+    setIsDriver(is_driver ? true : false);
 }
 
 async function getUpgradeSubmitted(setUpgradeSubmitted) {
