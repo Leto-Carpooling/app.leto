@@ -52,7 +52,7 @@ async function getUser(setUser) {
 
 async function getIsDriver(setIsDriver) {
     const is_driver = await AsyncStorage.getItem("@is_driver");
-    setIsDriver(is_driver ? true : true);
+    setIsDriver(is_driver ? true : false);
 }
 
 async function getUpgradeSubmitted(setUpgradeSubmitted) {

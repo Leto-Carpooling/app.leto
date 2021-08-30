@@ -198,7 +198,7 @@ function MyDrawer() {
             <StatusBar backgroundColor={colors.primary} />
 
             <Drawer.Navigator
-                initialRouteName={user ? `OnBoarding` : `Home`}
+                initialRouteName={user ? `Home` : `OnBoarding`}
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
             >
                 <Drawer.Screen name="Home" component={Home} />
@@ -267,10 +267,14 @@ function MyDrawer() {
 }
 
 export default () => {
-    return (
+    const { ready } = useContext(AppContext);
+
+    return ready ? (
         <NavigationContainer>
             <MyDrawer />
         </NavigationContainer>
+    ) : (
+        <></>
     );
 };
 
