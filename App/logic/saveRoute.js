@@ -33,6 +33,8 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
     let start_longitude = route0leg0.start_location.lng;
     let end_latitude = route0leg0.end_location.lat;
     let end_longitude = route0leg0.end_location.lng;
+    let startPlaceId = route.geocoded_waypoints[0].place_id;
+    let endPlaceId = route.geocoded_waypoints[route.geocoded_waypoints.length - 1].place_id
 
     let routePoints = {
         start_latitude,
@@ -40,6 +42,9 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
         end_latitude,
         end_longitude,
         rideType,
+        startPlaceId,
+        endPlaceId,
+        groupTimer
     };
 
     formData.append("route-points", JSON.stringify(routePoints));
@@ -51,7 +56,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
             Log("Adding route", resp.data);
 
             if (resp.data.status == "OK") {
-                deleteFromFirebase(resp, db);
+                //deleteFromFirebase(resp, db);
                 saveToFirebase(route, groupTimer, resp, db).then(callback);
             } else {
                 console.log(resp.data);
@@ -149,8 +154,7 @@ async function saveToFirebase(route, groupTimer, response, db) {
     };
 
     Log("151", groupId);
-    if (groupExists) {
-        let updates = {};
+    let updates = {};
         updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
         updates[`groups/gid-${groupId}/locations/uid-${userId}`] =
             locations[`uid-${userId}`];
@@ -159,23 +163,7 @@ async function saveToFirebase(route, groupTimer, response, db) {
         updates[`groups/gid-${groupId}/onlineStatus/uid-${userId}`] =
             onlineStatus[`uid-${userId}`];
 
-        await updateDatabase(updates, db);
-    } else {
-        await writeToDatabase(
-            `groups/gid-${groupId}`,
-            {
-                startPlaceId: geocodedWp[0].place_id,
-                endPlaceId: geocodedWp[geocodedWp.length - 1].place_id,
-                usersIndex,
-                pickUpPointId: geocodedWp[0].place_id,
-                fares,
-                locations,
-                timer: groupTimer,
-                onlineStatus,
-            },
-            db
-        );
-    }
+    await updateDatabase(updates, db);
 
     return {
         groupId,
