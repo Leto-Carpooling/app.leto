@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Keyboard, Platform } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/core";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
 
 import fonts from "../../../assets/fonts/fonts";
 
@@ -17,6 +18,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const WhereTo = ({ route }) => {
     const navigation = useNavigation();
+    const { snapToIndex } = useBottomSheet();
     const { origin, setOrigin, setDest, dest } = useContext(AppContext);
     const [whereTo, onChangeWhereTo] = useState("");
     const [whereFrom, onChangeWhereFrom] = useState(origin.name);
@@ -25,6 +27,19 @@ const WhereTo = ({ route }) => {
     const [timeoutId, setTimeoutId] = useState(null);
     const [places, setPlaces] = useState([]);
     const [isTo, setIsTo] = useState(false);
+
+    useEffect(() => {
+        const showEvt =
+            Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow";
+        const showListener = Keyboard.addListener(showEvt, snapbs);
+        return () => {
+            showListener.remove();
+        };
+    }, []);
+
+    function snapbs() {
+        snapToIndex(2);
+    }
 
     /** Clear results */
     useEffect(() => {

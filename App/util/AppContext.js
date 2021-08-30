@@ -12,8 +12,7 @@ export const AppContextProvider = ({ children }) => {
     const [upgradeSubmitted, setUpgradeSubmitted] = useState(false);
     const [db] = useState(database);
     const [ready, setReady] = useState(false);
-    //current location
-    const [curLoc, setCurLoc] = useState({});
+    const [curLoc, setCurLoc] = useState({}); //current location
 
     useEffect(() => {
         (async () => {
