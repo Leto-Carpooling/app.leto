@@ -76,9 +76,10 @@ const HangTight = ({ route }) => {
                     db.ref(`${groupUrl}/usersIndex`).on("value", (snapshot) => {
                         //listen to all users
                         //you can list them here
-
+                        Log("From hangtight snapshot:", snapshot)
                         let users = snapshot.val();
-                        users.forEach((uid, bool) => {
+
+                        for (const uid in users) {
                             let id = uid.split("-")[1];
                             db.ref(`users/${id}/cLocation`).on(
                                 "value",
@@ -87,7 +88,7 @@ const HangTight = ({ route }) => {
                                     //get the user data from here, including the current location.
                                 }
                             );
-                        });
+                        }
                     });
 
                     //maintain online status of others
