@@ -24,9 +24,6 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
         },
     };
 
-    const params = new URLSearchParams();
-    params.append("route-id", "new");
-
     const formData = new FormData();
     let route0leg0 = route.routes[0].legs[0];
     let start_latitude = route0leg0.start_location.lat;
@@ -53,7 +50,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
 
     api.post(`route/saveAndGroup.php`, formData, config)
         .then((resp) => {
-            Log("Adding route", resp.data);
+           // Log("Adding route", resp.data);
 
             if (resp.data.status == "OK") {
                 //deleteFromFirebase(resp, db);
@@ -63,7 +60,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
             }
         })
         .catch((err) => {
-            Log("Adding route error", err);
+            Log("Adding route error here", err);
         });
 };
 
@@ -75,7 +72,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
  */
 async function saveToFirebase(route, groupTimer, response, db) {
     let message = JSON.parse(response.data.message);
-    Log("msg", message);
+    //Log("msg", message);
 
     let routeId = message.routeId;
     let userId = message.userId;
@@ -170,7 +167,6 @@ async function saveToFirebase(route, groupTimer, response, db) {
         userId,
         routeId,
         groupTimer,
-        response,
     };
 }
 
