@@ -24,6 +24,7 @@ const HangTight = ({ route }) => {
     const navigation = useNavigation();
     const [status, setStatus] = useState(0);
     const { origin, dest, user, db, setDest } = useContext(AppContext);
+    const [price, setPrice] = useState(0);
 
     //get the riders route
     useEffect(() => {
@@ -43,9 +44,9 @@ const HangTight = ({ route }) => {
                      * Update the map
                      * listen to the timer
                      */
-                   
+
                     Log("47: Route Info", routeInfo);
-                    getFare(routeInfo.groupId, user, (fareData) =>{
+                    getFare(routeInfo.groupId, user, (fareData) => {
                         //handle fare info here.
                         Log("48: Fare Data", fareData);
                     });
@@ -59,29 +60,30 @@ const HangTight = ({ route }) => {
                     });
 
                     //listen for locations change
-                    db.ref(`${groupUrl}/locations`).on("value", (snapshot) =>{
+                    db.ref(`${groupUrl}/locations`).on("value", (snapshot) => {
                         let locations = snapshot.val();
                         //update the map
                     });
 
                     //listen to users and their location changes
-                    db.ref(`${groupUrl}/usersIndex`).on("value", (snapshot) =>{
-                        //listen to all users 
+                    db.ref(`${groupUrl}/usersIndex`).on("value", (snapshot) => {
+                        //listen to all users
                         //you can list them here
 
                         let users = snapshot.val();
                         users.forEach((uid, bool) => {
                             let id = uid.split("-")[1];
-                            db.ref(`users/${id}/cLocation`).on("value", (snapshot) =>{
-                                let userDetails = snapshot.val();
-                                //get the user data from here, including the current location.
-                            });
+                            db.ref(`users/${id}/cLocation`).on(
+                                "value",
+                                (snapshot) => {
+                                    let userDetails = snapshot.val();
+                                    //get the user data from here, including the current location.
+                                }
+                            );
                         });
                     });
 
                     //maintain online status of others
-                    
-                    
                 }
             );
         })();
