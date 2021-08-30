@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
 
 import colors from "../../../assets/colors/colors";
 import fonts from "../../../assets/fonts/fonts";
@@ -22,12 +23,14 @@ import { getFare } from "../../../logic/functions";
 
 const HangTight = ({ route }) => {
     const navigation = useNavigation();
+    const { snapToIndex } = useBottomSheet();
     const [status, setStatus] = useState(0);
     const { origin, dest, user, db, setDest } = useContext(AppContext);
     const [price, setPrice] = useState(0);
 
     //get the riders route
     useEffect(() => {
+        snapToIndex(1);
         (async () => {
             const route_ = await getRoute(origin.placeId, dest.placeId);
             Log("riders route", route);
@@ -44,7 +47,7 @@ const HangTight = ({ route }) => {
                      * Update the map
                      * listen to the timer
                      */
-
+                    setStatus(1);
                     Log("47: Route Info", routeInfo);
                     getFare(routeInfo.groupId, user, (fareData) => {
                         //handle fare info here.
@@ -54,10 +57,14 @@ const HangTight = ({ route }) => {
                     //listen for fare change
                     let groupUrl = `groups/gid-${routeInfo.groupId}`;
 
-                    db.ref(`${groupUrl}/fares/uid-${routeInfo.userId}`).on("value", (snapshot) => {
-                        let fares = snapshot.val();
-                        //price = snapshot[`uid-${routeInfo.userId}`];
-                    });
+                    db.ref(`${groupUrl}/fares/uid-${routeInfo.userId}`).on(
+                        "value",
+                        (snapshot) => {
+                            let fare = snapshot.val();
+                            setPrice(fare);
+                            //price = snapshot[`uid-${routeInfo.userId}`];
+                        }
+                    );
 
                     //listen for locations change
                     db.ref(`${groupUrl}/locations`).on("value", (snapshot) => {
@@ -121,7 +128,7 @@ const HangTight = ({ route }) => {
                 {renderDriverItem()}
                 <Spacer height={5} />
 
-                <View>
+                <View style={tw`flex-1 bg-red-400`}>
                     <Button
                         text="Cancel ride"
                         iconName="close"
@@ -140,7 +147,7 @@ const HangTight = ({ route }) => {
     }
 
     function renderPrice() {
-        return status >= 1 && <PriceLabel price={130} header="KES" />;
+        return status >= 1 && <PriceLabel price={price} header="KES" />;
     }
 
     function renderStatus() {

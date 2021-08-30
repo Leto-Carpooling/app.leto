@@ -46,7 +46,7 @@ const WhereTo = ({ route }) => {
         setPlaces([]);
     }, [whereTo, whereFrom]);
 
-    /** when both origin and destination are set route.. */
+    /** when both origin and destination are set -> route user -> */
     useEffect(() => {
         if (dest != null && origin != null) {
             navigation.navigate("HangTight", route.params);
@@ -148,6 +148,7 @@ const WhereTo = ({ route }) => {
     function handlePress(place) {
         console.log(place);
         if (isTo) {
+            setToLoading(true);
             //set text on the textfield
             var config = {
                 method: "get",
@@ -157,6 +158,7 @@ const WhereTo = ({ route }) => {
 
             axios(config)
                 .then(function (resp) {
+                    setToLoading(false);
                     setDest({
                         lat: resp.data.result.geometry.location.lat,
                         lng: resp.data.result.geometry.location.lng,
@@ -167,8 +169,10 @@ const WhereTo = ({ route }) => {
                 })
                 .catch(function (error) {
                     console.log(error);
+                    setToLoading(false);
                 });
         } else {
+            setFromLoading(true);
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -177,6 +181,8 @@ const WhereTo = ({ route }) => {
 
             axios(config)
                 .then(function (resp) {
+                    setFromLoading(false);
+
                     setOrigin({
                         lat: resp.data.result.geometry.location.lat,
                         lng: resp.data.result.geometry.location.lng,
@@ -187,6 +193,7 @@ const WhereTo = ({ route }) => {
                 })
                 .catch(function (error) {
                     console.log(error);
+                    setFromLoading(false);
                 });
         }
     }
