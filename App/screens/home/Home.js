@@ -176,9 +176,10 @@ export default ({ navigation }) => {
                             `users/${userId}/cLocation`,
                             {
                                 ...coords,
-                                profileImage: user.profileImage,
-                                firstname: user.firstname,
-                                lastname: user.lastname,
+                                profileImage: user?.profileImage,
+                                firstname: user?.firstname,
+                                lastname: user?.lastname,
+                                phone: user?.phone,
                             },
                             db
                         );

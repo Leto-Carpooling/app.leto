@@ -22,8 +22,8 @@ import { getFare } from "../../../logic/functions";
 
 const HangTight = ({ route }) => {
     const navigation = useNavigation();
-    const [status, setstatus] = useState(0);
-    const { origin, dest, user, db } = useContext(AppContext);
+    const [status, setStatus] = useState(0);
+    const { origin, dest, user, db, setDest } = useContext(AppContext);
 
     //get the riders route
     useEffect(() => {
@@ -105,14 +105,14 @@ const HangTight = ({ route }) => {
                 <TextField
                     iconName="place"
                     placeholder="Where from?"
-                    value={origin.name}
+                    value={origin?.name}
                     editable={false}
                 />
                 <Spacer height={1} />
                 <TextField
                     iconName="place"
                     placeholder="Where to?"
-                    value={dest.name}
+                    value={dest?.name}
                     editable={false}
                 />
                 <Spacer height={4} />
@@ -125,6 +125,7 @@ const HangTight = ({ route }) => {
                         iconName="close"
                         onPress={() => {
                             navigation.navigate("RideTypeChooser");
+                            setDest(null);
                         }}
                     />
                 </View>
