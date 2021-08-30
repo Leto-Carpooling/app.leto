@@ -53,7 +53,7 @@ const HangTight = ({ route }) => {
                     //listen for fare change
                     let groupUrl = `groups/gid-${routeInfo.groupId}`;
 
-                    db.ref(`${groupUrl}/fares`).on("value", (snapshot) => {
+                    db.ref(`${groupUrl}/fares/uid-${routeInfo.userId}`).on("value", (snapshot) => {
                         let fares = snapshot.val();
                         //price = snapshot[`uid-${routeInfo.userId}`];
                     });
