@@ -144,7 +144,7 @@ async function saveToFirebase(route, groupTimer, response, db) {
         endPlaceId: geocodedWp[geocodedWp.length - 1].place_id,
     };
 
-    fares[`uid-${userId}`] = -1; //will calculate fare later.
+    fares[`uid-${userId}`] = "-"; //will calculate fare later.
 
     onlineStatus[`uid-${userId}`] = {
         updated: firebase.database.ServerValue.TIMESTAMP,
