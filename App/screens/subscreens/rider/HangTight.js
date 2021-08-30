@@ -76,7 +76,6 @@ const HangTight = ({ route }) => {
                     db.ref(`${groupUrl}/usersIndex`).on("value", (snapshot) => {
                         //listen to all users
                         //you can list them here
-                        Log("From hangtight snapshot:", snapshot)
                         let users = snapshot.val();
 
                         for (const uid in users) {
@@ -129,7 +128,7 @@ const HangTight = ({ route }) => {
                 {renderDriverItem()}
                 <Spacer height={5} />
 
-                <View style={tw`bg-red-400 p-2`}>
+                <View>
                     <Button
                         text="Cancel ride"
                         iconName="close"
