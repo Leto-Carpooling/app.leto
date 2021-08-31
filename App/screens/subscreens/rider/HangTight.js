@@ -34,6 +34,8 @@ const HangTight = ({ route }) => {
         setRiderMarkers,
         setMapDirections,
         setmIndentifiers,
+        setRideOrigin,
+        setRideDest,
     } = useContext(AppContext);
     const [price, setPrice] = useState(0);
     const [currency, setCurrency] = useState("");
@@ -92,6 +94,18 @@ const HangTight = ({ route }) => {
                                     startPlaceId: groupDetails.startPlaceId,
                                     endPlaceId: groupDetails.endPlaceId,
                                 };
+                                setRideOrigin({
+                                    lat: groupDetails.sLat,
+                                    lng: groupDetails.sLong,
+                                    name: "Pickup",
+                                    placeId: groupDetails.startPlaceId,
+                                });
+                                setRideDest({
+                                    lat: groupDetails.eLat,
+                                    lng: groupDetails.eLong,
+                                    name: "Destination",
+                                    placeId: groupDetails.endPlaceId,
+                                });
                                 //will trigger drawing of polyline
                                 setMapDirections([direction]);
                             }
@@ -109,7 +123,10 @@ const HangTight = ({ route }) => {
 
                         const markers = [];
                         const identifiers = [];
+                        let i = 0;
+                        const numUsers = users ? Object.keys(users).length : 0;
                         for (const uid in users) {
+                            i++;
                             const id = uid.split("-")[1];
                             otherRiders.push(id);
 
@@ -119,7 +136,7 @@ const HangTight = ({ route }) => {
                                     const userDetails = snapshot.val();
                                     const currUserId = user.token.split("-")[0];
                                     //get the user data from here, including the current location.
-                                    identifiers.push(`uid`);
+                                    identifiers.push(`${uid}`);
                                     const marker = {
                                         coords: userDetails.cLocation,
                                         title:
@@ -132,11 +149,13 @@ const HangTight = ({ route }) => {
                                             id === currUserId ? "me" : "rider",
                                     };
                                     markers.push(marker);
+                                    if (i === numUsers) {
+                                        setRiderMarkers(markers);
+                                        setmIndentifiers(identifiers);
+                                    }
                                 }
                             );
                         }
-                        setRiderMarkers(markers);
-                        setmIndentifiers(identifiers);
 
                         setOtherRiders(otherRiders);
                         if (otherRiders.length > 1) {
@@ -161,6 +180,7 @@ const HangTight = ({ route }) => {
                         setTimer(timeFormatter(currentTime));
 
                         //show pickup point then assign drivers
+                        //show pickup point then assign drivers
                         if (currentTime == 0) {
                             assignDriver(routeInfo, user).then((response) =>{
                              if(response.data.status == "OK"){
@@ -172,6 +192,7 @@ const HangTight = ({ route }) => {
                                 Log("Error Assigning driver", err)
                             });
                             setStatus(2);
+                            clearInterval(interval);
                         }
                     });
 
@@ -179,11 +200,13 @@ const HangTight = ({ route }) => {
                 }
             );
         })();
-    }, [dest, origin]);
+    }, [dest]);
 
     // useEffect(() => {
     //     if (status === 2) {
-    //         navigation.navigate("Pickup");
+    //         setTimeout(() => {
+    //             navigation.navigate("Pickup");
+    //         }, 1000 * 10);
     //     }
     // }, [status]);
 
@@ -209,7 +232,7 @@ const HangTight = ({ route }) => {
                 <View style={tw`w-8/12`}>{renderStatus()}</View>
                 {renderPrice()}
             </View>
-            <View style={tw`p-2`}>
+            <View style={tw`p-2 flex-1`}>
                 <TextField
                     iconName="my-location"
                     placeholder="Where from?"
@@ -223,11 +246,11 @@ const HangTight = ({ route }) => {
                     value={dest?.name}
                     editable={false}
                 />
-                <Spacer height={4} />
+                <Spacer height={10} />
                 {renderDriverItem()}
                 <Spacer height={5} />
 
-                <View>
+                <View style={[tw`flex-1 justify-end`]}>
                     <Button
                         text="Cancel ride"
                         iconName="close"

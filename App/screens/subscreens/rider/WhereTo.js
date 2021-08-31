@@ -163,6 +163,7 @@ const WhereTo = ({ route }) => {
                         lng: resp.data.result.geometry.location.lng,
                         name: place.mainText,
                         placeId: place.placeId,
+                        secondaryText: place.secondaryText,
                     });
                 })
                 .catch(function (error) {
@@ -170,7 +171,7 @@ const WhereTo = ({ route }) => {
                 });
         } else {
             onChangeWhereFrom(place.mainText);
-            navigation.navigate("HangTight", route.params);
+            //navigation.navigate("HangTight", route.params);
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -204,7 +205,6 @@ function getPlaces(whereTo, setPlaces, isTo, setToLoading, setFromLoading) {
         .then(function (response) {
             //Log("autocomplete", response.data);
             const candidates = response.data.predictions;
-            console.log("num:" + candidates.length);
             const results = [];
             candidates.forEach((cand) => {
                 results.push({

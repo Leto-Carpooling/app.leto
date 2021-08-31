@@ -5,8 +5,15 @@ import MapViewDirections from "react-native-maps-directions";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 
 const Map = () => {
-    const { origin, dest, mapDirections, riderMarkers, mIndentifiers } =
-        useContext(AppContext);
+    const {
+        origin,
+        dest,
+        mapDirections,
+        riderMarkers,
+        mIndentifiers,
+        rideOrigin,
+        rideDest,
+    } = useContext(AppContext);
     const mapRef = React.useRef(null);
 
     useEffect(() => {
@@ -21,10 +28,12 @@ const Map = () => {
     }, [origin]);
 
     useEffect(() => {
-        if (!origin || !dest) return;
+        if (!rideOrigin || !rideDest) return;
 
-        mapRef.current.fitToSuppliedMarkers(mIndentifiers);
-    }, [origin, dest]);
+        mapRef.current.fitToSuppliedMarkers(
+            mIndentifiers.concat(["origin", "destination"])
+        );
+    }, [rideOrigin, rideDest, riderMarkers, mIndentifiers]);
 
     return (
         <MapView
@@ -78,6 +87,29 @@ const Map = () => {
                         longitude: origin.lng,
                     }}
                     image={require("../../assets/img/me.png")}
+                />
+            )}
+
+            {rideOrigin && false && (
+                <Marker
+                    coordinate={{
+                        latitude: rideOrigin?.lat,
+                        longitude: rideOrigin?.lng,
+                    }}
+                    title={rideOrigin?.name}
+                    description="point"
+                    identifier="origin"
+                />
+            )}
+            {rideDest && (
+                <Marker
+                    coordinate={{
+                        latitude: rideDest?.lat,
+                        longitude: rideDest?.lng,
+                    }}
+                    title={rideDest?.name}
+                    description="point"
+                    identifier="destination"
                 />
             )}
         </MapView>
