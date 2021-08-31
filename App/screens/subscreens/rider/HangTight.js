@@ -19,7 +19,7 @@ import { saveRoute } from "../../../logic/saveRoute";
 
 import { AppContext } from "../../../util/AppContext";
 import { Log } from "../../../util/Logger";
-import { getFare } from "../../../logic/functions";
+import { cancelRide, getFare, timeFormatter } from "../../../logic/functions";
 
 const HangTight = ({ route }) => {
     const navigation = useNavigation();
@@ -28,6 +28,11 @@ const HangTight = ({ route }) => {
     const { origin, dest, user, db, setDest } = useContext(AppContext);
     const [price, setPrice] = useState(0);
     const [currency, setCurrency] = useState("");
+
+    const [routeInfo, setRouteInfo] = useState(null);
+    const [otherRiders, setOtherRiders ] = useState([]);
+    const [groupText, setGroupText] = useState("Looking for matches");
+    const [timer, setTimer] = useState(timeFormatter(120));
 
     //get the riders route
     useEffect(() => {
@@ -39,7 +44,7 @@ const HangTight = ({ route }) => {
             // Log("riders route", route);
             saveRoute(
                 route_,
-                300,
+                120,
                 user,
                 db,
                 route.params.rideType,
@@ -125,6 +130,21 @@ const HangTight = ({ route }) => {
             navigation.navigate("Pickup");
         }
     }, [status]);
+
+    useEffect(() => {
+        if(routeInfo && routeInfo.deleted){
+           let groupUrl = `groups/gid-${routeInfo.groupId}`;
+           db.ref(`${groupUrl}/fares/uid-${routeInfo.userId}`).off();
+           db.ref(`${groupUrl}/locations`).off(); 
+           db.ref(`${groupUrl}/usersIndex`).off();
+           otherRiders.forEach(riderId => {
+            db.ref(`users/${riderId}/cLocation`).off();
+           });
+           setTimer(0);
+        }
+    }, [routeInfo]);
+
+
     return (
         <View style={tw`flex-1 p-2 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-2`, styles.fp]}>
@@ -157,8 +177,26 @@ const HangTight = ({ route }) => {
                         text="Cancel ride"
                         iconName="close"
                         onPress={() => {
-                            navigation.navigate("RideTypeChooser");
-                            setDest(null);
+                            //cancelling ride here. Ensure to put some progress bar here
+                            cancelRide(routeInfo, user).then((response) => {
+                                let jRes = response.data;
+                                Log("CancelRide Response: ", jRes );
+                                if(jRes.status == "OK"){
+                                    let deletedRouteInfo = routeInfo;
+                                    deletedRouteInfo.deleted = true;
+                                    setRouteInfo(deletedRouteInfo);
+                                    
+                                    navigation.navigate("RideTypeChooser");
+                                    setDest(null);
+                                    return;
+                                }
+                                
+                                Alert(JSON.parse(jRes.message));
+                            })
+                            .catch(error => {
+                                //show error
+                            });
+                            
                         }}
                     />
                 </View>
@@ -183,9 +221,8 @@ const HangTight = ({ route }) => {
                             size="small"
                             color={colors.primary}
                         />
-
-                        <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                            Looking for matches
+                        <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
+                            {groupText}
                         </Text>
                     </View>
                 );
@@ -198,9 +235,8 @@ const HangTight = ({ route }) => {
                                 color={colors.success}
                                 size={20}
                             />
-
-                            <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Matches found
+                            <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
+                               {groupText}
                             </Text>
                         </View>
                         <View style={tw`flex-row items-center mt-2`}>
@@ -208,9 +244,8 @@ const HangTight = ({ route }) => {
                                 size="small"
                                 color={colors.primary}
                             />
-
                             <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Searching for a driver
+                                Waiting for timeout {timer}
                             </Text>
                         </View>
                     </>
@@ -224,9 +259,8 @@ const HangTight = ({ route }) => {
                                 color={colors.success}
                                 size={20}
                             />
-
                             <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
-                                Assigning your driver
+                                Your driver is Jake
                             </Text>
                         </View>
                         <View style={tw`flex-row items-center mt-2`}>
@@ -234,9 +268,8 @@ const HangTight = ({ route }) => {
                                 size="small"
                                 color={colors.primary}
                             />
-
                             <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Finding optimal pickup point
+                                Finding best pickup point
                             </Text>
                         </View>
                     </>
@@ -244,6 +277,7 @@ const HangTight = ({ route }) => {
         }
     }
 };
+
 
 export default HangTight;
 
