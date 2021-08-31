@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Alert } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
@@ -28,6 +28,7 @@ const HangTight = ({ route }) => {
     const { origin, dest, user, db, setDest } = useContext(AppContext);
     const [price, setPrice] = useState(0);
     const [currency, setCurrency] = useState("");
+    const [cancelBtnLoading, setCancelBtnLoading] = useState(false);
 
     const [routeInfo, setRouteInfo] = useState(null);
     const [otherRiders, setOtherRiders] = useState([]);
@@ -76,6 +77,9 @@ const HangTight = ({ route }) => {
                         let locations = snapshot.val();
                         Log("Locations", locations);
                         //update the map
+                        for (const uid in locations) {
+                            const loc = location[uid];
+                        }
                     });
 
                     //listen to users and their location changes
@@ -86,7 +90,7 @@ const HangTight = ({ route }) => {
 
                         for (const uid in users) {
                             let id = uid.split("-")[1];
-                            db.ref(`users/${id}/cLocation`).on(
+                            db.ref(`users/uid-${id}/cLocation`).on(
                                 "value",
                                 (snapshot) => {
                                     let userDetails = snapshot.val();
@@ -179,26 +183,33 @@ const HangTight = ({ route }) => {
                     <Button
                         text="Cancel ride"
                         iconName="close"
+                        loading={cancelBtnLoading}
                         onPress={() => {
-                            //cancelling ride here. Ensure to put some progress bar here
+                            setCancelBtnLoading(true);
                             cancelRide(routeInfo, user)
                                 .then((response) => {
+                                    setCancelBtnLoading(false);
                                     let jRes = response.data;
                                     Log("CancelRide Response: ", jRes);
                                     if (jRes.status == "OK") {
                                         let deletedRouteInfo = routeInfo;
                                         deletedRouteInfo.deleted = true;
                                         setRouteInfo(deletedRouteInfo);
-
-                                        navigation.navigate("RideTypeChooser");
+                                        navigation.reset({
+                                            index: 0,
+                                            routes: [
+                                                { name: "RideTypeChooser" },
+                                            ],
+                                        });
                                         setDest(null);
                                         return;
                                     }
 
-                                    Alert(JSON.parse(jRes.message));
+                                    Alert.alert("Error", jRes.message);
                                 })
                                 .catch((error) => {
-                                    //show error
+                                    setCancelBtnLoading(false);
+                                    Log("Cancel ride error", error);
                                 });
                         }}
                     />
