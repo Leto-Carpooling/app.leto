@@ -111,7 +111,7 @@ const WhereTo = ({ route }) => {
             </Text>
             <View style={tw`p-2`}>
                 <TextField
-                    iconName="place"
+                    iconName="my-location"
                     placeholder="Where from?"
                     value={whereFrom}
                     onChangeText={onChangeWhereFrom}
