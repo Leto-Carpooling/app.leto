@@ -57,3 +57,16 @@ export const timeFormatter = (seconds, withHours = false) => {
 
     return `${withHours ? `${h}:` : ""} ${m}:${s}`;
 };
+
+export const assignDriver = async (routeInfo, user) =>{
+    Log("Assigning driver: making 62 request", routeInfo);
+    const config = {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            auth: user.token,
+        },
+    };
+    let formData = new FormData();
+    formData.append("groupId", routeInfo.groupId);
+    return await api.post(`roe/assignDriver.php`, formData, config);
+}

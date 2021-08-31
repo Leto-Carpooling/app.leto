@@ -19,7 +19,7 @@ import { saveRoute } from "../../../logic/saveRoute";
 
 import { AppContext } from "../../../util/AppContext";
 import { Log } from "../../../util/Logger";
-import { cancelRide, getFare, timeFormatter } from "../../../logic/functions";
+import { assignDriver, cancelRide, getFare, timeFormatter } from "../../../logic/functions";
 
 const HangTight = ({ route }) => {
     const navigation = useNavigation();
@@ -42,7 +42,7 @@ const HangTight = ({ route }) => {
     const [routeInfo, setRouteInfo] = useState(null);
     const [otherRiders, setOtherRiders] = useState([]);
     const [groupText, setGroupText] = useState("Looking for matches");
-    const [timer, setTimer] = useState(timeFormatter(120));
+    const [timer, setTimer] = useState(timeFormatter(60));
 
     //get the riders route
     useEffect(() => {
@@ -54,7 +54,7 @@ const HangTight = ({ route }) => {
             // Log("riders route", route);
             saveRoute(
                 route_,
-                120,
+                60,
                 user,
                 db,
                 route.params.rideType,
@@ -66,6 +66,7 @@ const HangTight = ({ route }) => {
                      * listen to the timer
                      */
                     setStatus(1);
+                    setRouteInfo(routeInfo);
                     Log("47: Route Info", routeInfo);
                     getFare(routeInfo.groupId, user, (fareData) => {
                         setCurrency(fareData.currency);
@@ -104,11 +105,14 @@ const HangTight = ({ route }) => {
                         //listen to all users
                         //you can list them here
                         let users = snapshot.val();
+                        let otherRiders = [];
 
                         const markers = [];
                         const identifiers = [];
                         for (const uid in users) {
                             const id = uid.split("-")[1];
+                            otherRiders.push(id);
+
                             db.ref(`users/uid-${id}`).on(
                                 "value",
                                 (snapshot) => {
@@ -158,6 +162,15 @@ const HangTight = ({ route }) => {
 
                         //show pickup point then assign drivers
                         if (currentTime == 0) {
+                            assignDriver(routeInfo, user).then((response) =>{
+                             if(response.data.status == "OK"){
+                                Log("Assign driver response", JSON.parse(response.data.message));
+                                setStatus(2);
+                             }
+                            
+                            }).catch(err =>{
+                                Log("Error Assigning driver", err)
+                            });
                             setStatus(2);
                         }
                     });
@@ -303,13 +316,12 @@ const HangTight = ({ route }) => {
                 return (
                     <>
                         <View style={tw`flex-row items-center`}>
-                            <MaterialIcons
-                                name="check"
-                                color={colors.success}
-                                size={20}
+                            <ActivityIndicator
+                                size="small"
+                                color={colors.primary}
                             />
                             <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
-                                Your driver is Jake
+                               Finding your driver
                             </Text>
                         </View>
                         <View style={tw`flex-row items-center mt-2`}>
