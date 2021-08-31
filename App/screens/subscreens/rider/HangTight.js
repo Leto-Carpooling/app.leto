@@ -33,15 +33,6 @@ const HangTight = ({ route }) => {
     const [groupText, setGroupText] = useState("Looking for matches");
     const [timer, setTimer] = useState(180);
 
-    setInterval(() =>{
-        if(timer > 0){
-            setTimer(timer - 1);
-        }else{
-            setTimer(0);
-        }
-
-    }, 1000);
-
     //get the riders route
     useEffect(() => {
         snapToIndex(1);
@@ -120,6 +111,17 @@ const HangTight = ({ route }) => {
                         }
 
                     }); 
+
+                    //timer
+                    db.ref(`${groupUrl}/timer`).on("value", (snapshot) => {
+                        let currentTime = snapshot.val();
+                        setTimer(currentTime);
+
+                        //show pickup point then assign drivers
+                        if(timer == 0){
+
+                        }
+                    });
 
                     //maintain online status of others
                 }
