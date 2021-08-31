@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Alert } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
@@ -19,7 +19,7 @@ import { saveRoute } from "../../../logic/saveRoute";
 
 import { AppContext } from "../../../util/AppContext";
 import { Log } from "../../../util/Logger";
-import { getFare } from "../../../logic/functions";
+import { cancelRide, getFare } from "../../../logic/functions";
 
 const HangTight = ({ route }) => {
     const navigation = useNavigation();
@@ -27,6 +27,20 @@ const HangTight = ({ route }) => {
     const [status, setStatus] = useState(0);
     const { origin, dest, user, db, setDest } = useContext(AppContext);
     const [price, setPrice] = useState(0);
+
+    const [routeInfo, setRouteInfo] = useState(null);
+    const [otherRiders, setOtherRiders ] = useState([]);
+    const [groupText, setGroupText] = useState("Looking for matches");
+    const [timer, setTimer] = useState(180);
+
+    setInterval(() =>{
+        if(timer > 0){
+            setTimer(timer - 1);
+        }else{
+            setTimer(0);
+        }
+
+    }, 1000);
 
     //get the riders route
     useEffect(() => {
@@ -36,7 +50,7 @@ const HangTight = ({ route }) => {
             Log("riders route", route);
             saveRoute(
                 route_,
-                300,
+                180,
                 user,
                 db,
                 route.params.rideType,
@@ -48,6 +62,9 @@ const HangTight = ({ route }) => {
                      * listen to the timer
                      */
                     setStatus(1);
+                    setRouteInfo(routeInfo);
+                    setTimer(routeInfo.groupTimer);
+
                     Log("47: Route Info", routeInfo);
                     getFare(routeInfo.groupId, user, (fareData) => {
                         //handle fare info here.
@@ -78,9 +95,11 @@ const HangTight = ({ route }) => {
                         //you can list them here
                         Log("From hangtight snapshot:", snapshot)
                         let users = snapshot.val();
+                        let otherRiders = [];
 
                         for (const uid in users) {
                             let id = uid.split("-")[1];
+                            otherRiders.push(id);
                             db.ref(`users/${id}/cLocation`).on(
                                 "value",
                                 (snapshot) => {
@@ -89,7 +108,18 @@ const HangTight = ({ route }) => {
                                 }
                             );
                         }
-                    });
+
+                        setOtherRiders(otherRiders);
+                        if(otherRiders.length > 1){
+                            let text = "You and "+ (otherRiders.length -1) + " other rider" +((otherRiders.length - 1) > 1 ? "s" : "") + " are sharing this ride";
+
+                            setGroupText(text);
+                        }
+                        else{
+                            setGroupText("You are the only rider in this ride group... waiting for timeout");
+                        }
+
+                    }); 
 
                     //maintain online status of others
                 }
@@ -102,6 +132,22 @@ const HangTight = ({ route }) => {
             navigation.navigate("Pickup");
         }
     }, [status]);
+
+    useEffect(() => {
+        if(routeInfo && routeInfo.deleted){
+           let groupUrl = `groups/gid-${routeInfo.groupId}`;
+           db.ref(`${groupUrl}/fares/uid-${routeInfo.userId}`).off();
+           db.ref(`${groupUrl}/locations`).off(); 
+           db.ref(`${groupUrl}/usersIndex`).off();
+           otherRiders.forEach(riderId => {
+            db.ref(`users/${riderId}/cLocation`).off();
+           });
+
+           setTimer(0);
+        }
+    }, [routeInfo]);
+
+
     return (
         <View style={tw`flex-1 p-2 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-2`, styles.fp]}>
@@ -134,8 +180,29 @@ const HangTight = ({ route }) => {
                         text="Cancel ride"
                         iconName="close"
                         onPress={() => {
-                            navigation.navigate("RideTypeChooser");
-                            setDest(null);
+
+                            //cancelling ride here. Ensure to put some progress bar here
+                            cancelRide(routeInfo, user).then((response) => {
+                                let jRes = response.data;
+                                Log("CancelRide Response: ", jRes );
+                                if(jRes.status == "OK"){
+                                    let deletedRouteInfo = routeInfo;
+                                    deletedRouteInfo.deleted = true;
+                                    setRouteInfo(deletedRouteInfo);
+                                    
+
+                                    navigation.navigate("RideTypeChooser");
+                                    setDest(null);
+                                    return;
+                                }
+                                
+                                Alert(JSON.parse(jRes.message));
+                            })
+                            .catch(error => {
+                                //show error
+                            });
+                            
+
                         }}
                     />
                 </View>
@@ -161,8 +228,8 @@ const HangTight = ({ route }) => {
                             color={colors.primary}
                         />
 
-                        <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                            Looking for matches
+                        <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
+                            {groupText}
                         </Text>
                     </View>
                 );
@@ -176,8 +243,8 @@ const HangTight = ({ route }) => {
                                 size={20}
                             />
 
-                            <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Matches found
+                            <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
+                               {groupText}
                             </Text>
                         </View>
                         <View style={tw`flex-row items-center mt-2`}>
@@ -187,7 +254,7 @@ const HangTight = ({ route }) => {
                             />
 
                             <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Searching for a driver
+                                Waiting for timeout {timer}
                             </Text>
                         </View>
                     </>
@@ -202,7 +269,7 @@ const HangTight = ({ route }) => {
                                 size={20}
                             />
 
-                            <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
+                            <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
                                 Your driver is Jake
                             </Text>
                         </View>
@@ -213,7 +280,7 @@ const HangTight = ({ route }) => {
                             />
 
                             <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Finding optimal pickup point
+                                Finding best pickup point
                             </Text>
                         </View>
                     </>

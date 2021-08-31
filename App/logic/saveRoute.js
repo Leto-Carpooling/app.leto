@@ -167,6 +167,8 @@ async function saveToFirebase(route, groupTimer, response, db) {
         userId,
         routeId,
         groupTimer,
+        groupExists,
+        deleted: false
     };
 }
 

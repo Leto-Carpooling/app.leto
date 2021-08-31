@@ -27,6 +27,4 @@ firebase.initializeApp(firebaseConfig);
 
 export const database = firebase.database();
 
-database.ref().on("child_removed", (snapshot) => {
 
-});

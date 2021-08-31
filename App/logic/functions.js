@@ -26,9 +26,22 @@ export const getFare = async function(groupId, user, callback){
                 callback(JSON.parse(resp.data.message), groupId);
             } else {
                Log("Error from calculate fare:", resp.data.message);
-            }
+            } 
         })
         .catch((err) => {
             Log("Getting fare", err);
     });
+}
+
+export const cancelRide = async function (routeInfo, user){
+    Log("Cancel Ride: making 37 request", routeInfo);
+    const config = {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            auth: user.token,
+        },
+    };
+    let formData = new FormData();
+    formData.append("route-info", JSON.stringify(routeInfo));
+    return await api.post(`route/cancel.php`, formData, config);
 }
