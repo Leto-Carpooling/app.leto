@@ -31,7 +31,7 @@ const HangTight = ({ route }) => {
     const [routeInfo, setRouteInfo] = useState(null);
     const [otherRiders, setOtherRiders ] = useState([]);
     const [groupText, setGroupText] = useState("Looking for matches");
-    const [timer, setTimer] = useState(timeFormatter(60));
+    const [timer, setTimer] = useState(timeFormatter(120));
 
     //get the riders route
     useEffect(() => {
@@ -41,7 +41,7 @@ const HangTight = ({ route }) => {
             Log("riders route", route);
             saveRoute(
                 route_,
-                60,
+                120,
                 user,
                 db,
                 route.params.rideType,
