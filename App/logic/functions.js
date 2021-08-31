@@ -45,3 +45,16 @@ export const cancelRide = async function (routeInfo, user){
     formData.append("route-info", JSON.stringify(routeInfo));
     return await api.post(`route/cancel.php`, formData, config);
 }
+/**
+ * 
+ * @param {int} seconds 
+ * @param {boolean} withHours - should the hours shown in the formatted time.
+ */
+export const timeFormatter = (seconds, withHours = false) =>{
+    
+    let s = seconds % 60;
+    let m = Math.trunc(seconds / 60) % 60;
+    let h = Math.trunc(seconds / 3600) % 24;
+    
+    return `${(withHours)?`${h}:`: ""} ${m}:${s}`;
+}

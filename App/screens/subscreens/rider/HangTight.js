@@ -19,7 +19,7 @@ import { saveRoute } from "../../../logic/saveRoute";
 
 import { AppContext } from "../../../util/AppContext";
 import { Log } from "../../../util/Logger";
-import { cancelRide, getFare } from "../../../logic/functions";
+import { cancelRide, getFare, timeFormatter } from "../../../logic/functions";
 
 const HangTight = ({ route }) => {
     const navigation = useNavigation();
@@ -31,7 +31,7 @@ const HangTight = ({ route }) => {
     const [routeInfo, setRouteInfo] = useState(null);
     const [otherRiders, setOtherRiders ] = useState([]);
     const [groupText, setGroupText] = useState("Looking for matches");
-    const [timer, setTimer] = useState(180);
+    const [timer, setTimer] = useState(timeFormatter(60));
 
     //get the riders route
     useEffect(() => {
@@ -41,7 +41,7 @@ const HangTight = ({ route }) => {
             Log("riders route", route);
             saveRoute(
                 route_,
-                180,
+                60,
                 user,
                 db,
                 route.params.rideType,
@@ -115,10 +115,10 @@ const HangTight = ({ route }) => {
                     //timer
                     db.ref(`${groupUrl}/timer`).on("value", (snapshot) => {
                         let currentTime = snapshot.val();
-                        setTimer(currentTime);
+                        setTimer(timeFormatter(currentTime));
 
                         //show pickup point then assign drivers
-                        if(timer == 0){
+                        if(currentTime == 0){
 
                         }
                     });
