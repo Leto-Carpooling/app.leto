@@ -106,7 +106,7 @@ const HangTight = ({ route }) => {
                             setGroupText(text);
                         }
                         else{
-                            setGroupText("You are the only rider in this ride group... waiting for timeout");
+                            setGroupText("You are the only rider in this ride group");
                         }
 
                     }); 
@@ -118,6 +118,7 @@ const HangTight = ({ route }) => {
 
                         //show pickup point then assign drivers
                         if(currentTime == 0){
+                            setStatus(2);
 
                         }
                     });
@@ -271,7 +272,7 @@ const HangTight = ({ route }) => {
                             />
 
                             <Text style={[tw`text-gray-500 ml-2 `, styles.fi]}>
-                                Your driver is Jake
+                                Assigning your driver
                             </Text>
                         </View>
                         <View style={tw`flex-row items-center mt-2`}>
