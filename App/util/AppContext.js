@@ -13,6 +13,9 @@ export const AppContextProvider = ({ children }) => {
     const [db] = useState(database);
     const [ready, setReady] = useState(false);
     const [curLoc, setCurLoc] = useState({}); //current location
+    const [mapDirections, setMapDirections] = useState([]);
+    const [riderMarkers, setRiderMarkers] = useState([]);
+    const [mIndentifiers, setmIndentifiers] = useState([]);
 
     useEffect(() => {
         (async () => {
@@ -38,6 +41,12 @@ export const AppContextProvider = ({ children }) => {
         ready,
         curLoc,
         setCurLoc,
+        mapDirections,
+        setMapDirections,
+        riderMarkers,
+        setRiderMarkers,
+        mIndentifiers,
+        setmIndentifiers,
     };
     return (
         <AppContext.Provider value={context}>{children}</AppContext.Provider>

@@ -25,7 +25,16 @@ const HangTight = ({ route }) => {
     const navigation = useNavigation();
     const { snapToIndex } = useBottomSheet();
     const [status, setStatus] = useState(0);
-    const { origin, dest, user, db, setDest } = useContext(AppContext);
+    const {
+        origin,
+        dest,
+        user,
+        db,
+        setDest,
+        setRiderMarkers,
+        setMapDirections,
+        setmIndentifiers,
+    } = useContext(AppContext);
     const [price, setPrice] = useState(0);
     const [currency, setCurrency] = useState("");
     const [cancelBtnLoading, setCancelBtnLoading] = useState(false);
@@ -72,15 +81,23 @@ const HangTight = ({ route }) => {
                         }
                     );
 
-                    //listen for locations change
-                    db.ref(`${groupUrl}/locations`).on("value", (snapshot) => {
-                        let locations = snapshot.val();
-                        Log("Locations", locations);
-                        //update the map
-                        for (const uid in locations) {
-                            const loc = location[uid];
-                        }
-                    });
+                    db.ref(`${groupUrl}`)
+                        .get()
+                        .then((snapshot) => {
+                            if (snapshot.exists()) {
+                                const groupDetails = snapshot.val();
+                                Log("group route", groupDetails);
+                                const direction = {
+                                    startPlaceId: groupDetails.startPlaceId,
+                                    endPlaceId: groupDetails.endPlaceId,
+                                };
+                                //will trigger drawing of polyline
+                                setMapDirections([direction]);
+                            }
+                        })
+                        .catch((err) => {
+                            Log("Listening on group", err);
+                        });
 
                     //listen to users and their location changes
                     db.ref(`${groupUrl}/usersIndex`).on("value", (snapshot) => {
@@ -88,16 +105,34 @@ const HangTight = ({ route }) => {
                         //you can list them here
                         let users = snapshot.val();
 
+                        const markers = [];
+                        const identifiers = [];
                         for (const uid in users) {
-                            let id = uid.split("-")[1];
-                            db.ref(`users/uid-${id}/cLocation`).on(
+                            const id = uid.split("-")[1];
+                            db.ref(`users/uid-${id}`).on(
                                 "value",
                                 (snapshot) => {
-                                    let userDetails = snapshot.val();
+                                    const userDetails = snapshot.val();
+                                    const currUserId = user.token.split("-")[0];
                                     //get the user data from here, including the current location.
+                                    identifiers.push(`uid`);
+                                    const marker = {
+                                        coords: userDetails.cLocation,
+                                        title:
+                                            id === currUserId
+                                                ? "You"
+                                                : `${userDetails.firstname} ${userDetails.lastname}`,
+                                        desc: `Rider`,
+                                        identifier: `${uid}`,
+                                        type:
+                                            id === currUserId ? "me" : "rider",
+                                    };
+                                    markers.push(marker);
                                 }
                             );
                         }
+                        setRiderMarkers(markers);
+                        setmIndentifiers(identifiers);
 
                         setOtherRiders(otherRiders);
                         if (otherRiders.length > 1) {

@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { AppContext } from "../../util/AppContext";
 import MapViewDirections from "react-native-maps-directions";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 
 const Map = () => {
-    const { origin, dest } = useContext(AppContext);
+    const { origin, dest, mapDirections, riderMarkers, mIndentifiers } =
+        useContext(AppContext);
     const mapRef = React.useRef(null);
 
     useEffect(() => {
@@ -22,7 +23,7 @@ const Map = () => {
     useEffect(() => {
         if (!origin || !dest) return;
 
-        mapRef.current.fitToSuppliedMarkers(["origin", "destination"]);
+        mapRef.current.fitToSuppliedMarkers(mIndentifiers);
     }, [origin, dest]);
 
     return (
@@ -37,59 +38,63 @@ const Map = () => {
                 longitudeDelta: 0.005,
             }}
         >
-            {origin && dest && (
+            {/** Map directions are rendered here */}
+            {mapDirections.map((direction, index) => (
                 <MapViewDirections
-                    origin={{
-                        latitude: origin.lat,
-                        longitude: origin.lng,
-                    }}
-                    destination={{
-                        latitude: dest.lat,
-                        longitude: dest.lng,
-                    }}
+                    key={index}
+                    origin={`place_id:${direction.startPlaceId}`}
+                    destination={`place_id:${direction.endPlaceId}`}
                     lineDashPattern={[1]}
                     apikey={GOOGLE_MAPS_API_KEY}
                     strokeWidth={5}
+                    optimizeWaypoints={true}
                     strokeColor="black"
                     onReady={(result) => {
                         // console.log(result);
                     }}
                 />
-            )}
-            {origin && (
+            ))}
+
+            {/**
+             * Rider markers are rendered here
+             */}
+            {riderMarkers.map((marker, index) => {
+                return (
+                    <Marker
+                        key={index}
+                        coordinate={marker.coords}
+                        title={marker.title}
+                        description={marker.desc}
+                        identifier={marker.identifier}
+                        image={returnMarkerImage(marker.type)}
+                    />
+                );
+            })}
+
+            {origin && mapDirections.length < 1 && (
                 <Marker
                     coordinate={{
                         latitude: origin.lat,
                         longitude: origin.lng,
                     }}
-                    title={origin.mainText}
-                    description={origin.secondaryText}
-                    identifier="origin"
-                />
-            )}
-            {dest && (
-                <Marker
-                    coordinate={{
-                        latitude: dest.lat,
-                        longitude: dest.lng,
-                    }}
-                    title="You"
-                    description={"Destination"}
-                    identifier="destination"
-                />
-            )}
-
-            {origin && (
-                <Marker
-                    coordinate={{
-                        latitude: origin.lat + 0.00095,
-                        longitude: origin.lng,
-                    }}
-                    image={require("../../assets/img/car_top_view.png")}
+                    image={require("../../assets/img/me.png")}
                 />
             )}
         </MapView>
     );
 };
+
+function returnMarkerImage(type) {
+    switch (type) {
+        case "rider":
+            return require(`../../assets/img/rider.png`);
+
+        case "driver":
+            return require(`../../assets/img/driver.png`);
+
+        default:
+            return require(`../../assets/img/me.png`);
+    }
+}
 
 export default Map;

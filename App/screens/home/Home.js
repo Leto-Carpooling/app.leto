@@ -172,14 +172,11 @@ export default ({ navigation }) => {
                         );
                     } else {
                         const userId = user?.token.split("-")[0];
-                        writeToDatabase(
-                            `users/uid-${userId}/cLocation`,
-                            coords,
-                            db
-                        );
+
                         writeToDatabase(
                             `users/uid-${userId}`,
                             {
+                                cLocation: coords,
                                 profileImage: user?.profileImage,
                                 firstname: user?.firstname,
                                 lastname: user?.lastname,
