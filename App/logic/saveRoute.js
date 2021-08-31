@@ -31,7 +31,8 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
     let end_latitude = route0leg0.end_location.lat;
     let end_longitude = route0leg0.end_location.lng;
     let startPlaceId = route.geocoded_waypoints[0].place_id;
-    let endPlaceId = route.geocoded_waypoints[route.geocoded_waypoints.length - 1].place_id
+    let endPlaceId =
+        route.geocoded_waypoints[route.geocoded_waypoints.length - 1].place_id;
 
     let routePoints = {
         start_latitude,
@@ -41,22 +42,22 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
         rideType,
         startPlaceId,
         endPlaceId,
-        groupTimer
+        groupTimer,
     };
 
     formData.append("route-points", JSON.stringify(routePoints));
 
-    Log("token", user);
+    // Log("token", user);
 
     api.post(`route/saveAndGroup.php`, formData, config)
         .then((resp) => {
-           // Log("Adding route", resp.data);
+            // Log("Adding route", resp.data);
 
             if (resp.data.status == "OK") {
                 //deleteFromFirebase(resp, db);
                 saveToFirebase(route, groupTimer, resp, db).then(callback);
             } else {
-                console.log(resp.data);
+                // console.log(resp.data);
             }
         })
         .catch((err) => {
@@ -150,15 +151,15 @@ async function saveToFirebase(route, groupTimer, response, db) {
         updated: firebase.database.ServerValue.TIMESTAMP,
     };
 
-    Log("151", groupId);
+    // Log("151", groupId);
     let updates = {};
-        updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
-        updates[`groups/gid-${groupId}/locations/uid-${userId}`] =
-            locations[`uid-${userId}`];
-        updates[`groups/gid-${groupId}/fares/uid-${userId}`] =
-            fares[`uid-${userId}`];
-        updates[`groups/gid-${groupId}/onlineStatus/uid-${userId}`] =
-            onlineStatus[`uid-${userId}`];
+    updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
+    updates[`groups/gid-${groupId}/locations/uid-${userId}`] =
+        locations[`uid-${userId}`];
+    updates[`groups/gid-${groupId}/fares/uid-${userId}`] =
+        fares[`uid-${userId}`];
+    updates[`groups/gid-${groupId}/onlineStatus/uid-${userId}`] =
+        onlineStatus[`uid-${userId}`];
 
     await updateDatabase(updates, db);
 
@@ -168,7 +169,7 @@ async function saveToFirebase(route, groupTimer, response, db) {
         routeId,
         groupTimer,
         groupExists,
-        deleted: false
+        deleted: false,
     };
 }
 
