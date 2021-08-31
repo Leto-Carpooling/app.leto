@@ -47,7 +47,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
 
     formData.append("route-points", JSON.stringify(routePoints));
 
-    Log("token", user);
+    // Log("token", user);
 
     api.post(`route/saveAndGroup.php`, formData, config)
         .then((resp) => {
@@ -57,7 +57,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
                 //deleteFromFirebase(resp, db);
                 saveToFirebase(route, groupTimer, resp, db).then(callback);
             } else {
-                console.log(resp.data);
+                // console.log(resp.data);
             }
         })
         .catch((err) => {
@@ -151,7 +151,7 @@ async function saveToFirebase(route, groupTimer, response, db) {
         updated: firebase.database.ServerValue.TIMESTAMP,
     };
 
-    Log("151", groupId);
+    // Log("151", groupId);
     let updates = {};
     updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
     updates[`groups/gid-${groupId}/locations/uid-${userId}`] =

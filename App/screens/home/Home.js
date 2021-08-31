@@ -166,16 +166,20 @@ export default ({ navigation }) => {
                     if (isDriver) {
                         const driverId = user?.token.split("-")[0];
                         writeToDatabase(
-                            `drivers/${driverId}/cLocation`,
+                            `drivers/did-${driverId}/cLocation`,
                             coords,
                             db
                         );
                     } else {
                         const userId = user?.token.split("-")[0];
                         writeToDatabase(
-                            `users/${userId}/cLocation`,
+                            `users/uid-${userId}/cLocation`,
+                            coords,
+                            db
+                        );
+                        writeToDatabase(
+                            `users/uid-${userId}`,
                             {
-                                ...coords,
                                 profileImage: user?.profileImage,
                                 firstname: user?.firstname,
                                 lastname: user?.lastname,

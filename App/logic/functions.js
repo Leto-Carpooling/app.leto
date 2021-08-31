@@ -20,7 +20,7 @@ export const getFare = async function (groupId, user, callback) {
 
     api.post(`route/calculateFare.php`, formData, config)
         .then((resp) => {
-            Log("Getting fare in herec", resp.data);
+            // Log("Getting fare in herec", resp.data);
 
             if (resp.data.status == "OK") {
                 callback(JSON.parse(resp.data.message), groupId);

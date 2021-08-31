@@ -27,13 +27,16 @@ const HangTight = ({ route }) => {
     const [status, setStatus] = useState(0);
     const { origin, dest, user, db, setDest } = useContext(AppContext);
     const [price, setPrice] = useState(0);
+    const [currency, setCurrency] = useState("");
 
     //get the riders route
     useEffect(() => {
         snapToIndex(1);
+        if (!dest || !origin) return;
+
         (async () => {
             const route_ = await getRoute(origin.placeId, dest.placeId);
-            Log("riders route", route);
+            // Log("riders route", route);
             saveRoute(
                 route_,
                 300,
@@ -48,13 +51,11 @@ const HangTight = ({ route }) => {
                      * listen to the timer
                      */
                     setStatus(1);
-                    Log("47: Route Info", routeInfo);
+                    // Log("47: Route Info", routeInfo);
                     getFare(routeInfo.groupId, user, (fareData) => {
-                        //handle fare info here.
-                        Log("48: Fare Data", fareData);
+                        setCurrency(fareData.currency);
                     });
 
-                    //listen for fare change
                     let groupUrl = `groups/gid-${routeInfo.groupId}`;
 
                     db.ref(`${groupUrl}/fares/uid-${routeInfo.userId}`).on(
@@ -62,13 +63,13 @@ const HangTight = ({ route }) => {
                         (snapshot) => {
                             let fare = snapshot.val();
                             setPrice(fare);
-                            //price = snapshot[`uid-${routeInfo.userId}`];
                         }
                     );
 
                     //listen for locations change
                     db.ref(`${groupUrl}/locations`).on("value", (snapshot) => {
                         let locations = snapshot.val();
+                        Log("Locations", locations);
                         //update the map
                     });
 
@@ -94,7 +95,7 @@ const HangTight = ({ route }) => {
                 }
             );
         })();
-    }, []);
+    }, [dest, origin]);
 
     useEffect(() => {
         if (status === 2) {
@@ -147,7 +148,7 @@ const HangTight = ({ route }) => {
     }
 
     function renderPrice() {
-        return status >= 1 && <PriceLabel price={price} header="KES" />;
+        return status >= 1 && <PriceLabel price={price} header={currency} />;
     }
 
     function renderStatus() {

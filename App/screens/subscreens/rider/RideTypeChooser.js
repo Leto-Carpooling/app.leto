@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
 
 import colors from "../../../assets/colors/colors";
 import fonts from "../../../assets/fonts/fonts";
@@ -13,6 +14,11 @@ import CardButton from "../../../components/btn/CardButton";
 
 const RideTypeChooser = () => {
     const navigation = useNavigation();
+    const { snapToIndex } = useBottomSheet();
+
+    useEffect(() => {
+        snapToIndex(1);
+    }, []);
     return (
         <View style={tw`flex-1 bg-white p-4`}>
             <Text style={[tw`text-2xl text-gray-500 mb-3`, styles.fontPoppins]}>
