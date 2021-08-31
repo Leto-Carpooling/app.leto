@@ -146,12 +146,14 @@ export default ({ navigation }) => {
 
             axios(config)
                 .then(function (response) {
+                    //Log("current location", response.data);
                     if (!origin) {
                         setOrigin({
                             lat: location.coords.latitude,
                             lng: location.coords.longitude,
                             name: response.data.results[0].name,
                             placeId: response.data.results[0].place_id,
+                            secondaryText: response.data.results[0].vicinity,
                         });
                     }
 

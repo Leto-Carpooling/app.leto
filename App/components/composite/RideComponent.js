@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+    ActivityIndicator,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import tw from "tailwind-react-native-classnames";
 import colors from "../../assets/colors/colors";
 import { Avatar } from "../img/Avatar";
 import FontStyles from "../../assets/fonts/FontStyles";
 import PriceLabel from "../display/PriceLabel";
 import { MaterialIcons } from "@expo/vector-icons";
-const RideComponent = ({ actionText, onPress }) => {
+const RideComponent = ({ actionText, onPress, loading }) => {
     const [riders, setRiders] = useState([
         { name: "John" },
         { name: "Kevin" },
@@ -32,13 +38,19 @@ const RideComponent = ({ actionText, onPress }) => {
                 <TouchableOpacity
                     style={[
                         { backgroundColor: colors.primary },
-                        tw`h-1/3 rounded-br-md justify-center items-center`,
+                        tw`h-1/3 rounded-br-md justify-around flex-row items-center ${
+                            loading && `opacity-50`
+                        }`,
                     ]}
                     onPress={onPress}
+                    disabled={loading}
                 >
                     <Text style={[tw`text-white`, FontStyles.fim]}>
                         {actionText}
                     </Text>
+                    {loading && (
+                        <ActivityIndicator size="small" color={colors.white} />
+                    )}
                 </TouchableOpacity>
             </View>
         </View>

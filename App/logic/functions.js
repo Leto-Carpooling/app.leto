@@ -55,5 +55,5 @@ export const timeFormatter = (seconds, withHours = false) => {
     let m = Math.trunc(seconds / 60) % 60;
     let h = Math.trunc(seconds / 3600) % 24;
 
-    return `${withHours ? `${h}:` : ""} ${m}:${s}`;
+    return `${withHours ? `${h}:` : ""} ${m}:${s < 10 ? `0${s}` : s}`;
 };

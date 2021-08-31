@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/core";
+import { AppContext } from "../../../util/AppContext";
 
 import fonts from "../../../assets/fonts/fonts";
 
@@ -12,6 +13,7 @@ import Spacer from "../../../components/auxx/Spacer";
 
 const Pickup = () => {
     const navigation = useNavigation();
+    const { origin } = useContext(AppContext);
     return (
         <View style={tw`flex-1 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-4`, styles.fp]}>
@@ -19,14 +21,14 @@ const Pickup = () => {
             </Text>
             <PlaceView
                 place={{
-                    mainText: "Strathmore University",
-                    secondaryText: "Ole Sangale Rd.",
+                    mainText: origin.name,
+                    secondaryText: origin.secondaryText,
                 }}
             />
             <Spacer height={5} />
             <View style={[tw`p-2`]}>
                 <DriverItem />
-                <Spacer height={10} />
+                <Spacer height={20} />
                 <Button
                     text="I have arrived"
                     iconName="place"

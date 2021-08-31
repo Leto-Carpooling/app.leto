@@ -16,6 +16,8 @@ export const AppContextProvider = ({ children }) => {
     const [mapDirections, setMapDirections] = useState([]);
     const [riderMarkers, setRiderMarkers] = useState([]);
     const [mIndentifiers, setmIndentifiers] = useState([]);
+    const [rideOrigin, setRideOrigin] = useState(null);
+    const [rideDest, setRideDest] = useState(null);
 
     useEffect(() => {
         (async () => {
@@ -47,6 +49,10 @@ export const AppContextProvider = ({ children }) => {
         setRiderMarkers,
         mIndentifiers,
         setmIndentifiers,
+        rideOrigin,
+        setRideOrigin,
+        rideDest,
+        setRideDest,
     };
     return (
         <AppContext.Provider value={context}>{children}</AppContext.Provider>
@@ -60,7 +66,7 @@ async function getUser(setUser) {
 
 async function getIsDriver(setIsDriver) {
     const is_driver = await AsyncStorage.getItem("@is_driver");
-    setIsDriver(is_driver ? true : false);
+    setIsDriver(is_driver ? true : true);
 }
 
 async function getUpgradeSubmitted(setUpgradeSubmitted) {
