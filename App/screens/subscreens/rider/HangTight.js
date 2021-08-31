@@ -57,7 +57,7 @@ const HangTight = ({ route }) => {
                      * listen to the timer
                      */
                     setStatus(1);
-                    // Log("47: Route Info", routeInfo);
+                    Log("47: Route Info", routeInfo);
                     getFare(routeInfo.groupId, user, (fareData) => {
                         setCurrency(fareData.currency);
                     });
