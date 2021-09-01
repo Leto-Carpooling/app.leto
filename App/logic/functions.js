@@ -1,5 +1,7 @@
 import { Log } from "../util/Logger";
 import { api } from "../util/api";
+import { GOOGLE_MAPS_API_KEY } from "@env";
+
 
 /**
  *
@@ -14,7 +16,7 @@ export const getFare = async function (groupId, user, callback) {
             auth: user.token,
         },
     };
-    Log("getFare: 16 making request", groupId);
+    Log("getFare: 16 making request", groupId); 
     const formData = new FormData();
     formData.append("group-id", groupId);
 
@@ -69,4 +71,31 @@ export const assignDriver = async (routeInfo, user) =>{
     let formData = new FormData();
     formData.append("groupId", routeInfo.groupId);
     return await api.post(`roe/assignDriver.php`, formData, config);
+}
+
+export const getPlace = async(placeId) => {
+
+    try {
+        let resp = await fetch(
+            `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=formatted_address,name,geometry&key=${GOOGLE_MAPS_API_KEY}`
+        );
+        let place = await resp.json();
+        return place;
+    } catch (error) {
+        return error; 
+    }
+    
+}
+
+export const startTimer = async(routeInfo, user) => {
+    Log("Starting Timer: Making request", routeInfo);
+    const config = {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            auth: user.token,
+        },
+    };
+    let formData = new FormData();
+    formData.append("groupId", routeInfo.groupId);
+    return await api.post(`roe/startTimer.php`, formData, config);
 }

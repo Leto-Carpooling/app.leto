@@ -19,7 +19,7 @@ import { saveRoute } from "../../../logic/saveRoute";
 
 import { AppContext } from "../../../util/AppContext";
 import { Log } from "../../../util/Logger";
-import { assignDriver, cancelRide, getFare, timeFormatter } from "../../../logic/functions";
+import { assignDriver, cancelRide, getFare, getPlace, startTimer, timeFormatter } from "../../../logic/functions";
 
 const HangTight = ({ route }) => {
     const navigation = useNavigation();
@@ -45,6 +45,7 @@ const HangTight = ({ route }) => {
     const [otherRiders, setOtherRiders] = useState([]);
     const [groupText, setGroupText] = useState("Looking for matches");
     const [timer, setTimer] = useState(timeFormatter(60));
+    const [bestPickup, setBestPickup] = useState("Finding best pickup");
 
     //get the riders route
     useEffect(() => {
@@ -56,7 +57,7 @@ const HangTight = ({ route }) => {
             // Log("riders route", route);
             saveRoute(
                 route_,
-                60,
+                30,
                 user,
                 db,
                 route.params.rideType,
@@ -66,15 +67,18 @@ const HangTight = ({ route }) => {
                      * Add event listeners to the groups,
                      * Update the map
                      * listen to the timer
-                     */
+                     */ 
                     setStatus(1);
                     setRouteInfo(routeInfo);
                     Log("47: Route Info", routeInfo);
                     getFare(routeInfo.groupId, user, (fareData) => {
                         setCurrency(fareData.currency);
                     });
+                    startTimer(routeInfo, user); 
 
                     let groupUrl = `groups/gid-${routeInfo.groupId}`;
+
+                    
 
                     db.ref(`${groupUrl}/fares/uid-${routeInfo.userId}`).on(
                         "value",
@@ -89,7 +93,7 @@ const HangTight = ({ route }) => {
                         .then((snapshot) => {
                             if (snapshot.exists()) {
                                 const groupDetails = snapshot.val();
-                                Log("group route", groupDetails);
+                                //Log("group route", groupDetails);
                                 const direction = {
                                     startPlaceId: groupDetails.startPlaceId,
                                     endPlaceId: groupDetails.endPlaceId,
@@ -165,6 +169,7 @@ const HangTight = ({ route }) => {
                                 " other rider" +
                                 (otherRiders.length - 1 > 1 ? "s" : "") +
                                 " are sharing this ride";
+                            Alert.alert("New Rider(s)", text);
 
                             setGroupText(text);
                         } else {
@@ -182,26 +187,49 @@ const HangTight = ({ route }) => {
                         //show pickup point then assign drivers
                         //show pickup point then assign drivers
                         if (currentTime == 0) {
+                            setStatus(2);
                             assignDriver(routeInfo, user).then((response) =>{
                              if(response.data.status == "OK"){
-                                Log("Assign driver response", JSON.parse(response.data.message));
-                                setStatus(2);
+                                Log("Assign driver response", response.data);
                              }
+                             Log("Assigning driver response", response.data);
                             
                             }).catch(err =>{
-                                Log("Error Assigning driver", err)
-                            });
-                            setStatus(2);
-                            clearInterval(interval);
+                                Log("Error Assigning driver:", err)
+                            }); 
+
+                            db.ref(`${groupUrl}/pickUpPointId`).on(
+                                "value",
+                                (snapshot) => {
+                                   
+                                    Log("Getting pickup point", snapshot.val())
+                                    getPlace(snapshot.val()).then(resp =>{
+                                        setBestPickup(resp.result.formatted_address);
+                                    })
+                                    .catch(err => {
+                                        Alert.alert("An Error Occurred", "Unable to fetch the pickup point");
+                                    });
+                                }
+                            );
+                            
                         }
                     });
+
+                    db.ref(`${groupUrl}/driver`).on(
+                        "value",
+                        (snapshot) => {
+                           if(snapshot.val()){
+                             navigation.navigate("Pickup");
+                           }
+                        }
+                    );
 
                     //maintain online status of others
                 }
             );
-        })();
+        })(); 
     }, [dest]);
-
+ 
     // useEffect(() => {
     //     if (status === 2) {
     //         setTimeout(() => {
@@ -219,6 +247,7 @@ const HangTight = ({ route }) => {
             otherRiders.forEach((riderId) => {
                 db.ref(`users/${riderId}/cLocation`).off();
             });
+            
             setTimer(0);
         }
     }, [routeInfo]);
@@ -246,9 +275,7 @@ const HangTight = ({ route }) => {
                     value={dest?.name}
                     editable={false}
                 />
-                <Spacer height={10} />
-                {renderDriverItem()}
-                <Spacer height={5} />
+
 
                 <View style={[tw`flex-1 justify-end`]}>
                     <Button
@@ -264,6 +291,9 @@ const HangTight = ({ route }) => {
                                     Log("CancelRide Response: ", jRes);
                                     if (jRes.status == "OK") {
                                         let deletedRouteInfo = routeInfo;
+                                        getFare(routeInfo.groupId, user, (fareData) => {
+                                         
+                                        });
                                         deletedRouteInfo.deleted = true;
                                         setRouteInfo(deletedRouteInfo);
                                         navigation.reset({
@@ -348,14 +378,15 @@ const HangTight = ({ route }) => {
                             </Text>
                         </View>
                         <View style={tw`flex-row items-center mt-2`}>
-                            <ActivityIndicator
-                                size="small"
-                                color={colors.primary}
+                            <MaterialIcons
+                                name="check"
+                                color={colors.success}
+                                size={20}
                             />
                             <Text style={[tw`text-gray-500 ml-2`, styles.fi]}>
-                                Finding best pickup point
+                               {bestPickup}
                             </Text>
-                        </View>
+                        </View> 
                     </>
                 );
         }
