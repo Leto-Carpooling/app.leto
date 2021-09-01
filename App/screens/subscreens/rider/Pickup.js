@@ -37,6 +37,14 @@ const Pickup = ({route}) => {
         Alert.alert("Error", "Could not fetch Driver information");
     })
 
+    let groupUrl = `groups/gid-${routeInfo.groupId}`;
+    let driverUrl = `drivers/did-${driverId}/cLocation`;
+
+    //render driver in here
+    db.ref(`${driverUrl}`).on("value", (snapshot) => {
+
+    });
+
     return (
         <View style={tw`flex-1 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-4`, styles.fp]}>
