@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useContext, useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { useNavigation } from "@react-navigation/core";
 import { AppContext } from "../../../util/AppContext";
@@ -10,12 +10,33 @@ import { Button } from "../../../components/btn/Button";
 import DriverItem from "../../../components/display/DriverItem";
 import PlaceView from "../../../components/display/PlaceView";
 import Spacer from "../../../components/auxx/Spacer";
+import { getDriverInfo } from "../../../logic/functions";
 
 const Pickup = ({route}) => {
     const navigation = useNavigation();
-    const { origin } = useContext(AppContext);
+    const { origin, user, db } = useContext(AppContext);
     const {routeInfo, driverId, pickup} = route.params;
-    
+    const [driver, setDriver] = useState({
+        name: "fetching",
+        vehicle: {
+            licensePlate: "fetching"
+        },
+        totalRides: "fetching"
+    });
+
+    getDriverInfo(driverId, user ).then(response => {
+        if(response.data.status == "OK"){
+            let driver = JSON.parse(response.data.message);
+            setDriver(driver);
+        }
+        else{
+
+        }
+    })
+    .catch(err => {
+        Alert.alert("Error", "Could not fetch Driver information");
+    })
+
     return (
         <View style={tw`flex-1 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-4`, styles.fp]}>
@@ -28,8 +49,10 @@ const Pickup = ({route}) => {
                 }}
             />
             <Spacer height={5} />
+            <DriverItem />
+            <Spacer height={5} />
             <View style={[tw`p-2`]}>
-                <DriverItem />
+                <DriverItem driver={driver} />
                 <Spacer height={20} />
                 <Button
                     text="I have arrived"

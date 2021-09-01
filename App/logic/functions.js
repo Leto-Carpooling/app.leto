@@ -99,3 +99,15 @@ export const startTimer = async(routeInfo, user) => {
     formData.append("groupId", routeInfo.groupId);
     return await api.post(`roe/startTimer.php`, formData, config);
 }
+
+export const getDriverInfo = async(driverId, user) =>{
+    const config = {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            auth: user.token,
+        },
+    };
+    let formData = new FormData();
+    formData.append("driverId", driverId);
+    return await api.post(`roe/getDriver.php`, formData, config);
+}
