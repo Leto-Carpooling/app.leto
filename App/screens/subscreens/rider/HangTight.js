@@ -327,9 +327,9 @@ const HangTight = ({ route }) => {
         </View>
     );
 
-    function renderDriverItem() {
-        return status === 2 && <DriverItem />;
-    }
+    // function renderDriverItem() {
+    //     return status === 2 && <DriverItem />;
+    // }
 
     function renderPrice() {
         return status >= 1 && <PriceLabel price={price} header={currency} />;
