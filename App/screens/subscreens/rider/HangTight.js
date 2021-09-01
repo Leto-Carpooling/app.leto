@@ -210,6 +210,7 @@ const HangTight = ({ route }) => {
                                     })
                                     .catch(err => {
                                         Alert.alert("An Error Occurred", "Unable to fetch the pickup point");
+                                        Log("Google Pickup error", err);
                                     });
                                 }
                             );

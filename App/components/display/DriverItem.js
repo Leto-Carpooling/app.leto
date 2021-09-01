@@ -7,6 +7,15 @@ import colors from "../../assets/colors/colors";
 import fonts from "../../assets/fonts/fonts";
 
 const DriverItem = ({driver}) => {
+    if(!driver){
+        driver = {
+            name: "fetching",
+            vehicle: {
+                licensePlate: "fetching"
+            },
+            totalRides: "fetching"
+        }
+    }
     return (
         <View
             style={tw`bg-gray-100 flex-row p-3 rounded justify-between items-center`}
