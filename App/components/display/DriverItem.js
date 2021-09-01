@@ -10,6 +10,7 @@ const DriverItem = ({driver}) => {
     if(!driver){
         driver = {
             name: "fetching",
+            profileImage: "./../assets/img/profile.svg",
             vehicle: {
                 licensePlate: "fetching"
             },
@@ -20,7 +21,7 @@ const DriverItem = ({driver}) => {
         <View
             style={tw`bg-gray-100 flex-row p-3 rounded justify-between items-center`}
         >
-            <Avatar size={40} src="https://picsum.photos/200/300" test />
+            <Avatar size={40} src={driver.profileImage} test />
             <View style={tw`flex-col`}>
                 <Text style={[styles.fi, tw`text-xl text-gray-600 mb-1`]}>
                     {driver.name}
