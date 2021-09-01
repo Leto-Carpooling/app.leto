@@ -11,9 +11,11 @@ import DriverItem from "../../../components/display/DriverItem";
 import PlaceView from "../../../components/display/PlaceView";
 import Spacer from "../../../components/auxx/Spacer";
 
-const Pickup = () => {
+const Pickup = ({route}) => {
     const navigation = useNavigation();
     const { origin } = useContext(AppContext);
+    const {routeInfo, driverId, pickup} = route.params;
+    
     return (
         <View style={tw`flex-1 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-4`, styles.fp]}>
@@ -21,8 +23,8 @@ const Pickup = () => {
             </Text>
             <PlaceView
                 place={{
-                    mainText: origin.name,
-                    secondaryText: origin.secondaryText,
+                    mainText: pickup.name,
+                    secondaryText: pickup.secondaryName,
                 }}
             />
             <Spacer height={5} />

@@ -46,6 +46,7 @@ const HangTight = ({ route }) => {
     const [groupText, setGroupText] = useState("Looking for matches");
     const [timer, setTimer] = useState(timeFormatter(60));
     const [bestPickup, setBestPickup] = useState("Finding best pickup");
+    const [pickupName, setPickupName] = useState("Pickup location name");
 
     //get the riders route
     useEffect(() => {
@@ -204,6 +205,7 @@ const HangTight = ({ route }) => {
                                    
                                     Log("Getting pickup point", snapshot.val())
                                     getPlace(snapshot.val()).then(resp =>{
+                                        setPickupName(resp.result.name);
                                         setBestPickup(resp.result.formatted_address);
                                     })
                                     .catch(err => {
@@ -218,9 +220,15 @@ const HangTight = ({ route }) => {
                     db.ref(`${groupUrl}/driver`).on(
                         "value",
                         (snapshot) => {
-                           if(snapshot.val()){
-                             navigation.navigate("Pickup");
-                           }
+                           if(snapshot.val() != -1){
+                             let driverId = snapshot.val();
+
+                             let dataToPass =  {routeInfo, driverId, pickup: {
+                                 name:pickupName, secondaryName:bestPickup}
+                             }
+                             navigation.navigate("Pickup", dataToPass);
+
+                            };
                         }
                     );
 
