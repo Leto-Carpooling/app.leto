@@ -47,11 +47,11 @@ const WhereTo = ({ route }) => {
     }, [whereTo, whereFrom]);
 
     /** when both origin and destination are set -> route user -> */
-    useEffect(() => {
-        if (dest != null && origin != null) {
-            navigation.navigate("HangTight", route.params);
-        }
-    }, [dest, origin]);
+    // useEffect(() => {
+    //     if (dest != null && origin != null) {
+    //         navigation.navigate("HangTight", route.params);
+    //     }
+    // }, [dest, origin]);
 
     /** run timer to implement a debounce of 400ms for WhereTo */
     useEffect(() => {
@@ -111,7 +111,7 @@ const WhereTo = ({ route }) => {
             </Text>
             <View style={tw`p-2`}>
                 <TextField
-                    iconName="place"
+                    iconName="my-location"
                     placeholder="Where from?"
                     value={whereFrom}
                     onChangeText={onChangeWhereFrom}
@@ -146,10 +146,10 @@ const WhereTo = ({ route }) => {
      * sets the location details on press.
      */
     function handlePress(place) {
-        console.log(place);
         if (isTo) {
-            setToLoading(true);
+            onChangeWhereTo(place.mainText);
             //set text on the textfield
+            navigation.navigate("HangTight", route.params);
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -158,21 +158,20 @@ const WhereTo = ({ route }) => {
 
             axios(config)
                 .then(function (resp) {
-                    setToLoading(false);
                     setDest({
                         lat: resp.data.result.geometry.location.lat,
                         lng: resp.data.result.geometry.location.lng,
                         name: place.mainText,
                         placeId: place.placeId,
+                        secondaryText: place.secondaryText,
                     });
-                    onChangeWhereTo(place.mainText);
                 })
                 .catch(function (error) {
                     console.log(error);
-                    setToLoading(false);
                 });
         } else {
-            setFromLoading(true);
+            onChangeWhereFrom(place.mainText);
+            //navigation.navigate("HangTight", route.params);
             var config = {
                 method: "get",
                 url: `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`,
@@ -181,19 +180,15 @@ const WhereTo = ({ route }) => {
 
             axios(config)
                 .then(function (resp) {
-                    setFromLoading(false);
-
                     setOrigin({
                         lat: resp.data.result.geometry.location.lat,
                         lng: resp.data.result.geometry.location.lng,
                         name: place.mainText,
                         placeId: place.placeId,
                     });
-                    onChangeWhereFrom(place.mainText);
                 })
                 .catch(function (error) {
                     console.log(error);
-                    setFromLoading(false);
                 });
         }
     }
@@ -210,7 +205,6 @@ function getPlaces(whereTo, setPlaces, isTo, setToLoading, setFromLoading) {
         .then(function (response) {
             //Log("autocomplete", response.data);
             const candidates = response.data.predictions;
-            console.log("num:" + candidates.length);
             const results = [];
             candidates.forEach((cand) => {
                 results.push({

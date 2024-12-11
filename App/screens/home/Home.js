@@ -146,12 +146,14 @@ export default ({ navigation }) => {
 
             axios(config)
                 .then(function (response) {
+                    //Log("current location", response.data);
                     if (!origin) {
                         setOrigin({
                             lat: location.coords.latitude,
                             lng: location.coords.longitude,
                             name: response.data.results[0].name,
                             placeId: response.data.results[0].place_id,
+                            secondaryText: response.data.results[0].vicinity,
                         });
                     }
 
@@ -166,16 +168,17 @@ export default ({ navigation }) => {
                     if (isDriver) {
                         const driverId = user?.token.split("-")[0];
                         writeToDatabase(
-                            `drivers/${driverId}/cLocation`,
+                            `drivers/did-${driverId}/cLocation`,
                             coords,
                             db
                         );
                     } else {
                         const userId = user?.token.split("-")[0];
+
                         writeToDatabase(
-                            `users/${userId}/cLocation`,
+                            `users/uid-${userId}`,
                             {
-                                ...coords,
+                                cLocation: coords,
                                 profileImage: user?.profileImage,
                                 firstname: user?.firstname,
                                 lastname: user?.lastname,

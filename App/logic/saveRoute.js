@@ -31,7 +31,8 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
     let end_latitude = route0leg0.end_location.lat;
     let end_longitude = route0leg0.end_location.lng;
     let startPlaceId = route.geocoded_waypoints[0].place_id;
-    let endPlaceId = route.geocoded_waypoints[route.geocoded_waypoints.length - 1].place_id
+    let endPlaceId =
+        route.geocoded_waypoints[route.geocoded_waypoints.length - 1].place_id;
 
     let routePoints = {
         start_latitude,
@@ -41,7 +42,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
         rideType,
         startPlaceId,
         endPlaceId,
-        groupTimer
+        groupTimer,
     };
 
     formData.append("route-points", JSON.stringify(routePoints));
@@ -50,13 +51,13 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
 
     api.post(`route/saveAndGroup.php`, formData, config)
         .then((resp) => {
-           // Log("Adding route", resp.data);
+            Log("Adding route", resp.data);
 
             if (resp.data.status == "OK") {
                 //deleteFromFirebase(resp, db);
                 saveToFirebase(route, groupTimer, resp, db).then(callback);
             } else {
-                console.log(resp.data);
+                Log("An error occurred")
             }
         })
         .catch((err) => {
@@ -72,7 +73,7 @@ export const saveRoute = (route, groupTimer, user, db, rideType, callback) => {
  */
 async function saveToFirebase(route, groupTimer, response, db) {
     let message = JSON.parse(response.data.message);
-    //Log("msg", message);
+    Log("msg", message);
 
     let routeId = message.routeId;
     let userId = message.userId;
@@ -81,6 +82,12 @@ async function saveToFirebase(route, groupTimer, response, db) {
     let groupExists = message.groupExists;
 
     let legs = route0.legs;
+
+    let route0leg0 = route.routes[0].legs[0];
+    let start_latitude = route0leg0.start_location.lat;
+    let start_longitude = route0leg0.start_location.lng;
+    let end_latitude = route0leg0.end_location.lat;
+    let end_longitude = route0leg0.end_location.lng;
 
     //save the geocoded_waypoint
     let geocodedWp = route.geocoded_waypoints;
@@ -136,12 +143,20 @@ async function saveToFirebase(route, groupTimer, response, db) {
     let locations = {};
     let fares = {};
     let onlineStatus = {};
+    
 
     usersIndex[`uid-${userId}`] = true;
 
     locations[`uid-${userId}`] = {
         startPlaceId: geocodedWp[0].place_id,
         endPlaceId: geocodedWp[geocodedWp.length - 1].place_id,
+        coordinates: 
+        {
+            sLat: start_latitude,
+            sLong: start_longitude,
+            eLat: end_latitude,
+            eLong: end_longitude
+        } 
     };
 
     fares[`uid-${userId}`] = "-"; //will calculate fare later.
@@ -152,13 +167,13 @@ async function saveToFirebase(route, groupTimer, response, db) {
 
     Log("151", groupId);
     let updates = {};
-        updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
-        updates[`groups/gid-${groupId}/locations/uid-${userId}`] =
-            locations[`uid-${userId}`];
-        updates[`groups/gid-${groupId}/fares/uid-${userId}`] =
-            fares[`uid-${userId}`];
-        updates[`groups/gid-${groupId}/onlineStatus/uid-${userId}`] =
-            onlineStatus[`uid-${userId}`];
+    updates[`groups/gid-${groupId}/usersIndex/uid-${userId}`] = true;
+    updates[`groups/gid-${groupId}/locations/uid-${userId}`] =
+        locations[`uid-${userId}`];
+    updates[`groups/gid-${groupId}/fares/uid-${userId}`] =
+        fares[`uid-${userId}`];
+    updates[`groups/gid-${groupId}/onlineStatus/uid-${userId}`] =
+        onlineStatus[`uid-${userId}`];
 
     await updateDatabase(updates, db);
 
@@ -167,6 +182,8 @@ async function saveToFirebase(route, groupTimer, response, db) {
         userId,
         routeId,
         groupTimer,
+        groupExists,
+        deleted: false,
     };
 }
 

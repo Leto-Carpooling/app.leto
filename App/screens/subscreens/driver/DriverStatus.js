@@ -8,10 +8,28 @@ import LogoTagline from "../../../components/display/LogoTagline";
 import { AppContext } from "../../../util/AppContext";
 import { api } from "../../../util/api";
 import { Log } from "../../../util/Logger";
+import { useNavigation } from "@react-navigation/core";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
 
 const DriverStatus = () => {
     const [on, setOn] = useState(false);
     const { user } = useContext(AppContext);
+    const navigation = useNavigation();
+    const { snapToIndex } = useBottomSheet();
+
+    useEffect(() => {
+        snapToIndex(1);
+        setOn(false);
+    }, []);
+
+    //Dirty code to simulate requests to driver
+    useEffect(() => {
+        if (on) {
+            setInterval(() => {
+                navigation.navigate("RideStatus");
+            }, 1000 * 10);
+        }
+    }, [on]);
 
     //Mark driver as online or offline
     useEffect(() => {

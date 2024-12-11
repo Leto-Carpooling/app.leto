@@ -22,7 +22,7 @@ const PlaceView = ({ place, onPress }) => {
                     numberOfLines={1}
                     style={[
                         tw`text-gray-600 text-lg w-11/12 pr-5`,
-                        { fontFamily: fonts.interMedium },
+                        { fontFamily: fonts.interRegular },
                     ]}
                 >
                     {place.mainText}

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/core";
 
 import colors from "../../../assets/colors/colors";
 import RideComponent from "../../../components/composite/RideComponent";
@@ -10,7 +12,24 @@ import Spacer from "../../../components/auxx/Spacer";
 import PlaceView from "../../../components/display/PlaceView";
 
 const RideStatus = () => {
-    const [status, setStatus] = useState(3);
+    const [status, setStatus] = useState(0);
+    const navigation = useNavigation();
+    const { snapToIndex } = useBottomSheet();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        switch (status) {
+            case 0:
+                snapToIndex(2);
+                break;
+            case 1:
+                snapToIndex(1);
+                break;
+            case 3:
+                snapToIndex(1);
+                break;
+        }
+    }, [status]);
     return (
         <View style={tw`flex-1 bg-white`}>
             <Text style={[tw`text-2xl text-gray-600 m-4`, FontStyles.fp]}>
@@ -22,10 +41,14 @@ const RideStatus = () => {
                 <RideComponent
                     actionText={renderActionText()}
                     onPress={returnOnPress()}
+                    loading={loading}
                 />
                 {status === 0 && (
                     <TouchableOpacity
                         style={[tw`mt-3 mr-2 flex-row justify-end`]}
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
                     >
                         <View style={[tw`flex-row items-center`]}>
                             <MaterialIcons name="close" color={colors.danger} />
@@ -58,19 +81,35 @@ const RideStatus = () => {
         switch (status) {
             case 0:
                 return () => {
-                    alert("Incoming ride");
+                    setLoading(true);
+                    setTimeout(() => {
+                        setLoading(false);
+                        setStatus(1);
+                    }, 1000 * 5);
                 };
             case 1:
                 return () => {
-                    alert("Go to pickup point");
+                    setLoading(true);
+                    setTimeout(() => {
+                        setLoading(false);
+                        setStatus(2);
+                    }, 1000 * 5);
                 };
             case 2:
                 return () => {
-                    alert("Ready..");
+                    setLoading(true);
+                    setTimeout(() => {
+                        setLoading(false);
+                        setStatus(3);
+                    }, 1000 * 5);
                 };
             case 3:
                 return () => {
-                    alert("In transit");
+                    setLoading(true);
+                    setTimeout(() => {
+                        setLoading(false);
+                        navigation.goBack();
+                    }, 1000 * 5);
                 };
         }
     }
@@ -94,8 +133,8 @@ const RideStatus = () => {
                 <>
                     <PlaceView
                         place={{
-                            name: "Strathmore University",
-                            addr: "Ole Sangale Rd.",
+                            mainText: "Strathmore University",
+                            secondaryText: "Ole Sangale Rd.",
                         }}
                     />
                     <Spacer height={20} />

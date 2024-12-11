@@ -6,15 +6,25 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../../assets/colors/colors";
 import fonts from "../../assets/fonts/fonts";
 
-const DriverItem = () => {
+const DriverItem = ({driver}) => {
+    if(!driver){
+        driver = {
+            name: "fetching",
+            profileImage: "./../assets/img/profile.svg",
+            vehicle: {
+                licensePlate: "fetching"
+            },
+            totalRides: "fetching"
+        }
+    }
     return (
         <View
             style={tw`bg-gray-100 flex-row p-3 rounded justify-between items-center`}
         >
-            <Avatar size={40} src="https://picsum.photos/200/300" test />
+            <Avatar size={40} src={driver.profileImage} test />
             <View style={tw`flex-col`}>
                 <Text style={[styles.fi, tw`text-xl text-gray-600 mb-1`]}>
-                    Levi Kamara
+                    {driver.name}
                 </Text>
                 <View style={tw`flex-row items-center justify-between`}>
                     <MaterialIcons
@@ -23,10 +33,10 @@ const DriverItem = () => {
                         color={colors.primary}
                     />
                     <Text style={[styles.fi, tw`text-sm text-gray-500 ml-2`]}>
-                        KDR 344Y
+                        {driver.vehicle.licensePlate}
                     </Text>
                     <Text style={[styles.fi, tw`text-sm text-gray-500 ml-2`]}>
-                        203 rides
+                        {driver.totalRides}
                     </Text>
                 </View>
             </View>
